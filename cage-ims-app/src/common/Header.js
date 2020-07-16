@@ -16,7 +16,7 @@ const trigger = (
 class Header extends Component {
   render() {
     return (
-      <Row className="header no-gutter fixed-top">
+      <Row className="header no-gutter">
         <Col>
           <h2>
             <Icon name="camera" />
