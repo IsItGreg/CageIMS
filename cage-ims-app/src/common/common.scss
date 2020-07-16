@@ -5,6 +5,10 @@
   h3 {
     padding: 5px;
     vertical-align: middle;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none; /* Standard */
   }
   .header-dropdown {
     float: right;
