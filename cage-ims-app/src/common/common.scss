@@ -14,3 +14,15 @@
     float: right;
   }
 }
+
+.sidebar {
+  background-color: #93aab8;
+  color: white;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+
+  .sidebar-menu {
+    padding-top: 50px;
+  }
+}
