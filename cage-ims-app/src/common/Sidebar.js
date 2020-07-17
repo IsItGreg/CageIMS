@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { Icon, Button, Menu, Sidebar, Segment, Image } from "semantic-ui-react";
-import { Container, Row, Col, NavItem, Nav } from "react-bootstrap";
+import { Icon, Button, Menu, Segment, Image } from "semantic-ui-react";
+import { Container, Row, Col, Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
 
-class MySidebar extends Component {
+class Sidebar extends Component {
   render() {
     const mystyle = {
       color: "white",
@@ -14,50 +13,60 @@ class MySidebar extends Component {
     };
 
     return (
-      <Row>
-        <Nav className="sidebar sidebar-sticky">
-          <Col className="sidebar-menu">
-            <Nav.Item>
-              <Nav.Link href="/home">
+      <Navbar variant="dark" className="sidebar flex-column">
+        <Nav className="flex-column">
+          <Nav.Item>
+            <Nav.Link href="#/">
+              <h4>
                 <Icon name="home icon" />
                 Home
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link href="/check">
+              </h4>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#/checkinout">
+              <h4>
                 <Icon name="sync" />
                 Check In/Out
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link href="/users">
+              </h4>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#/users">
+              <h4>
                 <Icon name="users" />
                 Users
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link href="/inventory">
+              </h4>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#/inventory">
+              <h4>
                 <Icon name="camera" />
                 Inventory
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link href="/staff">
+              </h4>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#/staff">
+              <h4>
                 <Icon name="user" />
                 Staff
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link href="/history">
+              </h4>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link href="#/transactions">
+              <h4>
                 <Icon name="history" />
                 Transactions
-              </Nav.Link>
-            </Nav.Item>
-          </Col>
+              </h4>
+            </Nav.Link>
+          </Nav.Item>
         </Nav>
-      </Row>
+      </Navbar>
     );
   }
 }
 
-export default MySidebar;
+export default Sidebar;
