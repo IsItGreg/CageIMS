@@ -3,6 +3,11 @@
   flex-grow: 1;
 }
 
+.flex-shrink {
+  flex-shrink: 1;
+  flex-grow: 0;
+}
+
 .flex-col {
   display: flex;
   flex-direction: column;
@@ -11,6 +16,9 @@
 .stretch-hw {
   height: 100%;
   width: 100%;
+}
+.stretch-h {
+  height: 100%;
 }
 
 .no-gutters {
@@ -39,8 +47,21 @@
   background-color: #93aab8;
   color: white;
   z-index: 9000;
-
+  height: 100%;
   h4 {
     padding: 10px;
+  }
+}
+
+.checkinout {
+  .checkinout-search {
+    display: block;
+    padding: 15% 25%;
+    & > * {
+      display: block;
+      margin: 10% auto;
+      // margin: 0 auto;
+      // margin: 15px;
+    }
   }
 }
