@@ -32,7 +32,7 @@ class Table extends Component {
         <table
           id="main"
           class="display row-border"
-          width="100%"
+          width="110%"
           ref={(el) => (this.el = el)}
         ></table>
       </div>
