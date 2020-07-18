@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import { Tabs, Tab } from "react-bootstrap";
+import { Tabs, Tab, Col } from "react-bootstrap";
 import { Divider, Segment, Button } from "semantic-ui-react";
 import Table from "../common/Table";
 
 class Inventory extends Component {
   render() {
     return (
-      <div className="userspage">
-        <Segment>
+      <div>
+        <Col className="userspage">
           <Button basic>Add Item</Button>
           <Divider clearing />
           <h1>Inventory</h1>
@@ -22,7 +22,7 @@ class Inventory extends Component {
               <Table data={this.dataSet} columns={this.columnSet}></Table>
             </Tab>
           </Tabs>
-        </Segment>
+        </Col>
       </div>
     );
   }
