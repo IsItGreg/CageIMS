@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Divider, Segment, Button } from "semantic-ui-react";
-import { Modal } from "bootstrap";
 import Table from "../common/Table";
 
 class Users extends Component {
