@@ -1,12 +1,18 @@
 import React, { Component } from "react";
+import { Divider, Segment, Button } from "semantic-ui-react";
+import { Modal } from "bootstrap";
 import Table from "../common/Table";
 
 class Users extends Component {
   render() {
     return (
       <div className="userspage">
-        <h1>Users</h1>
-        <Table data={this.dataSet} columns={this.columnSet}></Table>
+        <Segment>
+          <Button basic>Add User</Button>
+          <Divider clearing />
+          <h1>Users</h1>
+          <Table data={this.dataSet} columns={this.columnSet}></Table>
+        </Segment>
       </div>
     );
   }
