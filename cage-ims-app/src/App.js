@@ -6,6 +6,7 @@ import Sidebar from "./common/Sidebar";
 import { Container, Row, Col } from "react-bootstrap";
 import "./App.scss";
 import CheckInOut from "./pages/CheckInOut";
+import Users from "./pages/Users";
 
 class App extends Component {
   render() {
@@ -25,7 +26,9 @@ class App extends Component {
                 <Route path="/checkinout">
                   <CheckInOut />
                 </Route>
-                <Route path="/users">Users</Route>
+                <Route path="/users">
+                  <Users />
+                </Route>
                 <Route path="/inventory">Inventory</Route>
                 <Route path="/staff">Staff</Route>
                 <Route path="/transactions">Transactions</Route>
