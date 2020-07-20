@@ -13,6 +13,10 @@
   flex-direction: column;
 }
 
+.flex-end {
+  justify-content: flex-end;
+}
+
 .stretch-hw {
   height: 100%;
   width: 100%;
@@ -57,11 +61,46 @@
   .checkinout-search {
     display: block;
     padding: 15% 25%;
+    .error-text {
+      width: fit-content;
+      color: red;
+      margin: -7% auto;
+    }
     & > * {
       display: block;
       margin: 10% auto;
-      // margin: 0 auto;
-      // margin: 15px;
+    }
+  }
+  .checkinout-viewuser {
+    margin: 0 15px;
+    .row {
+      margin-top: 3em;
+    }
+    .current-table {
+      border: 1px solid black;
+      height: 300px;
+      width: 100%;
+    }
+    .checkout-table-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+    .checkout-inv-table {
+      border: 1px solid black;
+      height: 300px;
+      width: 67%;
+    }
+    .checkout-cart-table {
+      border: 1px solid black;
+      height: 300px;
+      width: 32%;
+    }
+    .page-menu {
+      justify-content: space-between;
+    }
+    .checkinout-buttons {
+      justify-content: space-evenly;
     }
   }
 }
