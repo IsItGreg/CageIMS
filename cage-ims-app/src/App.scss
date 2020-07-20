@@ -64,4 +64,20 @@
       // margin: 15px;
     }
   }
+  .checkinout-viewuser {
+    .row {
+      margin-top: 3em;
+    }
+    .current-table {
+      border: 1px solid black;
+      height: 300px;
+      width: 100%;
+    }
+    .page-menu {
+      justify-content: space-between;
+    }
+    .checkinout-buttons {
+      justify-content: space-evenly;
+    }
+  }
 }
