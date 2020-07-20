@@ -10,7 +10,6 @@
     "@testing-library/user-event": "^7.2.1",
     "bootstrap": "^4.5.0",
     "bootstrap-icons": "^1.0.0-alpha5",
-    "datatables.net-dt": "^1.10.21",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "material-table": "^1.65.0",
@@ -54,9 +53,5 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "devDependencies": {
-    "datatables.net-bs4": "^1.10.21",
-    "jquery": "^3.5.1"
   }
 }
