@@ -9,7 +9,7 @@ class CheckInOut extends Component {
     this.handleSearchResult = this.handleSearchResult.bind(this);
     this.state = {
       error: false,
-      userFound: "",
+      userFound: "12345",
     };
   }
 
@@ -57,6 +57,7 @@ class Search extends React.Component {
   };
 
   render() {
+    const isError = this.state.error;
     return (
       <div class="checkinout-search">
         <Input
@@ -68,6 +69,11 @@ class Search extends React.Component {
           iconPosition="left"
           placeholder="Search by exact ID..."
         />
+        {isError && (
+          <div class="error-text">
+            <p>Error: ID is invalid.</p>
+          </div>
+        )}
         <Button size="big" animated onClick={this.handleClick}>
           <Button.Content visible>Search</Button.Content>
           <Button.Content hidden>
@@ -91,7 +97,13 @@ class CheckInOutViewUser extends React.Component {
     this.props.onDoneClick("");
   };
 
-  // handleOpSelectClick = ()
+  handleReturnClick = () => {
+    this.state.op = "";
+  };
+
+  handleOpSelectClick = (e, op) => {
+    this.setState({ op: op });
+  };
 
   render() {
     const users = { "12345": "Greg Smelkov", "54321": "Seamus Rioux" };
@@ -101,17 +113,43 @@ class CheckInOutViewUser extends React.Component {
       pageOp = (
         <div class="checkinout-viewuser">
           <Row className="page-menu">
-            <h2>{users[this.props.userFound]}</h2>
+            <h2>{users[this.props.userFound]} -- Check In/Return</h2>
             <Button
-              onClick={this.handleDoneClick}
+              onClick={(e) => {
+                this.handleOpSelectClick(e, "");
+              }}
               size="big"
               animated
               color="green"
             >
-              <Button.Content visible>Complete Transactions</Button.Content>
+              <Button.Content visible>Back</Button.Content>
               <Button.Content hidden>
-                <Icon name="check" />
+                <Icon name="arrow circle left" />
               </Button.Content>
+            </Button>
+          </Row>
+          <Row>
+            <h4>Items due for Return:</h4>
+            <div class="current-table"> Data Table </div>
+          </Row>
+          <Row className="flex-end">
+            <Button
+              onClick={(e) => {
+                this.handleOpSelectClick(e, "");
+              }}
+              color="red"
+              size="big"
+            >
+              <Button.Content visible>Cancel</Button.Content>
+            </Button>
+            <Button
+              onClick={(e) => {
+                this.handleOpSelectClick(e, "");
+              }}
+              color="orange"
+              size="big"
+            >
+              <Button.Content visible>Return Selected Items</Button.Content>
             </Button>
           </Row>
         </div>
@@ -120,17 +158,46 @@ class CheckInOutViewUser extends React.Component {
       pageOp = (
         <div class="checkinout-viewuser">
           <Row className="page-menu">
-            <h2>{users[this.props.userFound]}</h2>
+            <h2>{users[this.props.userFound]} -- Check Out/Borrow</h2>
             <Button
-              onClick={this.handleDoneClick}
+              onClick={(e) => {
+                this.handleOpSelectClick(e, "");
+              }}
               size="big"
               animated
               color="green"
             >
-              <Button.Content visible>Complete Transactions</Button.Content>
+              <Button.Content visible>Back</Button.Content>
               <Button.Content hidden>
-                <Icon name="check" />
+                <Icon name="arrow circle left" />
               </Button.Content>
+            </Button>
+          </Row>
+          <Row>
+            <h4>Items due for Return:</h4>
+            <div class="checkout-table-wrapper">
+              <div class="checkout-inv-table"> Data Table </div>
+              <div class="checkout-cart-table"> Cart Table </div>
+            </div>
+          </Row>
+          <Row className="flex-end">
+            <Button
+              onClick={(e) => {
+                this.handleOpSelectClick(e, "");
+              }}
+              color="red"
+              size="big"
+            >
+              <Button.Content visible>Cancel</Button.Content>
+            </Button>
+            <Button
+              onClick={(e) => {
+                this.handleOpSelectClick(e, "");
+              }}
+              color="blue"
+              size="big"
+            >
+              <Button.Content visible>Check Out Selected Items</Button.Content>
             </Button>
           </Row>
         </div>
@@ -157,10 +224,22 @@ class CheckInOutViewUser extends React.Component {
             <div class="current-table"> Data Table </div>
           </Row>
           <Row className="checkinout-buttons">
-            <Button color="orange" size="big">
+            <Button
+              onClick={(e) => {
+                this.handleOpSelectClick(e, "checkin");
+              }}
+              color="orange"
+              size="big"
+            >
               <Button.Content visible>Check In/Return</Button.Content>
             </Button>
-            <Button color="blue" size="big">
+            <Button
+              onClick={(e) => {
+                this.handleOpSelectClick(e, "checkout");
+              }}
+              color="blue"
+              size="big"
+            >
               <Button.Content visible>Check Out/Borrow</Button.Content>
             </Button>
           </Row>
@@ -168,6 +247,6 @@ class CheckInOutViewUser extends React.Component {
       );
     }
 
-    return { pageOp };
+    return pageOp;
   }
 }
