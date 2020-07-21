@@ -14,12 +14,14 @@ class Users extends Component {
           lname: "Rioux",
           courses: ["Photography I", "Photography II"],
           id: "54321",
+          email: "seamus.rioux3@gmail.com",
         },
         {
           fname: "Greg",
           lname: "Smelkov",
           courses: ["Photography I"],
           id: "12345",
+          email: "greg@gmail.com",
         },
       ],
       columnSet: [
@@ -75,6 +77,7 @@ class Users extends Component {
       lname: "",
       courses: [],
       id: "",
+      email: "",
     };
     return (
       <div className="userspage">
@@ -95,53 +98,64 @@ class Users extends Component {
               <Form>
                 <Form.Field>
                   <label>First Name:</label>
-                  <Input
+                  <Form.Input
                     type="fname"
                     placeholder="First Name"
                     defaultValue={selectedUser.fname}
                     onChange={(e) => {
                       this.handleChange(e, "fname");
                     }}
-                  ></Input>
+                  ></Form.Input>
                 </Form.Field>
                 <Form.Field>
                   <label>Last Name:</label>
-                  <Input
+                  <Form.Input
                     type="lname"
                     placeholder="Last Name"
                     defaultValue={selectedUser.lname}
                     onChange={(e) => {
                       this.handleChange(e, "lname");
                     }}
-                  ></Input>
+                  ></Form.Input>
                 </Form.Field>
                 <Form.Field>
                   <label>Courses:</label>
-                  <Input
+                  <Form.Input
                     type="courses"
                     placeholder="Courses"
                     defaultValue={selectedUser.courses}
                     onChange={(e) => {
                       this.handleChange(e, "courses");
                     }}
-                  ></Input>{" "}
+                  ></Form.Input>{" "}
                   {/* TODO: change input type to searchable multiselect dropdown */}
                 </Form.Field>
                 <Form.Field>
                   <label>UML ID:</label>
-                  <Input
+                  <Form.Input
                     type="id"
                     placeholder="UML ID"
                     defaultValue={selectedUser.id}
                     onChange={(e) => {
                       this.handleChange(e, "id");
                     }}
-                  ></Input>
+                  ></Form.Input>
+                </Form.Field>
+                <Form.Field>
+                  <label>Email:</label>
+                  <Form.Input
+                    type="email"
+                    placeholder="Email"
+                    defaultValue={selectedUser.email}
+                    onChange={(e) => {
+                      this.handleChange(e, "email");
+                    }}
+                  ></Form.Input>
                 </Form.Field>
               </Form>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={this.close}>
+              <Button variant="primary" onClick={this.close}>
                 Close
               </Button>
               <Button

@@ -65,6 +65,7 @@ class Table extends Component {
         // }}
         options={{
           search: true,
+          pageSize: 10,
         }}
         onRowClick={this.props.onRowClick}
       ></MaterialTable>
