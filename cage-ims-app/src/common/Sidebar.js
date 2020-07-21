@@ -1,24 +1,16 @@
 import React, { Component } from "react";
-import { Icon, Button, Menu, Segment, Image } from "semantic-ui-react";
-import { Container, Row, Col, Nav, Navbar } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Icon } from "semantic-ui-react";
+import { Nav, Navbar } from "react-bootstrap";
 
 class Sidebar extends Component {
   render() {
-    const mystyle = {
-      color: "white",
-      fontFamily: "Roboto",
-      fontSize: "large",
-      background: "#93AAB8",
-    };
-
     return (
       <Navbar variant="dark" className="sidebar flex-column">
         <Nav className="flex-column">
           <Nav.Item>
             <Nav.Link href="#/">
               <h4>
-                <Icon name="home icon" />
+                <Icon name="home" />
                 Home
               </h4>
             </Nav.Link>
