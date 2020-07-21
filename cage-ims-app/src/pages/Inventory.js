@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Tabs, Tab, Col } from "react-bootstrap";
-import { Divider, Segment, Button } from "semantic-ui-react";
+import { Divider, Button } from "semantic-ui-react";
 import Table from "../common/Table";
 
 class Inventory extends Component {
@@ -10,16 +10,27 @@ class Inventory extends Component {
         <Col className="userspage">
           <Button basic>Add Item</Button>
           <Divider clearing />
-          <h1>Inventory</h1>
           <Tabs defaultActiveKey="all" id="uncontrolled-tab-example">
             <Tab eventKey="all" title="All">
-              <Table data={this.dataSet} columns={this.columnSet}></Table>
+              <Table
+                data={this.dataSet}
+                columns={this.columnSet}
+                title={<h2>Inventory</h2>}
+              ></Table>
             </Tab>
             <Tab eventKey="available" title="Available">
-              <Table data={this.dataSet} columns={this.columnSet}></Table>
+              <Table
+                data={this.dataSet}
+                columns={this.columnSet}
+                title={<h2>Inventory</h2>}
+              ></Table>
             </Tab>
             <Tab eventKey="usnavailable" title="Unavailable">
-              <Table data={this.dataSet} columns={this.columnSet}></Table>
+              <Table
+                data={this.dataSet}
+                columns={this.columnSet}
+                title={<h2>Inventory</h2>}
+              ></Table>
             </Tab>
           </Tabs>
         </Col>
@@ -27,21 +38,27 @@ class Inventory extends Component {
     );
   }
   columnSet = [
-    { title: "Name" },
-    { title: "Category" },
-    { title: "UML Serial" },
-    { title: "Notes" },
-    { title: "Courses" },
+    { title: "Name", field: "name" },
+    { title: "Category", field: "category" },
+    { title: "UML Serial", field: "serial" },
+    { title: "Notes", field: "notes" },
+    { title: "Courses", field: "course" },
   ];
   dataSet = [
-    [
-      "Canon 5D MK II",
-      "Camera",
-      "125",
-      "Missing Lens Cap",
-      "Photography I Photography II",
-    ],
-    ["Canon EOS", "Camera", "124", "Missing SD Card Cover", "Photography II"],
+    {
+      name: "Canon 5D MK II",
+      category: "Camera",
+      serial: "125",
+      notes: "Missing Lens Cap",
+      course: "Photography I Photography II",
+    },
+    {
+      name: "Canon EOS",
+      category: "Camera",
+      serial: "124",
+      notes: "Missing SD Card Cover",
+      course: "Photography II",
+    },
   ];
 }
 

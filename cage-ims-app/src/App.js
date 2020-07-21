@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { HashRouter as Router, Route, Link, Switch } from "react-router-dom";
+import { HashRouter as Router, Route, Switch } from "react-router-dom";
 
 import Header from "./common/Header";
 import Sidebar from "./common/Sidebar";
@@ -13,7 +13,7 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Container fluid className="no-gutters flex-col stretch-hw">
+        <Container fluid="true" className="no-gutters flex-col stretch-hw">
           <Header />
           <Row className="flex-fill no-gutters">
             <Col md="auto" className="no-gutters">
