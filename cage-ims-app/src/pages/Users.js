@@ -1,6 +1,6 @@
 import React, { Component, setState } from "react";
-import { Divider, Button, Input, Form, List } from "semantic-ui-react";
-import { Modal, Col } from "react-bootstrap";
+import { Divider, Button, Form, Dropdown } from "semantic-ui-react";
+import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
 class Users extends Component {
@@ -15,6 +15,7 @@ class Users extends Component {
           courses: ["Photography I", "Photography II"],
           id: "54321",
           email: "seamus.rioux3@gmail.com",
+          phone: "123-456-7890",
         },
         {
           fname: "Greg",
@@ -22,6 +23,7 @@ class Users extends Component {
           courses: ["Photography I"],
           id: "12345",
           email: "greg@gmail.com",
+          phone: "123-456-7890",
         },
       ],
       columnSet: [
@@ -32,6 +34,11 @@ class Users extends Component {
       open: false,
       selectedUserId: null,
       selectedUser: null,
+      courseOptions: [
+        { text: "Photography I", value: "Photography I" },
+        { text: "Photography II", value: "Photography II" },
+        { text: "Documentary Image", value: "Documentary Image" },
+      ],
     };
   }
   close = () => this.setState({ selectedUserId: null, selectedUser: null });
@@ -70,6 +77,21 @@ class Users extends Component {
     this.close();
   };
 
+  handleDropdownAddition = (e, { value }) => {
+    this.setState((prevState) => ({
+      courseOptions: [{ text: value, value }, ...prevState.courseOptions],
+    }));
+  };
+
+  handleDropdownChange = (e, { value }) => {
+    const val = value;
+    this.setState((prevState) => {
+      let selectedUser = Object.assign({}, prevState.selectedUser);
+      selectedUser.courses = val;
+      return { selectedUser };
+    });
+  };
+
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser ?? {
@@ -78,7 +100,9 @@ class Users extends Component {
       courses: [],
       id: "",
       email: "",
+      phone: "",
     };
+    const courseOptions = this.state.courseOptions;
     return (
       <div className="userspage">
         <Col>
@@ -86,7 +110,12 @@ class Users extends Component {
             Create New User
           </Button>
           <Divider clearing />
-          <Modal centered show={selectedUserId != null} onHide={this.close}>
+          <Modal
+            centered
+            size="lg"
+            show={selectedUserId != null}
+            onHide={this.close}
+          >
             <Modal.Header closeButton bsPrefix="modal-header">
               <Modal.Title>
                 {this.state.selectedUserId >= 0
@@ -95,69 +124,88 @@ class Users extends Component {
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
-              <Form>
-                <Form.Field>
-                  <label>First Name:</label>
-                  <Form.Input
-                    type="fname"
-                    placeholder="First Name"
-                    defaultValue={selectedUser.fname}
-                    onChange={(e) => {
-                      this.handleChange(e, "fname");
-                    }}
-                  ></Form.Input>
-                </Form.Field>
-                <Form.Field>
-                  <label>Last Name:</label>
-                  <Form.Input
-                    type="lname"
-                    placeholder="Last Name"
-                    defaultValue={selectedUser.lname}
-                    onChange={(e) => {
-                      this.handleChange(e, "lname");
-                    }}
-                  ></Form.Input>
-                </Form.Field>
-                <Form.Field>
-                  <label>Courses:</label>
-                  <Form.Input
-                    type="courses"
-                    placeholder="Courses"
-                    defaultValue={selectedUser.courses}
-                    onChange={(e) => {
-                      this.handleChange(e, "courses");
-                    }}
-                  ></Form.Input>{" "}
-                  {/* TODO: change input type to searchable multiselect dropdown */}
-                </Form.Field>
-                <Form.Field>
-                  <label>UML ID:</label>
-                  <Form.Input
-                    type="id"
-                    placeholder="UML ID"
-                    defaultValue={selectedUser.id}
-                    onChange={(e) => {
-                      this.handleChange(e, "id");
-                    }}
-                  ></Form.Input>
-                </Form.Field>
-                <Form.Field>
-                  <label>Email:</label>
-                  <Form.Input
-                    type="email"
-                    placeholder="Email"
-                    defaultValue={selectedUser.email}
-                    onChange={(e) => {
-                      this.handleChange(e, "email");
-                    }}
-                  ></Form.Input>
-                </Form.Field>
-              </Form>
+              <Row fluid>
+                <Col fluid>
+                  <Form>
+                    <Form.Field>
+                      <label>First Name:</label>
+                      <Form.Input
+                        type="fname"
+                        placeholder="First Name"
+                        defaultValue={selectedUser.fname}
+                        onChange={(e) => {
+                          this.handleChange(e, "fname");
+                        }}
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Last Name:</label>
+                      <Form.Input
+                        type="lname"
+                        placeholder="Last Name"
+                        defaultValue={selectedUser.lname}
+                        onChange={(e) => {
+                          this.handleChange(e, "lname");
+                        }}
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Courses:</label>
+                      <Dropdown
+                        placeholder="Courses"
+                        name="courses"
+                        fluid
+                        multiple
+                        search
+                        selection
+                        allowAdditions
+                        options={courseOptions}
+                        value={selectedUser.courses}
+                        onAddItem={this.handleDropdownAddition}
+                        onChange={this.handleDropdownChange}
+                      />
+                    </Form.Field>
+                    <Form.Field>
+                      <label>UML ID:</label>
+                      <Form.Input
+                        type="id"
+                        placeholder="UML ID"
+                        defaultValue={selectedUser.id}
+                        onChange={(e) => {
+                          this.handleChange(e, "id");
+                        }}
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Email:</label>
+                      <Form.Input
+                        type="email"
+                        placeholder="Email"
+                        defaultValue={selectedUser.email}
+                        onChange={(e) => {
+                          this.handleChange(e, "email");
+                        }}
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Phone Number:</label>
+                      <Form.Input
+                        type="phone"
+                        placeholder="Phone Number"
+                        defaultValue={selectedUser.phone}
+                        onChange={(e) => {
+                          this.handleChange(e, "phone");
+                        }}
+                      ></Form.Input>
+                    </Form.Field>
+                  </Form>
+                </Col>
+                <Col fluid>
+                  <Table>title={<h2>Users</h2>}</Table>
+                </Col>
+              </Row>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="primary" onClick={this.close}>
-                Close
-              </Button>
               <Button
                 id="add-icon-handler"
                 variant="primary"
