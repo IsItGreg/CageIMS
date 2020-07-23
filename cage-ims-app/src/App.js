@@ -14,13 +14,13 @@ class App extends Component {
   render() {
     return (
       <Router>
-        <Container fluid="true" className="no-gutters flex-col stretch-hw">
+        <Container fluid className="no-gutters flex-col stretch-hw">
           <Header />
-          <Row className="flex-fill no-gutters">
+          <Row className="flex-grow no-gutters">
             <Col md="auto" className="no-gutters">
               <Sidebar />
             </Col>
-            <Col fluid="true" className="no-gutters">
+            <Col className="no-gutters">
               <Switch>
                 <Route exact path="/">
                   Home

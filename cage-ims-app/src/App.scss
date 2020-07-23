@@ -1,5 +1,5 @@
 @import "~bootstrap/scss/bootstrap";
-.flex-fill {
+.flex-grow {
   flex-grow: 1;
 }
 
@@ -27,6 +27,15 @@
 
 .no-gutters {
   padding: 0;
+}
+
+.error-text {
+  width: fit-content;
+  color: red;
+}
+
+.modal-label-error-text {
+  float: right;
 }
 
 .header {
@@ -57,13 +66,15 @@
   }
 }
 
+.page-content {
+  padding: 15px 0;
+}
+
 .checkinout {
   .checkinout-search {
     display: block;
     padding: 15% 25%;
     .error-text {
-      width: fit-content;
-      color: red;
       margin: -7% auto;
     }
     & > * {

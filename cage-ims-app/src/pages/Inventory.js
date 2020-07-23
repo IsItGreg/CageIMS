@@ -1,5 +1,5 @@
-import React, { Component, setState } from "react";
-import { Divider, Button, Input, Form } from "semantic-ui-react";
+import React, { Component } from "react";
+import { Divider, Button, Form } from "semantic-ui-react";
 import { Modal, Col } from "react-bootstrap";
 import Table from "../common/Table";
 

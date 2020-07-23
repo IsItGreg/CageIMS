@@ -41,31 +41,20 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 class Table extends Component {
-  constructor(props) {
-    super(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
   render() {
     return (
       <MaterialTable
+        style={{ flexGrow: 1 }}
         icons={tableIcons}
         title={this.props.title}
         columns={this.props.columns}
         data={this.props.data}
-        // detailPanel={rowData => {
-        //   return (
-        //     <iframe
-        //       width="100%"
-        //       height="315"
-        //       src="https://www.youtube.com/embed/C0DPdy98e4c"
-        //       frameborder="0"
-        //       allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-        //       allowfullscreen
-        //     />
-        //   )
-        // }}
         options={{
           search: true,
-          pageSize: 10,
+          paging: false,
         }}
         onRowClick={this.props.onRowClick}
       ></MaterialTable>
