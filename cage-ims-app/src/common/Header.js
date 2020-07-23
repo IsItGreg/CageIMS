@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Link } from "react-router-dom";
-import { Container, Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { Row, Col } from "react-bootstrap";
 import { Dropdown, Icon } from "semantic-ui-react";
 
-const sampleUser = { firstName: "User", lastName: "Name" };
+// const sampleUser = { firstName: "User", lastName: "Name" };
 
 const trigger = (
   <h3>

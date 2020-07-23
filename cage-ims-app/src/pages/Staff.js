@@ -3,33 +3,34 @@ import { Divider, Button, Form } from "semantic-ui-react";
 import { Modal, Col } from "react-bootstrap";
 import Table from "../common/Table";
 
-class Inventory extends Component {
+class Staff extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      columnSet: [
-        { title: "Name", field: "name" },
-        { title: "Category", field: "category" },
-        { title: "UML Serial", field: "serial" },
-        { title: "Notes", field: "notes" },
-        { title: "Courses", field: "courses" },
-      ],
       dataSet: [
         {
-          name: "Canon 5D MK II",
-          category: "Camera",
-          serial: "125",
-          notes: "Missing Lens Cap",
+          fname: "Seamus",
+          lname: "Rioux",
+          roles: "Admin",
           courses: ["Photography I", "Photography II"],
+          id: "54321",
+          email: "seamus.rioux3@gmail.com",
         },
         {
-          name: "Canon EOS",
-          category: "Camera",
-          serial: "124",
-          notes: "Missing SD Card Cover",
-          courses: "Photography II",
+          fname: "Greg",
+          lname: "Smelkov",
+          roles: "Admin",
+          courses: ["Photography I"],
+          id: "12345",
+          email: "greg@gmail.com",
         },
+      ],
+      columnSet: [
+        { title: "First Name", field: "fname" },
+        { title: "Last Name", field: "lname" },
+        { title: "Courses", field: "courses" },
+        { title: "Roles", field: "roles" },
       ],
       open: false,
       selectedUserId: null,
@@ -75,83 +76,94 @@ class Inventory extends Component {
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser ?? {
-      name: "",
-      category: "",
+      fname: "",
+      lname: "",
+      roles: "",
+      courses: [],
       id: "",
-      notes: "",
-      courses: "",
+      email: "",
     };
     return (
       <div className="userspage">
         <Col>
           <Button basic onClick={this.handleAddUserClick}>
-            {" "}
-            Create New Item{" "}
+            Create New Staff
           </Button>
           <Divider clearing />
           <Modal centered show={selectedUserId != null} onHide={this.close}>
             <Modal.Header closeButton bsPrefix="modal-header">
               <Modal.Title>
                 {this.state.selectedUserId >= 0
-                  ? "Edit Item"
-                  : "Create New Item"}
+                  ? "Edit Staff"
+                  : "Create New Staff"}
               </Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <Form>
                 <Form.Field>
-                  <label>Name</label>
+                  <label>First Name:</label>
                   <Form.Input
-                    type="name"
-                    placeholder="Name"
-                    defaultValue={selectedUser.name}
+                    type="fname"
+                    placeholder="First Name"
+                    defaultValue={selectedUser.fname}
                     onChange={(e) => {
-                      this.handleChange(e, "name");
+                      this.handleChange(e, "fname");
                     }}
                   ></Form.Input>
                 </Form.Field>
                 <Form.Field>
-                  <label>Category</label>
+                  <label>Last Name:</label>
                   <Form.Input
-                    type="category"
-                    placeholder="Category"
-                    defaultValue={selectedUser.category}
+                    type="lname"
+                    placeholder="Last Name"
+                    defaultValue={selectedUser.lname}
                     onChange={(e) => {
-                      this.handleChange(e, "category");
+                      this.handleChange(e, "lname");
                     }}
                   ></Form.Input>
                 </Form.Field>
                 <Form.Field>
-                  <label>UML Serial</label>
-                  <Form.Input
-                    type="serial"
-                    placeholder="UML Serial"
-                    defaultValue={selectedUser.serial}
-                    onChange={(e) => {
-                      this.handleChange(e, "serial");
-                    }}
-                  ></Form.Input>{" "}
-                  {/* TODO: change input type to searchable multiselect dropdown */}
-                </Form.Field>
-                <Form.Field>
-                  <label>Notes</label>
-                  <Form.Input
-                    type="notes"
-                    placeholder="Notes"
-                    defaultValue={selectedUser.notes}
-                    onChange={(e) => {
-                      this.handleChange(e, "notes");
-                    }}
-                  ></Form.Input>
-                </Form.Field>
-                <Form.Field>
-                  <label>Courses</label>
+                  <label>Courses:</label>
                   <Form.Input
                     type="courses"
                     placeholder="Courses"
                     defaultValue={selectedUser.courses}
                     onChange={(e) => {
                       this.handleChange(e, "courses");
+                    }}
+                  ></Form.Input>{" "}
+                  {/* TODO: change input type to searchable multiselect dropdown */}
+                </Form.Field>
+                <Form.Field>
+                  <label>Roles:</label>
+                  <Form.Input
+                    type="roles"
+                    placeholder="Roles"
+                    defaultValue={selectedUser.roles}
+                    onChange={(e) => {
+                      this.handleChange(e, "roles");
+                    }}
+                  ></Form.Input>
+                </Form.Field>
+                <Form.Field>
+                  <label>UML ID:</label>
+                  <Form.Input
+                    type="id"
+                    placeholder="UML ID"
+                    defaultValue={selectedUser.id}
+                    onChange={(e) => {
+                      this.handleChange(e, "id");
+                    }}
+                  ></Form.Input>
+                </Form.Field>
+                <Form.Field>
+                  <label>Email:</label>
+                  <Form.Input
+                    type="email"
+                    placeholder="Email"
+                    defaultValue={selectedUser.email}
+                    onChange={(e) => {
+                      this.handleChange(e, "email");
                     }}
                   ></Form.Input>
                 </Form.Field>
@@ -170,7 +182,7 @@ class Inventory extends Component {
           <Table
             data={Array.from(this.state.dataSet)}
             columns={this.state.columnSet}
-            title={<h2>Inventory</h2>}
+            title={<h2>Users</h2>}
             onRowClick={(event, rowData) =>
               this.handleUserSelectClick(event, rowData)
             }
@@ -181,4 +193,4 @@ class Inventory extends Component {
   }
 }
 
-export default Inventory;
+export default Staff;

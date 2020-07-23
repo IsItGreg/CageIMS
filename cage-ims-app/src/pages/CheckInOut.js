@@ -1,6 +1,5 @@
-import React, { Component, createRef } from "react";
-import { HashRouter as Router, Route, Link } from "react-router-dom";
-import { Container, Row, Col } from "react-bootstrap";
+import React, { Component } from "react";
+import { Container, Row } from "react-bootstrap";
 import { Input, Button, Icon } from "semantic-ui-react";
 
 class CheckInOut extends Component {
@@ -59,7 +58,7 @@ class Search extends React.Component {
   render() {
     const isError = this.state.error;
     return (
-      <div class="checkinout-search">
+      <div className="checkinout-search">
         <Input
           error={this.state.error}
           onChange={this.handleChange}
@@ -70,7 +69,7 @@ class Search extends React.Component {
           placeholder="Search by exact ID..."
         />
         {isError && (
-          <div class="error-text">
+          <div className="error-text">
             <p>Error: ID is invalid.</p>
           </div>
         )}
@@ -98,7 +97,7 @@ class CheckInOutViewUser extends React.Component {
   };
 
   handleReturnClick = () => {
-    this.state.op = "";
+    this.setState({ op: "" });
   };
 
   handleOpSelectClick = (e, op) => {
@@ -111,7 +110,7 @@ class CheckInOutViewUser extends React.Component {
     let pageOp;
     if (this.state.op === "checkin") {
       pageOp = (
-        <div class="checkinout-viewuser">
+        <div className="checkinout-viewuser">
           <Row className="page-menu">
             <h2>{users[this.props.userFound]} -- Check In/Return</h2>
             <Button
@@ -130,7 +129,7 @@ class CheckInOutViewUser extends React.Component {
           </Row>
           <Row>
             <h4>Items due for Return:</h4>
-            <div class="current-table"> Data Table </div>
+            <div className="current-table"> Data Table </div>
           </Row>
           <Row className="flex-end">
             <Button
@@ -156,7 +155,7 @@ class CheckInOutViewUser extends React.Component {
       );
     } else if (this.state.op === "checkout") {
       pageOp = (
-        <div class="checkinout-viewuser">
+        <div className="checkinout-viewuser">
           <Row className="page-menu">
             <h2>{users[this.props.userFound]} -- Check Out/Borrow</h2>
             <Button
@@ -175,9 +174,9 @@ class CheckInOutViewUser extends React.Component {
           </Row>
           <Row>
             <h4>Items due for Return:</h4>
-            <div class="checkout-table-wrapper">
-              <div class="checkout-inv-table"> Data Table </div>
-              <div class="checkout-cart-table"> Cart Table </div>
+            <div className="checkout-table-wrapper">
+              <div className="checkout-inv-table"> Data Table </div>
+              <div className="checkout-cart-table"> Cart Table </div>
             </div>
           </Row>
           <Row className="flex-end">
@@ -204,7 +203,7 @@ class CheckInOutViewUser extends React.Component {
       );
     } else {
       pageOp = (
-        <div class="checkinout-viewuser">
+        <div className="checkinout-viewuser">
           <Row className="page-menu">
             <h2>{users[this.props.userFound]}</h2>
             <Button
@@ -221,7 +220,7 @@ class CheckInOutViewUser extends React.Component {
           </Row>
           <Row>
             <h4>Currently held items:</h4>
-            <div class="current-table"> Data Table </div>
+            <div className="current-table"> Data Table </div>
           </Row>
           <Row className="checkinout-buttons">
             <Button

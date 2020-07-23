@@ -8,18 +8,19 @@ import "./App.scss";
 import CheckInOut from "./pages/CheckInOut";
 import Users from "./pages/Users";
 import Inventory from "./pages/Inventory";
+import Staff from "./pages/Staff";
 
 class App extends Component {
   render() {
     return (
       <Router>
-        <Container fluid="true" className="no-gutters flex-col stretch-hw">
+        <Container fluid className="no-gutters flex-col stretch-hw">
           <Header />
-          <Row className="flex-fill no-gutters">
+          <Row className="flex-grow no-gutters">
             <Col md="auto" className="no-gutters">
               <Sidebar />
             </Col>
-            <Col fluid className="no-gutters">
+            <Col className="no-gutters">
               <Switch>
                 <Route exact path="/">
                   Home
@@ -33,7 +34,9 @@ class App extends Component {
                 <Route path="/inventory">
                   <Inventory />
                 </Route>
-                <Route path="/staff">Staff</Route>
+                <Route path="/staff">
+                  <Staff />
+                </Route>
                 <Route path="/transactions">Transactions</Route>
               </Switch>
             </Col>
