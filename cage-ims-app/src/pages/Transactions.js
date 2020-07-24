@@ -3,78 +3,54 @@ import { Divider, Button, Form, Dropdown, Tab } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
-class Inventory extends Component {
+class Transactions extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       dataSet: [
         {
+          fname: "Seamus",
+          lname: "Rioux",
           name: "Canon 5D Mk II",
           category: "Camera",
-          courses: ["Photography I", "Photography II"],
           serial: "125",
           notes: "Missing lens cap",
         },
         {
+          fname: "Greg",
+          lname: "Smelkov",
           name: "Canon Eos",
           category: "Camera",
-          courses: ["Photography I", "Photography II"],
           serial: "124",
           notes: "Missing SD Card cover, otherwise works fine",
         },
       ],
       columnSet: [
-        { title: "Name", field: "name" },
+        { title: "First Name", field: "fname" },
+        { title: "Last Name", field: "lname" },
+        { title: "Item Name", field: "name" },
         { title: "Category", field: "category" },
         { title: "Serial", field: "serial" },
         { title: "Notes", field: "notes" },
-        {
-          title: "Courses",
-          field: "courses",
-          render: (rowData) => {
-            return rowData.courses.length > 0
-              ? rowData.courses.reduce((result, item) => (
-                  <>
-                    {result}
-                    {", "}
-                    {item}
-                  </>
-                ))
-              : "";
-          },
-        },
       ],
       open: false,
 
-      nameError: false,
-      categoryError: false,
-      serialError: false,
-      notesError: false,
-
       selectedItemId: null,
       selectedItem: {
+        fname: "",
+        lname: "",
         name: "",
         category: "",
-        courses: [],
         serial: "",
         notes: "",
       },
-      courseOptions: [
-        { text: "Photography I", value: "Photography I" },
-        { text: "Photography II", value: "Photography II" },
-        { text: "Documentary Image", value: "Documentary Image" },
-      ],
     };
   }
 
   close = () =>
     this.setState({
       selectedItemId: null,
-      nameError: false,
-      categoryError: false,
-      serialError: false,
-      notesError: false,
     });
 
   handleChange = (e, userProp) => {
@@ -97,12 +73,12 @@ class Inventory extends Component {
     this.setState({
       selectedItemId: -1,
       selectedItem: {
+        fname: "",
+        lname: "",
         name: "",
         category: "",
-        courses: [],
         serial: "",
         notes: "",
-        phone: "",
       },
     });
   };
@@ -190,7 +166,26 @@ class Inventory extends Component {
                   <Form>
                     <Form.Field>
                       <label>
-                        Name:
+                        First Name:
+                        {this.state.nameError && (
+                          <span className="error-text modal-label-error-text">
+                            Error: Field cannot be empty.
+                          </span>
+                        )}
+                      </label>
+                      <Form.Input
+                        error={this.state.nameError}
+                        name="fname"
+                        placeholder="First Name"
+                        defaultValue={selectedItem.fname}
+                        onChange={(e) => {
+                          this.handleChange(e, "fname");
+                        }}
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>
+                        Last Name:
                         {this.state.nameError && (
                           <span className="error-text modal-label-error-text">
                             Error: Field cannot be empty.
@@ -200,16 +195,16 @@ class Inventory extends Component {
                       <Form.Input
                         error={this.state.nameError}
                         name="name"
-                        placeholder="Name"
-                        defaultValue={selectedItem.name}
+                        placeholder="Last Name"
+                        defaultValue={selectedItem.lname}
                         onChange={(e) => {
-                          this.handleChange(e, "name");
+                          this.handleChange(e, "lname");
                         }}
                       ></Form.Input>
                     </Form.Field>
                     <Form.Field>
                       <label>
-                        Category:
+                        Item Name:
                         {this.state.categoryError && (
                           <span className="error-text modal-label-error-text">
                             Error: Field cannot be empty.
@@ -218,33 +213,36 @@ class Inventory extends Component {
                       </label>
                       <Form.Input
                         error={this.state.categoryError}
-                        name="category"
-                        placeholder="Category"
+                        name="name"
+                        placeholder="name"
                         defaultValue={selectedItem.category}
+                        onChange={(e) => {
+                          this.handleChange(e, "name");
+                        }}
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>
+                        Category:
+                        {this.state.notesError && (
+                          <span className="error-text modal-label-error-text">
+                            Error: Field cannot be empty.
+                          </span>
+                        )}
+                      </label>
+                      <Form.Input
+                        name="category"
+                        error={this.state.notesError}
+                        placeholder="Category"
+                        defaultValue={selectedItem.notes}
                         onChange={(e) => {
                           this.handleChange(e, "category");
                         }}
                       ></Form.Input>
                     </Form.Field>
                     <Form.Field>
-                      <label>Courses:</label>
-                      <Dropdown
-                        placeholder="Courses"
-                        name="courses"
-                        fluid
-                        multiple
-                        search
-                        selection
-                        allowAdditions
-                        options={courseOptions}
-                        value={selectedItem.courses}
-                        onAddItem={this.handleDropdownAddition}
-                        onChange={this.handleDropdownChange}
-                      />
-                    </Form.Field>
-                    <Form.Field>
                       <label>
-                        UML Serial:
+                        Serial:
                         {this.state.serialError && (
                           <span className="error-text modal-label-error-text">
                             Error: Field cannot be empty.
@@ -254,7 +252,7 @@ class Inventory extends Component {
                       <Form.Input
                         name="serial"
                         error={this.state.serialError}
-                        placeholder="UML ID"
+                        placeholder="Serial"
                         defaultValue={selectedItem.serial}
                         onChange={(e) => {
                           this.handleChange(e, "serial");
@@ -300,4 +298,4 @@ class Inventory extends Component {
   }
 }
 
-export default Inventory;
+export default Transactions;

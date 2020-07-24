@@ -236,7 +236,7 @@ class Users extends Component {
                       </label>
                       <Form.Input
                         error={this.state.firstNameError}
-                        type="fname"
+                        name="fname"
                         placeholder="First Name"
                         defaultValue={selectedUser.fname}
                         onChange={(e) => {
@@ -255,7 +255,7 @@ class Users extends Component {
                       </label>
                       <Form.Input
                         error={this.state.lastNameError}
-                        type="lname"
+                        name="lname"
                         placeholder="Last Name"
                         defaultValue={selectedUser.lname}
                         onChange={(e) => {
@@ -289,7 +289,7 @@ class Users extends Component {
                         )}
                       </label>
                       <Form.Input
-                        type="id"
+                        name="id"
                         error={this.state.idError}
                         placeholder="UML ID"
                         defaultValue={selectedUser.id}
@@ -308,7 +308,7 @@ class Users extends Component {
                         )}
                       </label>
                       <Form.Input
-                        type="email"
+                        name="email"
                         error={this.state.emailError}
                         placeholder="Email"
                         defaultValue={selectedUser.email}
@@ -320,7 +320,7 @@ class Users extends Component {
                     <Form.Field>
                       <label>Phone Number:</label>
                       <Form.Input
-                        type="phone"
+                        name="phone"
                         placeholder="Phone Number"
                         defaultValue={selectedUser.phone}
                         onChange={(e) => {

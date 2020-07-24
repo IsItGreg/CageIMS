@@ -9,6 +9,7 @@ import CheckInOut from "./pages/CheckInOut";
 import Users from "./pages/Users";
 import Inventory from "./pages/Inventory";
 import Staff from "./pages/Staff";
+import Transactions from "./pages/Transactions";
 
 class App extends Component {
   render() {
@@ -37,7 +38,9 @@ class App extends Component {
                 <Route path="/staff">
                   <Staff />
                 </Route>
-                <Route path="/transactions">Transactions</Route>
+                <Route path="/transactions">
+                  <Transactions />
+                </Route>
               </Switch>
             </Col>
           </Row>
