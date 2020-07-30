@@ -21,7 +21,7 @@ class App extends Component {
             <Col md="auto" className="no-gutters">
               <Sidebar />
             </Col>
-            <Col className="no-gutters margintest">
+            <Col className="no-gutters">
               <Switch>
                 <Route exact path="/">
                   Home
