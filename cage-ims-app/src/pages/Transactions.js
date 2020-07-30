@@ -16,6 +16,9 @@ class Transactions extends Component {
           category: "Camera",
           serial: "125",
           notes: "Missing lens cap",
+          checkedOutDate: "7/22/2020",
+          checkedInDate: "7/24/2020",
+          dueDate: "7/26/2020",
         },
         {
           fname: "Greg",
@@ -24,6 +27,10 @@ class Transactions extends Component {
           category: "Camera",
           serial: "124",
           notes: "Missing SD Card cover, otherwise works fine",
+          checkedOutDate: "7/20/2020",
+          checkedInDate: "",
+          dueDate: "7/23/2020",
+          backgroundColor: "mistyrose",
         },
       ],
       columnSet: [
@@ -33,6 +40,9 @@ class Transactions extends Component {
         { title: "Category", field: "category" },
         { title: "Serial", field: "serial" },
         { title: "Notes", field: "notes" },
+        { title: "Checked Out", field: "checkedOutDate" },
+        { title: "Due Date", field: "dueDate" },
+        { title: "Checked In", field: "checkedInDate" },
       ],
       open: false,
 
@@ -44,6 +54,9 @@ class Transactions extends Component {
         category: "",
         serial: "",
         notes: "",
+        checkedOutDate: "",
+        checkedInDate: "",
+        dueDate: "",
       },
     };
   }
@@ -79,28 +92,31 @@ class Transactions extends Component {
         category: "",
         serial: "",
         notes: "",
+        checkedOutDate: "",
+        checkedInDate: "",
+        dueDate: "",
       },
     });
   };
 
-  checkErrorUpdateDataSet = () => {
-    if (
-      !this.state.nameError &&
-      !this.state.categoryError &&
-      !this.state.serialError &&
-      !this.state.notesError
-    ) {
-      this.setState((prevState) => {
-        let dataSet = Array.from(prevState.dataSet);
-        if (this.state.selectedItemId >= 0) {
-          dataSet[this.state.selectedItemId] = this.state.selectedItem;
-        } else {
-          dataSet.push(this.state.selectedItem);
-        }
-        return { dataSet };
-      }, this.close);
-    }
-  };
+  // checkErrorUpdateDataSet = () => {
+  //   if (
+  //     !this.state.nameError &&
+  //     !this.state.categoryError &&
+  //     !this.state.serialError &&
+  //     !this.state.notesError
+  //   ) {
+  //     this.setState((prevState) => {
+  //       let dataSet = Array.from(prevState.dataSet);
+  //       if (this.state.selectedItemId >= 0) {
+  //         dataSet[this.state.selectedItemId] = this.state.selectedItem;
+  //       } else {
+  //         dataSet.push(this.state.selectedItem);
+  //       }
+  //       return { dataSet };
+  //     }, this.close);
+  //   }
+  // };
 
   handleSubmitClick = () => {
     this.setState(
@@ -172,9 +188,7 @@ class Transactions extends Component {
                         name="fname"
                         placeholder="First Name"
                         defaultValue={selectedItem.fname}
-                        onChange={(e) => {
-                          this.handleChange(e, "fname");
-                        }}
+                        readOnly
                       ></Form.Input>
                     </Form.Field>
                     <Form.Field>
@@ -188,12 +202,10 @@ class Transactions extends Component {
                       </label>
                       <Form.Input
                         error={this.state.nameError}
-                        name="name"
+                        name="lname"
                         placeholder="Last Name"
                         defaultValue={selectedItem.lname}
-                        onChange={(e) => {
-                          this.handleChange(e, "lname");
-                        }}
+                        readOnly
                       ></Form.Input>
                     </Form.Field>
                     <Form.Field>
@@ -210,9 +222,7 @@ class Transactions extends Component {
                         name="name"
                         placeholder="name"
                         defaultValue={selectedItem.category}
-                        onChange={(e) => {
-                          this.handleChange(e, "name");
-                        }}
+                        readOnly
                       ></Form.Input>
                     </Form.Field>
                     <Form.Field>
@@ -229,9 +239,7 @@ class Transactions extends Component {
                         error={this.state.notesError}
                         placeholder="Category"
                         defaultValue={selectedItem.notes}
-                        onChange={(e) => {
-                          this.handleChange(e, "category");
-                        }}
+                        readOnly
                       ></Form.Input>
                     </Form.Field>
                     <Form.Field>
@@ -251,6 +259,7 @@ class Transactions extends Component {
                         onChange={(e) => {
                           this.handleChange(e, "serial");
                         }}
+                        readOnly
                       ></Form.Input>
                     </Form.Field>
                     <Form.Field>
@@ -270,21 +279,51 @@ class Transactions extends Component {
                         onChange={(e) => {
                           this.handleChange(e, "notes");
                         }}
+                        readOnly
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Checked Out:</label>
+                      <Form.Input
+                        name="checkedOut"
+                        placeholder="Checked Out"
+                        defaultValue={selectedItem.checkedOutDate}
+                        onChange={(e) => {
+                          this.handleChange(e, "checkedOutDate");
+                        }}
+                        readOnly
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Checked In:</label>
+                      <Form.Input
+                        name="checkedIn"
+                        placeholder="Checked In"
+                        error={!selectedItem.checkedInDate}
+                        defaultValue={selectedItem.checkedInDate}
+                        onChange={(e) => {
+                          this.handleChange(e, "checkedInDate");
+                        }}
+                        readOnly
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Due Date:</label>
+                      <Form.Input
+                        name="due"
+                        placeholder="Due Date"
+                        defaultValue={selectedItem.dueDate}
+                        onChange={(e) => {
+                          this.handleChange(e, "dueDate");
+                        }}
+                        readOnly
                       ></Form.Input>
                     </Form.Field>
                   </Form>
                 </Col>
               </Row>
             </Modal.Body>
-            <Modal.Footer>
-              <Button
-                id="add-icon-handler"
-                variant="primary"
-                onClick={this.handleSubmitClick}
-              >
-                Submit
-              </Button>
-            </Modal.Footer>
+            <Modal.Footer></Modal.Footer>
           </Modal>
         </Col>
       </div>

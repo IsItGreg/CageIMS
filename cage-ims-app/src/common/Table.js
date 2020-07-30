@@ -56,9 +56,11 @@ class Table extends Component {
           search: true,
           paging: false,
           rowStyle: (rowData) => ({
-            backgroundColor: !(rowData.tableData.id % 2 === 0)
-              ? "#EEE"
-              : "#FFF",
+            backgroundColor: rowData.backgroundColor
+              ? rowData.backgroundColor
+              : rowData.tableData.id % 2 === 0
+              ? "#FAFAFA"
+              : "#FFFFF",
           }),
         }}
         onRowClick={this.props.onRowClick}

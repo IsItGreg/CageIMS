@@ -258,7 +258,7 @@ class Staff extends Component {
             onHide={this.close}
           >
             <Modal.Header closeButton bsPrefix="modal-header">
-              <Modal.Title>User</Modal.Title>
+              <Modal.Title>Staff</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <Row>
