@@ -137,16 +137,10 @@ class Transactions extends Component {
     return (
       <div className="page-content stretch-h">
         <Col className="stretch-h flex-col">
-          <div className="topbar">
-            <Button basic onClick={this.handleAddUserClick}>
-              Create New Item
-            </Button>
-            <Divider clearing />
-          </div>
           <Table
             data={Array.from(this.state.dataSet)}
             columns={this.state.columnSet}
-            title={<h2>Inventory</h2>}
+            title={<h2>Transactions</h2>}
             onRowClick={(event, rowData) =>
               this.handleUserSelectClick(event, rowData)
             }
