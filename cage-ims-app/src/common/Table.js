@@ -60,7 +60,7 @@ class Table extends Component {
               ? rowData.backgroundColor
               : rowData.tableData.id % 2 === 0
               ? "#FAFAFA"
-              : "#FFFFF",
+              : "#FFFFFF",
           }),
         }}
         onRowClick={this.props.onRowClick}
