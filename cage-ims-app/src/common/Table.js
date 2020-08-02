@@ -47,23 +47,27 @@ class Table extends Component {
   render() {
     return (
       <MaterialTable
-        style={{ flexGrow: 1 }}
+        style={{ flexGrow: 1, height: "100%" }}
         icons={tableIcons}
         title={this.props.title}
         columns={this.props.columns}
         data={this.props.data}
         options={{
-          search: true,
-          paging: false,
-          rowStyle: (rowData) => ({
-            backgroundColor: rowData.backgroundColor
-              ? rowData.backgroundColor
-              : rowData.tableData.id % 2 === 0
-              ? "#FAFAFA"
-              : "#FFFFFF",
-          }),
+          ...{
+            search: true,
+            paging: false,
+            rowStyle: (rowData) => ({
+              backgroundColor: rowData.backgroundColor
+                ? rowData.backgroundColor
+                : rowData.tableData.id % 2 === 0
+                ? "#FAFAFA"
+                : "#FFFFFF",
+            }),
+          },
+          ...this.props.options,
         }}
         onRowClick={this.props.onRowClick}
+        onSelectionChange={this.props.onSelectionChange}
       ></MaterialTable>
     );
   }
