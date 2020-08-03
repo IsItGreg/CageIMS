@@ -16,15 +16,17 @@ class App extends Component {
     super(props);
     // this.handleSearchResult = this.handleSearchResult.bind(this);
     // this.handleTransactionsChanges = this.handleTransactionsChanges.bind(this);
+    this.handleDataUpdate = this.handleDataUpdate.bind(this);
     this.state = {
-      error: false,
-      userFound: "",
       data: {
         users: [
           {
             fname: "Seamus",
             lname: "Rioux",
             uid: "54321",
+            email: "srioux@email.com",
+            phone: "123-456-7890",
+            notes: "Optional notes for Seamus",
           },
           {
             fname: "Greg",
@@ -32,64 +34,64 @@ class App extends Component {
             uid: "12345",
           },
         ],
-
+        items: [
+          {
+            name: "Canon 5D Mk II",
+            iid: "1",
+            category: "Camera",
+            notes: "",
+            atid: "3",
+          },
+          {
+            name: "Canon 18-55 F4.0",
+            iid: "2",
+            category: "Lens",
+            notes: "Missing lens cap",
+            atid: "4",
+          },
+        ],
         transactions: [
           {
-            fname: "Seamus",
-            lname: "Rioux",
+            tid: "1",
             uid: "54321",
             iid: "1",
-            name: "Canon 5D Mk II",
-            category: "Camera",
-            serial: "125",
-            notes: "Missing lens cap",
             checkedOutDate: "7/22/2020",
-            checkedInDate: "7/24/2020",
             dueDate: "7/26/2020",
+            checkedInDate: "7/24/2020",
           },
           {
-            fname: "Greg",
-            lname: "Smelkov",
+            tid: "2",
+            uid: "54321",
+            iid: "2",
+            checkedOutDate: "7/22/2020",
+            dueDate: "7/26/2020",
+            checkedInDate: "7/24/2020",
+          },
+          {
+            tid: "3",
+            uid: "12345",
+            iid: "1",
+            checkedOutDate: "7/25/2020",
+            dueDate: "7/27/2020",
+            checkedInDate: "",
+            background: "mistyrose",
+          },
+          {
+            tid: "4",
             uid: "12345",
             iid: "2",
-            name: "Canon Eos",
-            category: "Camera",
-            serial: "124",
-            notes: "Missing SD Card cover, otherwise works fine",
-            checkedOutDate: "7/20/2020",
+            checkedOutDate: "7/25/2020",
+            dueDate: "7/27/2020",
             checkedInDate: "",
-            dueDate: "7/23/2020",
-            backgroundColor: "mistyrose",
-          },
-          {
-            fname: "Greg",
-            lname: "Smelkov",
-            uid: "12345",
-            iid: "3",
-            name: "Canon Eos 2",
-            category: "Camera",
-            serial: "124",
-            notes: "Missing SD Card cover, otherwise works fine",
-            checkedOutDate: "7/20/2020",
-            checkedInDate: "",
-            dueDate: "7/23/2020",
-          },
-          {
-            fname: "Greg",
-            lname: "Smelkov",
-            uid: "12345",
-            iid: "4",
-            name: "Canon Eos 3",
-            category: "Camera",
-            serial: "124",
-            notes: "Missing SD Card cover, otherwise works fine",
-            checkedOutDate: "7/20/2020",
-            checkedInDate: "",
-            dueDate: "7/23/2020",
+            background: "mistyrose",
           },
         ],
       },
     };
+  }
+
+  handleDataUpdate(data) {
+    this.setState({ data });
   }
 
   render() {
@@ -107,19 +109,22 @@ class App extends Component {
                   Home
                 </Route>
                 <Route path="/checkinout">
-                  <CheckInOut />
+                  <CheckInOut
+                    data={this.state.data}
+                    onUpdateData={this.handleDataUpdate}
+                  />
                 </Route>
                 <Route path="/users">
-                  <Users />
+                  <Users onUpdateData={this.handleDataUpdate} />
                 </Route>
                 <Route path="/inventory">
-                  <Inventory />
+                  <Inventory onUpdateData={this.handleDataUpdate} />
                 </Route>
                 <Route path="/staff">
-                  <Staff />
+                  <Staff onUpdateData={this.handleDataUpdate} />
                 </Route>
                 <Route path="/transactions">
-                  <Transactions />
+                  <Transactions onUpdateData={this.handleDataUpdate} />
                 </Route>
               </Switch>
             </Col>
