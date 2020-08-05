@@ -8,24 +8,6 @@ class Users extends Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      dataSet: [
-        {
-          fname: "Seamus",
-          lname: "Rioux",
-          courses: ["Photography I", "Photography II"],
-          id: "54321",
-          email: "seamus.rioux3@gmail.com",
-          phone: "123-456-7890",
-        },
-        {
-          fname: "Greg",
-          lname: "Smelkov",
-          courses: ["Photography I"],
-          id: "12345",
-          email: "greg@gmail.com",
-          phone: "123-456-7890",
-        },
-      ],
       columnSet: [
         { title: "First Name", field: "fname" },
         { title: "Last Name", field: "lname" },
@@ -57,9 +39,10 @@ class Users extends Component {
         fname: "",
         lname: "",
         courses: [],
-        id: "",
+        uid: "",
         email: "",
         phone: "",
+        notes: "",
       },
       courseOptions: [
         { text: "Photography I", value: "Photography I" },
@@ -90,7 +73,7 @@ class Users extends Component {
   handleUserSelectClick = (e, rowData) => {
     this.setState({
       selectedUserId: rowData.tableData.id,
-      selectedUser: this.state.dataSet[rowData.tableData.id],
+      selectedUser: this.props.data.users[rowData.tableData.id],
     });
   };
 
@@ -101,9 +84,10 @@ class Users extends Component {
         fname: "",
         lname: "",
         courses: [],
-        id: "",
+        uid: "",
         email: "",
         phone: "",
+        notes: "",
       },
     });
   };
@@ -115,15 +99,14 @@ class Users extends Component {
       !this.state.idError &&
       !this.state.emailError
     ) {
-      this.setState((prevState) => {
-        let dataSet = Array.from(prevState.dataSet);
-        if (this.state.selectedUserId >= 0) {
-          dataSet[this.state.selectedUserId] = this.state.selectedUser;
-        } else {
-          dataSet.push(this.state.selectedUser);
-        }
-        return { dataSet };
-      }, this.close);
+      let data = Object.assign({}, this.props.data);
+      if (this.state.selectedUserId >= 0) {
+        data.users[this.state.selectedUserId] = this.state.selectedUser;
+      } else {
+        data.users.push(this.state.selectedUser);
+      }
+      this.props.onUpdateData(data);
+      this.close();
     }
   };
 
@@ -132,7 +115,7 @@ class Users extends Component {
       {
         firstNameError: this.state.selectedUser.fname === "",
         lastNameError: this.state.selectedUser.lname === "",
-        idError: this.state.selectedUser.id === "",
+        idError: this.state.selectedUser.uid === "",
         emailError: this.state.selectedUser.email === "",
       },
       this.checkErrorUpdateDataSet
@@ -205,7 +188,7 @@ class Users extends Component {
             <Divider clearing />
           </div>
           <Table
-            data={Array.from(this.state.dataSet)}
+            data={Array.from(this.props.data.users)}
             columns={this.state.columnSet}
             title={<h2>Users</h2>}
             onRowClick={(event, rowData) =>
@@ -292,9 +275,9 @@ class Users extends Component {
                         name="id"
                         error={this.state.idError}
                         placeholder="UML ID"
-                        defaultValue={selectedUser.id}
+                        defaultValue={selectedUser.uid}
                         onChange={(e) => {
-                          this.handleChange(e, "id");
+                          this.handleChange(e, "uid");
                         }}
                       ></Form.Input>
                     </Form.Field>
@@ -325,6 +308,17 @@ class Users extends Component {
                         defaultValue={selectedUser.phone}
                         onChange={(e) => {
                           this.handleChange(e, "phone");
+                        }}
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Notes:</label>
+                      <Form.Input
+                        name="notes"
+                        placeholder="Notes"
+                        defaultValue={selectedUser.notes}
+                        onChange={(e) => {
+                          this.handleChange(e, "notes");
                         }}
                       ></Form.Input>
                     </Form.Field>

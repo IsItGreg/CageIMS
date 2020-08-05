@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useRef, useEffect } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 
 import Header from "./common/Header";
@@ -24,14 +24,19 @@ class App extends Component {
             fname: "Seamus",
             lname: "Rioux",
             uid: "54321",
+            courses: ["Photography I", "Photography II"],
             email: "srioux@email.com",
-            phone: "123-456-7890",
+            phone: "123-456-7891",
             notes: "Optional notes for Seamus",
           },
           {
             fname: "Greg",
             lname: "Smelkov",
             uid: "12345",
+            courses: ["Photography I", "Photography II"],
+            email: "greg@email.com",
+            phone: "123-456-7891",
+            notes: "Optional notes for Greg",
           },
         ],
         items: [
@@ -39,15 +44,17 @@ class App extends Component {
             name: "Canon 5D Mk II",
             iid: "1",
             category: "Camera",
-            notes: "",
-            atid: "3",
+            notes: "Missing SD card cover",
+            tid: "3",
+            courses: ["Photography I", "Photography II"],
           },
           {
             name: "Canon 18-55 F4.0",
             iid: "2",
             category: "Lens",
             notes: "Missing lens cap",
-            atid: "4",
+            tid: "4",
+            courses: ["Photography I", "Photography II"],
           },
         ],
         transactions: [
@@ -115,10 +122,16 @@ class App extends Component {
                   />
                 </Route>
                 <Route path="/users">
-                  <Users onUpdateData={this.handleDataUpdate} />
+                  <Users
+                    data={this.state.data}
+                    onUpdateData={this.handleDataUpdate}
+                  />
                 </Route>
                 <Route path="/inventory">
-                  <Inventory onUpdateData={this.handleDataUpdate} />
+                  <Inventory
+                    data={this.state.data}
+                    onUpdateData={this.handleDataUpdate}
+                  />
                 </Route>
                 <Route path="/staff">
                   <Staff onUpdateData={this.handleDataUpdate} />
