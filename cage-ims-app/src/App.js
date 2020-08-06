@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState, useRef, useEffect } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 
 import Header from "./common/Header";
@@ -22,8 +22,9 @@ class App extends Component {
             fname: "Seamus",
             lname: "Rioux",
             uid: "54321",
+            courses: ["Photography I", "Photography II"],
             email: "srioux@email.com",
-            phone: "123-456-7890",
+            phone: "123-456-7891",
             notes: "Optional notes for Seamus",
             courses: ["Photography I"],
           },
@@ -141,10 +142,16 @@ class App extends Component {
                   />
                 </Route>
                 <Route path="/users">
-                  <Users onUpdateData={this.handleDataUpdate} />
+                  <Users
+                    data={this.state.data}
+                    onUpdateData={this.handleDataUpdate}
+                  />
                 </Route>
                 <Route path="/inventory">
-                  <Inventory onUpdateData={this.handleDataUpdate} />
+                  <Inventory
+                    data={this.state.data}
+                    onUpdateData={this.handleDataUpdate}
+                  />
                 </Route>
                 <Route path="/staff">
                   <Staff onUpdateData={this.handleDataUpdate} />
