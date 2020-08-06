@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import MaterialTable from "material-table";
+import MaterialTable, { MTableToolbar, M } from "material-table";
 import { forwardRef } from "react";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
@@ -16,6 +16,12 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import {
+  createMuiTheme,
+  makeStyles,
+  ThemeProvider,
+  MuiThemeProvider,
+} from "@material-ui/core/styles";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -34,8 +40,12 @@ const tableIcons = {
   PreviousPage: forwardRef((props, ref) => (
     <ChevronLeft {...props} ref={ref} />
   )),
-  ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+  ResetSearch: forwardRef((props, ref) => (
+    <Clear style={{ color: "white" }} {...props} ref={ref} />
+  )),
+  Search: forwardRef((props, ref) => (
+    <Search style={{ color: "white" }} {...props} ref={ref} />
+  )),
   SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
@@ -47,27 +57,31 @@ class Table extends Component {
   render() {
     return (
       <MaterialTable
-        style={{ flexGrow: 1, height: "100%" }}
+        style={{ flexGrow: 1 }}
+        components={{
+          Toolbar: (props) => (
+            <div class={"table-header MuiPaper-rounded MuiPaper-elevation2"}>
+              <MTableToolbar {...props} />
+            </div>
+          ),
+          Search: (props) => <div style={{ color: "white" }}></div>,
+        }}
         icons={tableIcons}
         title={this.props.title}
         columns={this.props.columns}
         data={this.props.data}
         options={{
-          ...{
-            search: true,
-            paging: false,
-            rowStyle: (rowData) => ({
-              backgroundColor: rowData.backgroundColor
-                ? rowData.backgroundColor
-                : rowData.tableData.id % 2 === 0
-                ? "#FAFAFA"
-                : "#FFFFFF",
-            }),
-          },
-          ...this.props.options,
+          search: true,
+          paging: false,
+          rowStyle: (rowData) => ({
+            backgroundColor: rowData.backgroundColor
+              ? rowData.backgroundColor
+              : rowData.tableData.id % 2 === 0
+              ? "#FAFAFA"
+              : "#FFFFFF",
+          }),
         }}
         onRowClick={this.props.onRowClick}
-        onSelectionChange={this.props.onSelectionChange}
       ></MaterialTable>
     );
   }

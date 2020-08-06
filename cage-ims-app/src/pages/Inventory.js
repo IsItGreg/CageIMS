@@ -8,12 +8,27 @@ class Inventory extends Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
+      dataSet: [
+        {
+          name: "Canon 5D Mk II",
+          category: "Camera",
+          courses: ["Photography I", "Photography II"],
+          serial: "125",
+          notes: "Missing lens cap",
+        },
+        {
+          name: "Canon Eos",
+          category: "Camera",
+          courses: ["Photography I", "Photography II"],
+          serial: "124",
+          notes: "Missing SD Card cover, otherwise works fine",
+        },
+      ],
       columnSet: [
         { title: "Name", field: "name" },
         { title: "Category", field: "category" },
-        { title: "Item ID", field: "iid" },
+        { title: "Serial", field: "serial" },
         { title: "Notes", field: "notes" },
-        { title: "Active Trasaction ID", field: "tid" },
         {
           title: "Courses",
           field: "courses",
@@ -40,11 +55,10 @@ class Inventory extends Component {
       selectedItemId: null,
       selectedItem: {
         name: "",
-        iid: "",
         category: "",
-        notes: "",
-        tid: "",
         courses: [],
+        serial: "",
+        notes: "",
       },
       courseOptions: [
         { text: "Photography I", value: "Photography I" },
@@ -75,7 +89,7 @@ class Inventory extends Component {
   handleUserSelectClick = (e, rowData) => {
     this.setState({
       selectedItemId: rowData.tableData.id,
-      selectedItem: this.props.data.items[rowData.tableData.id],
+      selectedItem: this.state.dataSet[rowData.tableData.id],
     });
   };
 
@@ -84,11 +98,11 @@ class Inventory extends Component {
       selectedItemId: -1,
       selectedItem: {
         name: "",
-        iid: "",
         category: "",
-        notes: "",
-        tid: "",
         courses: [],
+        serial: "",
+        notes: "",
+        phone: "",
       },
     });
   };
@@ -100,14 +114,15 @@ class Inventory extends Component {
       !this.state.serialError &&
       !this.state.notesError
     ) {
-      let data = Object.assign({}, this.props.data);
-      if (this.state.selectedItemId >= 0) {
-        data.items[this.state.selectedItemId] = this.state.selectedItem;
-      } else {
-        data.items.push(this.state.selectedItem);
-      }
-      this.props.onUpdateData(data);
-      this.close();
+      this.setState((prevState) => {
+        let dataSet = Array.from(prevState.dataSet);
+        if (this.state.selectedItemId >= 0) {
+          dataSet[this.state.selectedItemId] = this.state.selectedItem;
+        } else {
+          dataSet.push(this.state.selectedItem);
+        }
+        return { dataSet };
+      }, this.close);
     }
   };
 
@@ -116,7 +131,7 @@ class Inventory extends Component {
       {
         nameError: this.state.selectedItem.name === "",
         categoryError: this.state.selectedItem.category === "",
-        serialError: this.state.selectedItem.iid === "",
+        serialError: this.state.selectedItem.serial === "",
         notesError: this.state.selectedItem.notes === "",
       },
       this.checkErrorUpdateDataSet
@@ -141,8 +156,8 @@ class Inventory extends Component {
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
-    const courseOptions = this.state.courseOptions;
 
+    const courseOptions = this.state.courseOptions;
     return (
       <div className="page-content stretch-h">
         <Col className="stretch-h flex-col">
@@ -153,7 +168,7 @@ class Inventory extends Component {
             <Divider clearing />
           </div>
           <Table
-            data={Array.from(this.props.data.items)}
+            data={Array.from(this.state.dataSet)}
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
             onRowClick={(event, rowData) =>
@@ -229,7 +244,7 @@ class Inventory extends Component {
                     </Form.Field>
                     <Form.Field>
                       <label>
-                        Item ID:
+                        UML Serial:
                         {this.state.serialError && (
                           <span className="error-text modal-label-error-text">
                             Error: Field cannot be empty.
@@ -239,10 +254,10 @@ class Inventory extends Component {
                       <Form.Input
                         name="serial"
                         error={this.state.serialError}
-                        placeholder="Item ID"
-                        defaultValue={selectedItem.iid}
+                        placeholder="UML ID"
+                        defaultValue={selectedItem.serial}
                         onChange={(e) => {
-                          this.handleChange(e, "iid");
+                          this.handleChange(e, "serial");
                         }}
                       ></Form.Input>
                     </Form.Field>
@@ -263,14 +278,6 @@ class Inventory extends Component {
                         onChange={(e) => {
                           this.handleChange(e, "notes");
                         }}
-                      ></Form.Input>
-                    </Form.Field>
-                    <Form.Field>
-                      <label>Transaction ID:</label>
-                      <Form.Input
-                        name="tid"
-                        readOnly
-                        defaultValue={selectedItem.tid}
                       ></Form.Input>
                     </Form.Field>
                   </Form>
