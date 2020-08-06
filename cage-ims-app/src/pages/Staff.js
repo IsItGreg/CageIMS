@@ -195,43 +195,6 @@ class Staff extends Component {
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
-    let table;
-    if (this.state.selectedUserId != null) {
-      if (this.state.selectedUserId >= 0) {
-        const panes = [
-          {
-            menuItem: "Due Items",
-            render: () => (
-              <Table
-                title={
-                  this.state.selectedUser.fname +
-                  " " +
-                  this.state.selectedUser.lname
-                }
-              ></Table>
-            ),
-          },
-          {
-            menuItem: "Completed Transactions",
-            render: () => (
-              <Table
-                title={
-                  this.state.selectedUser.fname +
-                  " " +
-                  this.state.selectedUser.lname
-                }
-              ></Table>
-            ),
-          },
-        ];
-        table = (
-          <Col>
-            <Tab panes={panes} className="stretch-h flex-col" />
-          </Col>
-        );
-      }
-    }
-
     const courseOptions = this.state.courseOptions;
     const roleOptions = this.state.roleOptions;
     return (
@@ -254,7 +217,7 @@ class Staff extends Component {
             />
             <Modal
               centered
-              size={this.state.selectedUserId >= 0 ? "xl" : "lg"}
+              size={"lg"}
               show={selectedUserId != null}
               onHide={this.close}
             >
@@ -386,7 +349,6 @@ class Staff extends Component {
                       </Form.Field>
                     </Form>
                   </Col>
-                  {table}
                 </Row>
               </Modal.Body>
               <Modal.Footer>

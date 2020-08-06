@@ -43,6 +43,7 @@ class Users extends Component {
         email: "",
         phone: "",
         notes: "",
+        transactions: [],
       },
       courseOptions: [
         { text: "Photography I", value: "Photography I" },
@@ -75,6 +76,23 @@ class Users extends Component {
       selectedUserId: rowData.tableData.id,
       selectedUser: this.props.data.users[rowData.tableData.id],
     });
+    this.setState((prevState) => {
+      let selectedUser = Object.assign({}, prevState.selectedUser);
+      let transactions = Array.from(
+        this.props.data.transactions.filter(
+          (name) => name.uid === selectedUser.uid
+        )
+      );
+      transactions.forEach((transaction) => {
+        transaction.backgroundColor =
+          !transaction.checkedInDate &&
+          new Date(transaction.dueDate).getTime() < new Date().getTime()
+            ? "mistyrose"
+            : "";
+      });
+      selectedUser["transactions"] = transactions;
+      return { selectedUser };
+    });
   };
 
   handleAddUserClick = () => {
@@ -88,6 +106,7 @@ class Users extends Component {
         email: "",
         phone: "",
         notes: "",
+        tranactions: [],
       },
     });
   };
@@ -137,6 +156,14 @@ class Users extends Component {
     });
   };
 
+  formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return (
+      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear()
+    );
+  };
+
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
@@ -156,8 +183,23 @@ class Users extends Component {
                 columns={[
                   { title: "Item ID", field: "iid" },
                   { title: "Transaction ID", field: "tid" },
+                  {
+                    title: "Checked Out Date",
+                    field: "checkedOutDate",
+                    render: (rowData) =>
+                      this.formatDate(rowData.checkedOutDate),
+                  },
+                  {
+                    title: "Due Date",
+                    field: "dueDate",
+                    render: (rowData) => this.formatDate(rowData.dueDate),
+                  },
                 ]}
-                data={Array.from(this.props.data.transactions)}
+                data={Array.from(
+                  this.state.selectedUser.transactions.filter(
+                    (name) => name.checkedInDate == ""
+                  )
+                )}
               ></Table>
             ),
           },
@@ -173,8 +215,23 @@ class Users extends Component {
                 columns={[
                   { title: "Item ID", field: "iid" },
                   { title: "Transaction ID", field: "tid" },
+                  {
+                    title: "Checked Out Date",
+                    field: "checkedOutDate",
+                    render: (rowData) =>
+                      this.formatDate(rowData.checkedOutDate),
+                  },
+                  {
+                    title: "Checked In Date",
+                    field: "checkedInDate",
+                    render: (rowData) => this.formatDate(rowData.checkedInDate),
+                  },
                 ]}
-                data={Array.from(this.props.data.transactions)}
+                data={Array.from(
+                  this.state.selectedUser.transactions.filter(
+                    (name) => !(name.checkedInDate == "")
+                  )
+                )}
               ></Table>
             ),
           },
@@ -208,7 +265,7 @@ class Users extends Component {
             />
             <Modal
               centered
-              size={this.state.selectedUserId >= 0 ? "xl" : "lg"}
+              size={this.state.selectedUserId >= 0 ? "xl" : "xl"}
               show={selectedUserId != null}
               onHide={this.close}
             >
