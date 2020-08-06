@@ -10,6 +10,8 @@ import Users from "./pages/Users";
 import Inventory from "./pages/Inventory";
 import Staff from "./pages/Staff";
 import Transactions from "./pages/Transactions";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 
 class App extends Component {
   constructor(props) {
@@ -123,50 +125,52 @@ class App extends Component {
 
   render() {
     return (
-      <Router>
-        <Container fluid className="no-gutters flex-col stretch-hw">
-          <Header />
-          <Row className="flex-grow no-gutters">
-            <Col md="auto" className="no-gutters">
-              <Sidebar />
-            </Col>
-            <Col className="no-gutters">
-              <Switch>
-                <Route exact path="/">
-                  Home
-                </Route>
-                <Route path="/checkinout">
-                  <CheckInOut
-                    data={this.state.data}
-                    onUpdateData={this.handleDataUpdate}
-                  />
-                </Route>
-                <Route path="/users">
-                  <Users
-                    data={this.state.data}
-                    onUpdateData={this.handleDataUpdate}
-                  />
-                </Route>
-                <Route path="/inventory">
-                  <Inventory
-                    data={this.state.data}
-                    onUpdateData={this.handleDataUpdate}
-                  />
-                </Route>
-                <Route path="/staff">
-                  <Staff onUpdateData={this.handleDataUpdate} />
-                </Route>
-                <Route path="/transactions">
-                  <Transactions
-                    data={this.state.data}
-                    onUpdateData={this.handleDataUpdate}
-                  />
-                </Route>
-              </Switch>
-            </Col>
-          </Row>
-        </Container>
-      </Router>
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <Router>
+          <Container fluid className="no-gutters flex-col stretch-hw">
+            <Header />
+            <Row className="flex-grow no-gutters">
+              <Col md="auto" className="no-gutters">
+                <Sidebar />
+              </Col>
+              <Col className="no-gutters">
+                <Switch>
+                  <Route exact path="/">
+                    Home
+                  </Route>
+                  <Route path="/checkinout">
+                    <CheckInOut
+                      data={this.state.data}
+                      onUpdateData={this.handleDataUpdate}
+                    />
+                  </Route>
+                  <Route path="/users">
+                    <Users
+                      data={this.state.data}
+                      onUpdateData={this.handleDataUpdate}
+                    />
+                  </Route>
+                  <Route path="/inventory">
+                    <Inventory
+                      data={this.state.data}
+                      onUpdateData={this.handleDataUpdate}
+                    />
+                  </Route>
+                  <Route path="/staff">
+                    <Staff onUpdateData={this.handleDataUpdate} />
+                  </Route>
+                  <Route path="/transactions">
+                    <Transactions
+                      data={this.state.data}
+                      onUpdateData={this.handleDataUpdate}
+                    />
+                  </Route>
+                </Switch>
+              </Col>
+            </Row>
+          </Container>
+        </Router>
+      </MuiPickersUtilsProvider>
     );
   }
 }
