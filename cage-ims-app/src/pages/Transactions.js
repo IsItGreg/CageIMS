@@ -8,41 +8,27 @@ class Transactions extends Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      dataSet: [
-        {
-          fname: "Seamus",
-          lname: "Rioux",
-          name: "Canon 5D Mk II",
-          category: "Camera",
-          serial: "125",
-          notes: "Missing lens cap",
-          checkedOutDate: "7/22/2020",
-          checkedInDate: "7/24/2020",
-          dueDate: "7/26/2020",
-        },
-        {
-          fname: "Greg",
-          lname: "Smelkov",
-          name: "Canon Eos",
-          category: "Camera",
-          serial: "124",
-          notes: "Missing SD Card cover, otherwise works fine",
-          checkedOutDate: "7/20/2020",
-          checkedInDate: "",
-          dueDate: "7/23/2020",
-          backgroundColor: "mistyrose",
-        },
-      ],
       columnSet: [
         { title: "First Name", field: "fname" },
         { title: "Last Name", field: "lname" },
         { title: "Item Name", field: "name" },
         { title: "Category", field: "category" },
-        { title: "Serial", field: "serial" },
         { title: "Notes", field: "notes" },
-        { title: "Checked Out", field: "checkedOutDate" },
-        { title: "Due Date", field: "dueDate" },
-        { title: "Checked In", field: "checkedInDate" },
+        {
+          title: "Checked Out",
+          field: "checkedOutDate",
+          render: (rowData) => this.formatDate(rowData.checkedOutDate),
+        },
+        {
+          title: "Due Date",
+          field: "dueDate",
+          render: (rowData) => this.formatDate(rowData.dueDate),
+        },
+        {
+          title: "Checked In",
+          field: "checkedInDate",
+          render: (rowData) => this.formatDate(rowData.checkedInDate),
+        },
       ],
       open: false,
 
@@ -52,7 +38,6 @@ class Transactions extends Component {
         lname: "",
         name: "",
         category: "",
-        serial: "",
         notes: "",
         checkedOutDate: "",
         checkedInDate: "",
@@ -77,57 +62,9 @@ class Transactions extends Component {
 
   handleUserSelectClick = (e, rowData) => {
     this.setState({
-      selectedItemId: rowData.tableData.id,
-      selectedItem: this.state.dataSet[rowData.tableData.id],
+      selectedItemId: rowData.tid,
+      selectedItem: rowData,
     });
-  };
-
-  handleAddUserClick = () => {
-    this.setState({
-      selectedItemId: -1,
-      selectedItem: {
-        fname: "",
-        lname: "",
-        name: "",
-        category: "",
-        serial: "",
-        notes: "",
-        checkedOutDate: "",
-        checkedInDate: "",
-        dueDate: "",
-      },
-    });
-  };
-
-  // checkErrorUpdateDataSet = () => {
-  //   if (
-  //     !this.state.nameError &&
-  //     !this.state.categoryError &&
-  //     !this.state.serialError &&
-  //     !this.state.notesError
-  //   ) {
-  //     this.setState((prevState) => {
-  //       let dataSet = Array.from(prevState.dataSet);
-  //       if (this.state.selectedItemId >= 0) {
-  //         dataSet[this.state.selectedItemId] = this.state.selectedItem;
-  //       } else {
-  //         dataSet.push(this.state.selectedItem);
-  //       }
-  //       return { dataSet };
-  //     }, this.close);
-  //   }
-  // };
-
-  handleSubmitClick = () => {
-    this.setState(
-      {
-        nameError: this.state.selectedItem.name === "",
-        categoryError: this.state.selectedItem.category === "",
-        serialError: this.state.selectedItem.serial === "",
-        notesError: this.state.selectedItem.notes === "",
-      },
-      this.checkErrorUpdateDataSet
-    );
   };
 
   handleDropdownAddition = (e, { value }) => {
@@ -145,16 +82,44 @@ class Transactions extends Component {
     });
   };
 
+  formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return (
+      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear()
+    );
+  };
+
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
+
+    let transactions = Array.from(this.props.data.transactions);
+    transactions.forEach((transaction) => {
+      let result = this.props.data.users.filter(
+        (user) => transaction.uid === user.uid
+      );
+      transaction.fname = result[0] ? result[0].fname : "";
+      transaction.lname = result[0] ? result[0].lname : "";
+      result = this.props.data.items.filter(
+        (item) => transaction.iid === item.iid
+      );
+      transaction.name = result[0] ? result[0].name : "";
+      transaction.category = result[0] ? result[0].category : "";
+
+      transaction.backgroundColor =
+        !transaction.checkedInDate &&
+        new Date(transaction.dueDate).getTime() < new Date().getTime()
+          ? "mistyrose"
+          : "";
+    });
 
     const courseOptions = this.state.courseOptions;
     return (
       <div className="page-content stretch-h">
         <Col className="stretch-h flex-col">
           <Table
-            data={Array.from(this.state.dataSet)}
+            data={transactions}
             columns={this.state.columnSet}
             title={<h2>Transactions</h2>}
             onRowClick={(event, rowData) =>
