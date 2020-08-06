@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Input, Button, Icon, Form } from "semantic-ui-react";
+import { Input, Button, Icon, Form, Tab } from "semantic-ui-react";
 import { Container, Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
@@ -7,88 +7,25 @@ class CheckInOut extends Component {
   constructor(props) {
     super(props);
     this.handleSearchResult = this.handleSearchResult.bind(this);
-    this.handleTransactionsChanges = this.handleTransactionsChanges.bind(this);
+    this.handleTransactionsChanges = this.handleDataChanges.bind(this);
     this.state = {
       error: false,
-      userFound: "",
-
-      users: [
-        {
-          fname: "Seamus",
-          lname: "Rioux",
-          uid: "54321",
-        },
-        {
-          fname: "Greg",
-          lname: "Smelkov",
-          uid: "12345",
-        },
-      ],
-
-      transactions: [
-        {
-          fname: "Seamus",
-          lname: "Rioux",
-          uid: "54321",
-          iid: "1",
-          name: "Canon 5D Mk II",
-          category: "Camera",
-          serial: "125",
-          notes: "Missing lens cap",
-          checkedOutDate: "7/22/2020",
-          checkedInDate: "7/24/2020",
-          dueDate: "7/26/2020",
-        },
-        {
-          fname: "Greg",
-          lname: "Smelkov",
-          uid: "12345",
-          iid: "2",
-          name: "Canon Eos",
-          category: "Camera",
-          serial: "124",
-          notes: "Missing SD Card cover, otherwise works fine",
-          checkedOutDate: "7/20/2020",
-          checkedInDate: "",
-          dueDate: "7/23/2020",
-          backgroundColor: "mistyrose",
-        },
-        {
-          fname: "Greg",
-          lname: "Smelkov",
-          uid: "12345",
-          iid: "3",
-          name: "Canon Eos 2",
-          category: "Camera",
-          serial: "124",
-          notes: "Missing SD Card cover, otherwise works fine",
-          checkedOutDate: "7/20/2020",
-          checkedInDate: "",
-          dueDate: "7/23/2020",
-        },
-        {
-          fname: "Greg",
-          lname: "Smelkov",
-          uid: "12345",
-          iid: "4",
-          name: "Canon Eos 3",
-          category: "Camera",
-          serial: "124",
-          notes: "Missing SD Card cover, otherwise works fine",
-          checkedOutDate: "7/20/2020",
-          checkedInDate: "",
-          dueDate: "7/23/2020",
-        },
-      ],
+      userFound: {
+        fname: "Greg",
+        lname: "Smelkov",
+        uid: "12345",
+        courses: ["Photography I", "Photography II"],
+      },
     };
   }
 
   handleSearchResult(userFound) {
+    console.log(userFound);
     this.setState({ userFound });
   }
 
-  handleTransactionsChanges(transactions) {
-    this.setState({ transactions });
+  handleDataChanges(data) {
+    this.props.onUpdateData(data);
   }
 
   render() {
@@ -97,17 +34,17 @@ class CheckInOut extends Component {
     if (!userFound)
       page = (
         <Search
-          users={this.state.users}
+          users={this.props.data.users}
           onSuccessfulSearchResult={this.handleSearchResult}
         />
       );
     else
       page = (
         <CheckInOutViewUser
+          data={this.props.data}
           onDoneClick={this.handleSearchResult}
-          selectedUid={this.state.userFound}
-          transactions={this.state.transactions}
-          onUpdateTransactions={this.handleTransactionsChanges}
+          selectedUser={this.state.userFound}
+          onUpdateData={this.handleTransactionsChanges}
         />
       );
     return <Container className="checkinout">{page}</Container>;
@@ -129,9 +66,11 @@ class Search extends React.Component {
   };
 
   handleClick = () => {
-    const validIds = this.props.users.map((user) => user.uid);
-    if (validIds.includes(this.state.searchInput)) {
-      this.props.onSuccessfulSearchResult(this.state.searchInput);
+    const users = this.props.users.filter(
+      (user) => user.uid === this.state.searchInput
+    );
+    if (users.length > 0) {
+      this.props.onSuccessfulSearchResult(users[0]);
     } else {
       this.setState({ error: true });
     }
@@ -171,32 +110,64 @@ class CheckInOutViewUser extends React.Component {
     super(props);
     this.state = {
       op: "",
-
-      currentlyHeldColumnSet: [
-        { title: "Item Name", field: "name" },
-        { title: "Category", field: "category" },
-        { title: "Serial", field: "serial" },
-        { title: "Notes", field: "notes" },
-        { title: "Checked Out", field: "checkedOutDate" },
-        { title: "Due Date", field: "dueDate" },
-      ],
       open: false,
 
       selectedItemId: null,
-      selectedItem: {
-        fname: "",
-        lname: "",
-        name: "",
-        category: "",
-        serial: "",
-        notes: "",
-        checkedOutDate: "",
-        checkedInDate: "",
-        dueDate: "",
-      },
+      selectedItem: {},
 
       selectedItemsToReturn: [],
+
+      transactions: [],
+      items: [],
     };
+  }
+
+  getTransactionsToShow = () => {
+    let transactions = Array.from(
+      this.props.data.transactions.filter(
+        (item) =>
+          item.uid === this.props.selectedUser.uid && !item.checkedInDate
+      )
+    );
+    transactions.forEach((transaction) => {
+      let result = this.props.data.users.filter(
+        (user) => transaction.uid === user.uid
+      );
+      transaction.fname = result[0] ? result[0].fname : "";
+      transaction.lname = result[0] ? result[0].lname : "";
+      result = this.props.data.items.filter(
+        (item) => transaction.iid === item.iid
+      );
+      transaction.name = result[0] ? result[0].name : "";
+      transaction.category = result[0] ? result[0].category : "";
+
+      transaction.backgroundColor =
+        !transaction.checkedInDate &&
+        new Date(transaction.dueDate).getTime() < new Date().getTime()
+          ? "mistyrose"
+          : "";
+    });
+    return transactions;
+  };
+
+  getItemsToShow = () => {
+    let items = Array.from(
+      this.props.data.items.filter(
+        (item) =>
+          !item.atid &&
+          this.props.selectedUser.courses.some((course) =>
+            item.courses.includes(course)
+          )
+      )
+    );
+    return items;
+  };
+
+  componentDidMount() {
+    this.setState({
+      transactions: this.getTransactionsToShow(),
+      items: this.getItemsToShow(),
+    });
   }
 
   handleDoneClick = () => {
@@ -208,8 +179,10 @@ class CheckInOutViewUser extends React.Component {
   };
 
   handleOpSelectClick = (e, op) => {
-    let newTransactions = Array.from(this.props.transactions);
-    this.props.transactions.forEach((item) => {
+    this.state.transactions.forEach((transaction) => {
+      if (transaction.tableData) transaction.tableData.checked = false;
+    });
+    this.state.items.forEach((item) => {
       if (item.tableData) item.tableData.checked = false;
     });
     this.setState({ op: op });
@@ -230,40 +203,183 @@ class CheckInOutViewUser extends React.Component {
   };
 
   handleRowItemClick = (e, rowData) => {
-    this.setState({
-      selectedItemId: rowData.tableData.id,
-      selectedItem: this.state.dataSet[rowData.tableData.id],
-    });
+    if (this.state.op === "checkin") {
+      let transactions = this.state.transactions;
+      const index = transactions.indexOf(rowData);
+      transactions[index].tableData.checked = !transactions[index].tableData
+        .checked;
+      this.setState({ transactions });
+    } else if (this.state.op === "checkout") {
+      let items = this.state.items;
+      const index = items.indexOf(rowData);
+      items[index].tableData.checked = !items[index].tableData.checked;
+      this.setState({ items });
+    } else {
+      this.setState({
+        selectedItemId: rowData.tid,
+        selectedItem: rowData,
+      });
+    }
   };
 
-  handleReturnSelectedItemsClick = (e, transactions) => {
-    const returnedItemIds = transactions
-      .filter((item) => item.tableData?.checked)
-      .map((item) => item.iid);
-    const newTransactions = Array.from(this.props.transactions).filter(
-      (item) => !returnedItemIds.includes(item.iid)
-    );
+  handleReturnSelectedItemsClick = (e) => {
+    let data = Object.assign({}, this.props.data);
+    const completedTransactionIds = this.state.transactions
+      .filter((transaction) => transaction.tableData?.checked)
+      .map((transaction) => transaction.tid);
+    completedTransactionIds.forEach((id) => {
+      let transaction = data.transactions.find(
+        (transaction) => transaction.tid === id
+      );
+      transaction.checkedInDate = new Date().getTime();
+      let item = data.items.find((item) => item.iid === transaction.iid);
+      item.atid = "";
+    });
 
-    this.props.onUpdateTransactions(newTransactions);
-    this.handleOpSelectClick(e, "");
+    this.props.onUpdateData(data);
+
+    this.setState(
+      {
+        transactions: this.getTransactionsToShow(),
+        items: this.getItemsToShow(),
+      },
+      this.handleOpSelectClick(e, "")
+    );
+  };
+
+  handleCheckOutCartButtonClick = (e) => {
+    let data = Object.assign({}, this.props.data);
+    const itemsToCheckOut = this.state.items.filter(
+      (item) => item.tableData?.checked
+    );
+    itemsToCheckOut.forEach((item) => {
+      let newAtid = (
+        Math.max(...data.transactions.map((t) => t.tid)) + 1
+      ).toString();
+      data.transactions.push({
+        tid: newAtid,
+        uid: this.props.selectedUser.uid,
+        iid: item.iid,
+        checkedOutDate: new Date().getTime(),
+        dueDate: new Date().getTime() + 1000 * 60 * 60 * 24 * 2, //temp; adds two days to today
+        checkedInDate: "",
+      });
+      item.atid = newAtid;
+    });
+    this.props.onUpdateData(data);
+    this.setState(
+      {
+        transactions: this.getTransactionsToShow(),
+        items: this.getItemsToShow(),
+      },
+      this.handleOpSelectClick(e, "")
+    );
+  };
+
+  formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return (
+      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear()
+    );
   };
 
   render() {
-    const users = { "12345": "Greg Smelkov", "54321": "Seamus Rioux" };
-
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
 
-    let transactions = this.props.transactions.filter(
-      (item) => item.uid == this.props.selectedUid
-    );
+    const currentlyHeldColumnSet = [
+      { title: "Item Name", field: "name" },
+      { title: "Category", field: "category" },
+      { title: "Transaction Notes", field: "notes" },
+      {
+        title: "Checked Out",
+        field: "checkedOutDate",
+        render: (rowData) => this.formatDate(rowData.checkedOutDate),
+      },
+      {
+        title: "Due Date",
+        field: "dueDate",
+        render: (rowData) => this.formatDate(rowData.dueDate),
+      },
+    ];
+
+    const itemsColumnSet = [
+      { title: "Item Name", field: "name" },
+      { title: "Category", field: "category" },
+      { title: "Notes", field: "notes" },
+    ];
+
+    const cartColumnSet = [
+      { title: "Item Name", field: "name" },
+      { title: "Category", field: "category" },
+    ];
+
+    let itemPanes = [
+      {
+        menuItem: "All",
+        render: () => (
+          <Table
+            data={this.state.items}
+            columns={itemsColumnSet}
+            title={<h3>All</h3>}
+            onRowClick={(event, rowData) =>
+              this.handleRowItemClick(event, rowData)
+            }
+            options={{ selection: true }}
+          />
+        ),
+      },
+    ];
+
+    const categories = [
+      ...new Set(this.state.items.map((item) => item.category)),
+    ].sort();
+    categories.forEach((category) => {
+      itemPanes.push({
+        menuItem: category,
+        render: () => (
+          <Table
+            data={this.state.items.filter((item) => item.category === category)}
+            columns={itemsColumnSet}
+            title={<h3>{category}</h3>}
+            onRowClick={(event, rowData) =>
+              this.handleRowItemClick(event, rowData)
+            }
+            options={{ selection: true }}
+          />
+        ),
+      });
+    });
+
+    const cartPanes = [
+      {
+        menuItem: "",
+        render: () => (
+          <Table
+            data={this.state.items.filter((item) => item.tableData?.checked)}
+            columns={cartColumnSet}
+            title={<h3>Cart</h3>}
+            onRowClick={(event, rowData) =>
+              this.handleRowItemClick(event, rowData)
+            }
+            options={{ selection: true }}
+          />
+        ),
+      },
+    ];
 
     let pageOp;
     if (this.state.op === "checkin") {
       pageOp = (
         <div className="checkinout-viewuser">
           <Row className="page-menu">
-            <h2>{users[this.props.userFound]} -- Check In/Return</h2>
+            <h1>
+              {this.props.selectedUser.fname +
+                " " +
+                this.props.selectedUser.lname}{" "}
+              -- Check In/Return
+            </h1>
             <Button
               onClick={(e) => {
                 this.handleOpSelectClick(e, "");
@@ -281,178 +397,14 @@ class CheckInOutViewUser extends React.Component {
           <Row>
             <div className="current-table-container">
               <Table
-                data={transactions}
-                columns={this.state.currentlyHeldColumnSet}
+                data={this.state.transactions}
+                columns={currentlyHeldColumnSet}
                 title={<h3>Currently held items:</h3>}
                 onRowClick={(event, rowData) =>
                   this.handleRowItemClick(event, rowData)
                 }
                 options={{ selection: true }}
               />
-              <Modal
-                centered
-                size={this.state.selectedItemId >= 0 ? "lg" : "lg"}
-                show={selectedItemId != null}
-                onHide={this.close}
-              >
-                <Modal.Header closeButton bsPrefix="modal-header">
-                  <Modal.Title>Item</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <Row>
-                    <Col>
-                      <Form>
-                        <Form.Field>
-                          <label>
-                            First Name:
-                            {this.state.nameError && (
-                              <span className="error-text modal-label-error-text">
-                                Error: Field cannot be empty.
-                              </span>
-                            )}
-                          </label>
-                          <Form.Input
-                            error={this.state.nameError}
-                            name="fname"
-                            placeholder="First Name"
-                            defaultValue={selectedItem.fname}
-                            readOnly
-                          ></Form.Input>
-                        </Form.Field>
-                        <Form.Field>
-                          <label>
-                            Last Name:
-                            {this.state.nameError && (
-                              <span className="error-text modal-label-error-text">
-                                Error: Field cannot be empty.
-                              </span>
-                            )}
-                          </label>
-                          <Form.Input
-                            error={this.state.nameError}
-                            name="lname"
-                            placeholder="Last Name"
-                            defaultValue={selectedItem.lname}
-                            readOnly
-                          ></Form.Input>
-                        </Form.Field>
-                        <Form.Field>
-                          <label>
-                            Item Name:
-                            {this.state.categoryError && (
-                              <span className="error-text modal-label-error-text">
-                                Error: Field cannot be empty.
-                              </span>
-                            )}
-                          </label>
-                          <Form.Input
-                            error={this.state.categoryError}
-                            name="name"
-                            placeholder="name"
-                            defaultValue={selectedItem.category}
-                            readOnly
-                          ></Form.Input>
-                        </Form.Field>
-                        <Form.Field>
-                          <label>
-                            Category:
-                            {this.state.notesError && (
-                              <span className="error-text modal-label-error-text">
-                                Error: Field cannot be empty.
-                              </span>
-                            )}
-                          </label>
-                          <Form.Input
-                            name="category"
-                            error={this.state.notesError}
-                            placeholder="Category"
-                            defaultValue={selectedItem.notes}
-                            readOnly
-                          ></Form.Input>
-                        </Form.Field>
-                        <Form.Field>
-                          <label>
-                            Serial:
-                            {this.state.serialError && (
-                              <span className="error-text modal-label-error-text">
-                                Error: Field cannot be empty.
-                              </span>
-                            )}
-                          </label>
-                          <Form.Input
-                            name="serial"
-                            error={this.state.serialError}
-                            placeholder="Serial"
-                            defaultValue={selectedItem.serial}
-                            onChange={(e) => {
-                              this.handleChange(e, "serial");
-                            }}
-                            readOnly
-                          ></Form.Input>
-                        </Form.Field>
-                        <Form.Field>
-                          <label>
-                            Notes:
-                            {this.state.notesError && (
-                              <span className="error-text modal-label-error-text">
-                                Error: Field cannot be empty.
-                              </span>
-                            )}
-                          </label>
-                          <Form.Input
-                            name="notes"
-                            error={this.state.notesError}
-                            placeholder="Notes"
-                            defaultValue={selectedItem.notes}
-                            onChange={(e) => {
-                              this.handleChange(e, "notes");
-                            }}
-                            readOnly
-                          ></Form.Input>
-                        </Form.Field>
-                        <Form.Field>
-                          <label>Checked Out:</label>
-                          <Form.Input
-                            name="checkedOut"
-                            placeholder="Checked Out"
-                            defaultValue={selectedItem.checkedOutDate}
-                            onChange={(e) => {
-                              this.handleChange(e, "checkedOutDate");
-                            }}
-                            readOnly
-                          ></Form.Input>
-                        </Form.Field>
-                        <Form.Field>
-                          <label>Checked In:</label>
-                          <Form.Input
-                            name="checkedIn"
-                            placeholder="Checked In"
-                            error={!selectedItem.checkedInDate}
-                            defaultValue={selectedItem.checkedInDate}
-                            onChange={(e) => {
-                              this.handleChange(e, "checkedInDate");
-                            }}
-                            readOnly
-                          ></Form.Input>
-                        </Form.Field>
-                        <Form.Field>
-                          <label>Due Date:</label>
-                          <Form.Input
-                            name="due"
-                            placeholder="Due Date"
-                            defaultValue={selectedItem.dueDate}
-                            onChange={(e) => {
-                              this.handleChange(e, "dueDate");
-                            }}
-                            readOnly
-                          ></Form.Input>
-                        </Form.Field>
-                      </Form>
-                    </Col>
-                  </Row>
-                </Modal.Body>
-                <Modal.Footer></Modal.Footer>
-              </Modal>
             </div>
           </Row>
           <Row className="flex-end">
@@ -467,7 +419,7 @@ class CheckInOutViewUser extends React.Component {
             </Button>
             <Button
               onClick={(e) => {
-                this.handleReturnSelectedItemsClick(e, transactions);
+                this.handleReturnSelectedItemsClick(e);
               }}
               color="orange"
               size="big"
@@ -481,7 +433,12 @@ class CheckInOutViewUser extends React.Component {
       pageOp = (
         <div className="checkinout-viewuser">
           <Row className="page-menu">
-            <h2>{users[this.props.userFound]} -- Check Out/Borrow</h2>
+            <h1>
+              {this.props.selectedUser.fname +
+                " " +
+                this.props.selectedUser.lname}{" "}
+              -- Check Out/Borrow
+            </h1>
             <Button
               onClick={(e) => {
                 this.handleOpSelectClick(e, "");
@@ -497,10 +454,9 @@ class CheckInOutViewUser extends React.Component {
             </Button>
           </Row>
           <Row>
-            <h4>Items due for Return:</h4>
             <div className="checkout-table-wrapper">
-              <div className="checkout-inv-table"> Data Table </div>
-              <div className="checkout-cart-table"> Cart Table </div>
+              <Tab className="checkout-inv-table" panes={itemPanes} />
+              <Tab className="checkout-cart-table" panes={cartPanes} />
             </div>
           </Row>
           <Row className="flex-end">
@@ -515,7 +471,7 @@ class CheckInOutViewUser extends React.Component {
             </Button>
             <Button
               onClick={(e) => {
-                this.handleOpSelectClick(e, "");
+                this.handleCheckOutCartButtonClick(e);
               }}
               color="blue"
               size="big"
@@ -529,7 +485,11 @@ class CheckInOutViewUser extends React.Component {
       pageOp = (
         <div className="checkinout-viewuser">
           <Row className="page-menu">
-            <h1>{users[this.props.userFound]}</h1>
+            <h1>
+              {this.props.selectedUser.fname +
+                " " +
+                this.props.selectedUser.lname}
+            </h1>
             <Button
               onClick={this.handleDoneClick}
               size="big"
@@ -545,8 +505,8 @@ class CheckInOutViewUser extends React.Component {
           <Row>
             <div className="current-table-container">
               <Table
-                data={transactions}
-                columns={this.state.currentlyHeldColumnSet}
+                data={this.state.transactions}
+                columns={currentlyHeldColumnSet}
                 title={<h3>Currently held items:</h3>}
                 onRowClick={(event, rowData) =>
                   this.handleRowItemClick(event, rowData)

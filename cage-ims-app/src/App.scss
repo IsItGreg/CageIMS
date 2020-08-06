@@ -89,19 +89,22 @@
     }
     .checkout-table-wrapper {
       width: 100%;
+      height: 400px;
       display: flex;
       justify-content: space-between;
+
+      > div {
+        display: flex;
+        flex-direction: column;
+      }
+      .checkout-inv-table {
+        width: 67%;
+      }
+      .checkout-cart-table {
+        width: 32%;
+      }
     }
-    .checkout-inv-table {
-      border: 1px solid black;
-      height: 300px;
-      width: 67%;
-    }
-    .checkout-cart-table {
-      border: 1px solid black;
-      height: 300px;
-      width: 32%;
-    }
+
     .page-menu {
       justify-content: space-between;
     }
