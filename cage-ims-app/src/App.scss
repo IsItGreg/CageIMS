@@ -66,10 +66,6 @@
   }
 }
 
-.page-content {
-  padding: 15px 0;
-}
-
 .checkinout {
   .checkinout-search {
     display: block;
@@ -124,4 +120,18 @@
 .modal-header {
   background-color: #12558f;
   color: white;
+}
+.table-header {
+  background-color: #467591;
+  color: white;
+}
+
+.page-content {
+  padding: 10px 8%;
+  margin-bottom: 20px;
+}
+
+.top-bar {
+  margin-top: 10px;
+  padding: 10px 2%;
 }
