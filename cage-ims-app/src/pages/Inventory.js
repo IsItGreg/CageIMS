@@ -35,6 +35,11 @@ class Inventory extends Component {
               : "";
           },
         },
+        {
+          title: "Expected Return Date",
+          field: "expected",
+          render: (rowData) => this.formatDate(rowData.expected),
+        },
       ],
       open: false,
 
@@ -51,6 +56,7 @@ class Inventory extends Component {
         notes: "",
         atid: "",
         courses: [],
+        expected: "",
       },
       courseOptions: [
         { text: "Photography I", value: "Photography I" },
@@ -95,6 +101,7 @@ class Inventory extends Component {
         notes: "",
         atid: "",
         courses: [],
+        expected: "",
       },
       editable: false,
     });
@@ -140,6 +147,14 @@ class Inventory extends Component {
     }));
   };
 
+  formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return (
+      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear()
+    );
+  };
+
   handleDropdownChange = (e, { value }) => {
     const val = value;
     this.setState((prevState) => {
@@ -170,6 +185,11 @@ class Inventory extends Component {
 
     let items = Array.from(this.props.data.items);
     items.forEach((items) => {
+      let result = this.props.data.transactions.filter(
+        (transaction) => items.atid === transaction.tid
+      );
+      console.log(result);
+      items.expected = !(items.atid === "") ? result[0].dueDate : "";
       items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
     });
 
@@ -302,6 +322,15 @@ class Inventory extends Component {
                             this.handleChange(e, "notes");
                           }}
                           readOnly={this.state.editable}
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Expected Return Date:</label>
+                        <Form.Input
+                          name="expected"
+                          placeholder="Expected Return Date"
+                          defaultValue={this.formatDate(selectedItem.expected)}
+                          readOnly
                         ></Form.Input>
                       </Form.Field>
                     </Form>
