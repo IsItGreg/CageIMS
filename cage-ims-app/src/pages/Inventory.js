@@ -35,6 +35,7 @@ class Inventory extends Component {
       nameError: false,
       categoryError: false,
       serialError: false,
+      editable: true,
 
       selectedItemId: null,
       selectedItem: {
@@ -59,6 +60,7 @@ class Inventory extends Component {
       nameError: false,
       categoryError: false,
       serialError: false,
+      editable: true,
     });
 
   handleChange = (e, userProp) => {
@@ -88,6 +90,13 @@ class Inventory extends Component {
         tid: "",
         courses: [],
       },
+      editable: false,
+    });
+  };
+
+  handleUserEditClick = () => {
+    this.setState({
+      editable: false,
     });
   };
 
@@ -138,6 +147,21 @@ class Inventory extends Component {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
 
+    let editButton;
+    if (this.state.selectedItemId != null) {
+      if (this.state.selectedItemId >= 0) {
+        editButton = (
+          <Button
+            id="add-icon-handler"
+            variant="primary"
+            onClick={this.handleUserEditClick}
+          >
+            Edit
+          </Button>
+        );
+      }
+    }
+
     const courseOptions = this.state.courseOptions;
     return (
       <Col className="stretch-h flex-col">
@@ -187,6 +211,7 @@ class Inventory extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "name");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -206,6 +231,7 @@ class Inventory extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "category");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -222,6 +248,7 @@ class Inventory extends Component {
                           value={selectedItem.courses}
                           onAddItem={this.handleDropdownAddition}
                           onChange={this.handleDropdownChange}
+                          disabled={this.state.editable}
                         />
                       </Form.Field>
                       <Form.Field>
@@ -241,6 +268,7 @@ class Inventory extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "iid");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -262,6 +290,7 @@ class Inventory extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "notes");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                     </Form>
@@ -276,6 +305,7 @@ class Inventory extends Component {
                 >
                   Submit
                 </Button>
+                {editButton}
               </Modal.Footer>
             </Modal>
           </Col>
