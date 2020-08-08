@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown, Tab } from "semantic-ui-react";
+import { Divider, Button, Form, Dropdown } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import MaterialTable, { MTableToolbar, M } from "material-table";
+import MaterialTable, { MTableToolbar } from "material-table";
 import { forwardRef } from "react";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
@@ -16,12 +16,6 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
-import {
-  createMuiTheme,
-  makeStyles,
-  ThemeProvider,
-  MuiThemeProvider,
-} from "@material-ui/core/styles";
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -51,16 +45,13 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 class Table extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
   render() {
     return (
       <MaterialTable
         style={{ flexGrow: 1 }}
         components={{
           Toolbar: (props) => (
-            <div class={"table-header MuiPaper-rounded MuiPaper-elevation2"}>
+            <div className="table-header MuiPaper-rounded MuiPaper-elevation2">
               <MTableToolbar {...props} />
             </div>
           ),

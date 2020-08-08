@@ -197,7 +197,7 @@ class Users extends Component {
                 ]}
                 data={Array.from(
                   this.state.selectedUser.transactions.filter(
-                    (name) => name.checkedInDate == ""
+                    (name) => name.checkedInDate === ""
                   )
                 )}
               ></Table>
@@ -229,7 +229,7 @@ class Users extends Component {
                 ]}
                 data={Array.from(
                   this.state.selectedUser.transactions.filter(
-                    (name) => !(name.checkedInDate == "")
+                    (name) => !(name.checkedInDate === "")
                   )
                 )}
               ></Table>
