@@ -169,6 +169,19 @@ class Inventory extends Component {
     const selectedItem = this.state.selectedItem;
 
     let editButton;
+    let expetedDateField;
+    let tidField;
+
+    let items = Array.from(this.props.data.items);
+    items.forEach((items) => {
+      let result = this.props.data.transactions.filter(
+        (transaction) => items.atid === transaction.tid
+      );
+      console.log(result);
+      items.expected = !(items.atid === "") ? result[0].dueDate : "";
+      items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
+    });
+
     if (this.state.selectedItemId != null) {
       if (this.state.selectedItemId >= 0) {
         editButton = (
@@ -180,18 +193,32 @@ class Inventory extends Component {
             Edit
           </Button>
         );
+        if (!(this.state.selectedItem.expected === "")) {
+          expetedDateField = (
+            <Form.Field>
+              <label>Expected Return Date:</label>
+              <Form.Input
+                name="expected"
+                placeholder="Expected Return Date"
+                defaultValue={this.formatDate(selectedItem.expected)}
+                readOnly
+              ></Form.Input>
+            </Form.Field>
+          );
+          tidField = (
+            <Form.Field>
+              <label>Transaction ID:</label>
+              <Form.Input
+                name="atid"
+                placeholder="Transaction ID"
+                defaultValue={selectedItem.atid}
+                readOnly
+              ></Form.Input>
+            </Form.Field>
+          );
+        }
       }
     }
-
-    let items = Array.from(this.props.data.items);
-    items.forEach((items) => {
-      let result = this.props.data.transactions.filter(
-        (transaction) => items.atid === transaction.tid
-      );
-      console.log(result);
-      items.expected = !(items.atid === "") ? result[0].dueDate : "";
-      items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
-    });
 
     const courseOptions = this.state.courseOptions;
     return (
@@ -303,15 +330,6 @@ class Inventory extends Component {
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
-                        <label>Transaction ID:</label>
-                        <Form.Input
-                          name="atid"
-                          placeholder="Transaction ID"
-                          defaultValue={selectedItem.atid}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
                         <label>Notes:</label>
                         <Form.Input
                           name="notes"
@@ -324,15 +342,8 @@ class Inventory extends Component {
                           readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
-                      <Form.Field>
-                        <label>Expected Return Date:</label>
-                        <Form.Input
-                          name="expected"
-                          placeholder="Expected Return Date"
-                          defaultValue={this.formatDate(selectedItem.expected)}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
+                      {tidField}
+                      {expetedDateField}
                     </Form>
                   </Col>
                 </Row>

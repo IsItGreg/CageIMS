@@ -146,16 +146,8 @@ class Transactions extends Component {
                   <Col>
                     <Form>
                       <Form.Field>
-                        <label>
-                          First Name:
-                          {this.state.nameError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
+                        <label>First Name: )}</label>
                         <Form.Input
-                          error={this.state.nameError}
                           name="fname"
                           placeholder="First Name"
                           defaultValue={selectedItem.fname}
@@ -163,16 +155,8 @@ class Transactions extends Component {
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
-                        <label>
-                          Last Name:
-                          {this.state.nameError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
+                        <label>Last Name:</label>
                         <Form.Input
-                          error={this.state.nameError}
                           name="lname"
                           placeholder="Last Name"
                           defaultValue={selectedItem.lname}
@@ -180,76 +164,38 @@ class Transactions extends Component {
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
-                        <label>
-                          Item Name:
-                          {this.state.categoryError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
+                        <label>Item Name:</label>
                         <Form.Input
-                          error={this.state.categoryError}
                           name="name"
                           placeholder="name"
-                          defaultValue={selectedItem.category}
+                          defaultValue={selectedItem.name}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
-                        <label>
-                          Category:
-                          {this.state.notesError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
+                        <label>Category:</label>
                         <Form.Input
                           name="category"
-                          error={this.state.notesError}
                           placeholder="Category"
                           defaultValue={selectedItem.category}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
-                        <label>
-                          Item ID:
-                          {this.state.serialError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
+                        <label>Item ID:</label>
                         <Form.Input
                           name="iid"
-                          error={this.state.serialError}
                           placeholder="Item ID"
                           defaultValue={selectedItem.iid}
-                          onChange={(e) => {
-                            this.handleChange(e, "serial");
-                          }}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
-                        <label>
-                          Notes:
-                          {this.state.notesError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
+                        <label>Notes:</label>
                         <Form.Input
                           name="notes"
-                          error={this.state.notesError}
                           placeholder="Notes"
                           defaultValue={selectedItem.notes}
-                          onChange={(e) => {
-                            this.handleChange(e, "notes");
-                          }}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
@@ -261,9 +207,6 @@ class Transactions extends Component {
                           defaultValue={this.formatDate(
                             selectedItem.checkedOutDate
                           )}
-                          onChange={(e) => {
-                            this.handleChange(e, "checkedOutDate");
-                          }}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
@@ -276,9 +219,6 @@ class Transactions extends Component {
                           defaultValue={this.formatDate(
                             selectedItem.checkedInDate
                           )}
-                          onChange={(e) => {
-                            this.handleChange(e, "checkedInDate");
-                          }}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
@@ -288,9 +228,6 @@ class Transactions extends Component {
                           name="due"
                           placeholder="Due Date"
                           defaultValue={this.formatDate(selectedItem.dueDate)}
-                          onChange={(e) => {
-                            this.handleChange(e, "dueDate");
-                          }}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
