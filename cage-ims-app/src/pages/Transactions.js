@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown, Tab } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
@@ -114,7 +114,6 @@ class Transactions extends Component {
           : "";
     });
 
-    const courseOptions = this.state.courseOptions;
     return (
       <div className="page-content stretch-h">
         <Col className="stretch-h flex-col">

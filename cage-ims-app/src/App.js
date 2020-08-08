@@ -1,4 +1,4 @@
-import React, { Component, useState, useRef, useEffect } from "react";
+import React, { Component } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
 
 import Header from "./common/Header";
@@ -24,7 +24,6 @@ class App extends Component {
             fname: "Seamus",
             lname: "Rioux",
             uid: "54321",
-            courses: ["Photography I", "Photography II"],
             email: "srioux@email.com",
             phone: "123-456-7891",
             notes: "Optional notes for Seamus",
