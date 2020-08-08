@@ -12,7 +12,13 @@ class Inventory extends Component {
         { title: "Name", field: "name" },
         { title: "Category", field: "category" },
         { title: "Item ID", field: "iid" },
-        { title: "Transaction ID", field: "tid" },
+        {
+          title: "Availablity",
+          field: "atid",
+          render: (rowData) => {
+            return rowData.atid === "" ? "Available" : "Unavailable";
+          },
+        },
         { title: "Notes", field: "notes" },
         {
           title: "Courses",
@@ -43,7 +49,7 @@ class Inventory extends Component {
         iid: "",
         category: "",
         notes: "",
-        tid: "",
+        atid: "",
         courses: [],
       },
       courseOptions: [
@@ -87,7 +93,7 @@ class Inventory extends Component {
         iid: "",
         category: "",
         notes: "",
-        tid: "",
+        atid: "",
         courses: [],
       },
       editable: false,
@@ -161,6 +167,11 @@ class Inventory extends Component {
         );
       }
     }
+
+    let items = Array.from(this.props.data.items);
+    items.forEach((items) => {
+      items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
+    });
 
     const courseOptions = this.state.courseOptions;
     return (
@@ -274,9 +285,9 @@ class Inventory extends Component {
                       <Form.Field>
                         <label>Transaction ID:</label>
                         <Form.Input
-                          name="tid"
+                          name="atid"
                           placeholder="Transaction ID"
-                          defaultValue={selectedItem.tid}
+                          defaultValue={selectedItem.atid}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
