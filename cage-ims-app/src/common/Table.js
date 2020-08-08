@@ -62,15 +62,18 @@ class Table extends Component {
         columns={this.props.columns}
         data={this.props.data}
         options={{
-          search: true,
-          paging: false,
-          rowStyle: (rowData) => ({
-            backgroundColor: rowData.backgroundColor
-              ? rowData.backgroundColor
-              : rowData.tableData.id % 2 === 0
-              ? "#FAFAFA"
-              : "#FFFFFF",
-          }),
+          ...{
+            search: true,
+            paging: false,
+            rowStyle: (rowData) => ({
+              backgroundColor: rowData.backgroundColor
+                ? rowData.backgroundColor
+                : rowData.tableData.id % 2 === 0
+                ? "#FAFAFA"
+                : "#FFFFFF",
+            }),
+          },
+          ...this.props.options,
         }}
         onRowClick={this.props.onRowClick}
       ></MaterialTable>
