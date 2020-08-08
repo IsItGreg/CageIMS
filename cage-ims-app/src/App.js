@@ -134,9 +134,7 @@ class App extends Component {
               </Col>
               <Col className="no-gutters">
                 <Switch>
-                  <Route exact path="/">
-                    Home
-                  </Route>
+                  <Route exact path="/"></Route>
                   <Route path="/checkinout">
                     <CheckInOut
                       data={this.state.data}

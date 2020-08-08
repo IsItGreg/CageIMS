@@ -265,7 +265,7 @@ class Users extends Component {
             />
             <Modal
               centered
-              size={this.state.selectedUserId >= 0 ? "xl" : "xl"}
+              size={this.state.selectedUserId >= 0 ? "xl" : "lg"}
               show={selectedUserId != null}
               onHide={this.close}
             >
