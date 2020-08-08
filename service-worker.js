@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/CageIMS/precache-manifest.6d8a2702490aa76540c57097ee2af5ea.js"
+  "/CageIMS/precache-manifest.99987ae17b87ded178a4ecd8afb81506.js"
 );
 
 self.addEventListener('message', (event) => {

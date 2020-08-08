@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/CageIMS/static/css/main.e47845cf.chunk.css",
-    "main.js": "/CageIMS/static/js/main.c11ff9ac.chunk.js",
-    "main.js.map": "/CageIMS/static/js/main.c11ff9ac.chunk.js.map",
+    "main.js": "/CageIMS/static/js/main.fe0d4989.chunk.js",
+    "main.js.map": "/CageIMS/static/js/main.fe0d4989.chunk.js.map",
     "runtime-main.js": "/CageIMS/static/js/runtime-main.18c962d1.js",
     "runtime-main.js.map": "/CageIMS/static/js/runtime-main.18c962d1.js.map",
-    "static/js/2.3ec6aa28.chunk.js": "/CageIMS/static/js/2.3ec6aa28.chunk.js",
-    "static/js/2.3ec6aa28.chunk.js.map": "/CageIMS/static/js/2.3ec6aa28.chunk.js.map",
+    "static/js/2.03864913.chunk.js": "/CageIMS/static/js/2.03864913.chunk.js",
+    "static/js/2.03864913.chunk.js.map": "/CageIMS/static/js/2.03864913.chunk.js.map",
     "index.html": "/CageIMS/index.html",
-    "precache-manifest.6d8a2702490aa76540c57097ee2af5ea.js": "/CageIMS/precache-manifest.6d8a2702490aa76540c57097ee2af5ea.js",
+    "precache-manifest.99987ae17b87ded178a4ecd8afb81506.js": "/CageIMS/precache-manifest.99987ae17b87ded178a4ecd8afb81506.js",
     "service-worker.js": "/CageIMS/service-worker.js",
     "static/css/main.e47845cf.chunk.css.map": "/CageIMS/static/css/main.e47845cf.chunk.css.map",
-    "static/js/2.3ec6aa28.chunk.js.LICENSE.txt": "/CageIMS/static/js/2.3ec6aa28.chunk.js.LICENSE.txt"
+    "static/js/2.03864913.chunk.js.LICENSE.txt": "/CageIMS/static/js/2.03864913.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.18c962d1.js",
-    "static/js/2.3ec6aa28.chunk.js",
+    "static/js/2.03864913.chunk.js",
     "static/css/main.e47845cf.chunk.css",
-    "static/js/main.c11ff9ac.chunk.js"
+    "static/js/main.fe0d4989.chunk.js"
   ]
 }
