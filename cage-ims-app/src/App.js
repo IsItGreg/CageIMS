@@ -33,6 +33,9 @@ class App extends Component {
             fname: "Greg",
             lname: "Smelkov",
             uid: "12345",
+            email: "greg@email.com",
+            phone: "123-456-7891",
+            notes: "Optional notes for Greg",
             courses: ["Photography I", "Photography II"],
           },
         ],
@@ -86,6 +89,7 @@ class App extends Component {
             checkedOutDate: new Date("7/22/2020").getTime(),
             dueDate: new Date("7/26/2020").getTime(),
             checkedInDate: new Date("7/24/2020").getTime(),
+            notes: "Example of transaction notes",
           },
           {
             tid: "2",
@@ -94,6 +98,7 @@ class App extends Component {
             checkedOutDate: new Date("7/22/2020").getTime(),
             dueDate: new Date("7/26/2020").getTime(),
             checkedInDate: new Date("7/24/2020").getTime(),
+            notes: "Example of transaction notes",
           },
           {
             tid: "3",
@@ -111,6 +116,7 @@ class App extends Component {
             checkedOutDate: new Date("7/25/2020").getTime(),
             dueDate: new Date("7/27/2020").getTime(),
             checkedInDate: "",
+            notes: "Example of transaction notes",
           },
         ],
       },
