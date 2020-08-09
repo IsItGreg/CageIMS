@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown, Tab } from "semantic-ui-react";
+import { Divider, Button, Form, Dropdown, Tab, Icon } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
@@ -33,6 +33,7 @@ class Users extends Component {
       lastNameError: false,
       idError: false,
       emailError: false,
+      editable: true,
 
       selectedUserId: null,
       selectedUser: {
@@ -60,6 +61,7 @@ class Users extends Component {
       lastNameError: false,
       idError: false,
       emailError: false,
+      editable: true,
     });
 
   handleChange = (e, userProp) => {
@@ -68,6 +70,12 @@ class Users extends Component {
       let selectedUser = Object.assign({}, prevState.selectedUser);
       selectedUser[userProp] = val;
       return { selectedUser };
+    });
+  };
+
+  handleUserEditClick = () => {
+    this.setState({
+      editable: !this.state.editable,
     });
   };
 
@@ -108,6 +116,7 @@ class Users extends Component {
         notes: "",
         tranactions: [],
       },
+      editable: false,
     });
   };
 
@@ -168,6 +177,7 @@ class Users extends Component {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
     let table;
+    let editButton;
     if (this.state.selectedUserId != null) {
       if (this.state.selectedUserId >= 0) {
         const panes = [
@@ -241,6 +251,17 @@ class Users extends Component {
             <Tab panes={panes} className="stretch-h flex-col" />
           </Col>
         );
+        editButton = (
+          <Button
+            className="btn btn-primary mr-auto"
+            toggle
+            active={!this.state.editable}
+            onClick={this.handleUserEditClick}
+          >
+            <Icon name="pencil" />
+            Edit
+          </Button>
+        );
       }
     }
 
@@ -265,7 +286,7 @@ class Users extends Component {
             />
             <Modal
               centered
-              size={this.state.selectedUserId >= 0 ? "xl" : "xl"}
+              size={this.state.selectedUserId >= 0 ? "xl" : "lg"}
               show={selectedUserId != null}
               onHide={this.close}
             >
@@ -293,6 +314,7 @@ class Users extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "fname");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -312,6 +334,7 @@ class Users extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "lname");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -328,6 +351,7 @@ class Users extends Component {
                           value={selectedUser.courses}
                           onAddItem={this.handleDropdownAddition}
                           onChange={this.handleDropdownChange}
+                          disabled={this.state.editable}
                         />
                       </Form.Field>
                       <Form.Field>
@@ -347,6 +371,7 @@ class Users extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "uid");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -366,6 +391,7 @@ class Users extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "email");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -377,6 +403,7 @@ class Users extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "phone");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -388,6 +415,7 @@ class Users extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "notes");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                     </Form>
@@ -396,11 +424,13 @@ class Users extends Component {
                 </Row>
               </Modal.Body>
               <Modal.Footer>
+                {editButton}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >
+                  <Icon name="save" />
                   Submit
                 </Button>
               </Modal.Footer>

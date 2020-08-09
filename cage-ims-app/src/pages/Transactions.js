@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form } from "semantic-ui-react";
+import { Form, Divider, Button } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
@@ -115,182 +115,131 @@ class Transactions extends Component {
     });
 
     return (
-      <div className="page-content stretch-h">
-        <Col className="stretch-h flex-col">
-          <Table
-            data={transactions}
-            columns={this.state.columnSet}
-            title={<h2>Transactions</h2>}
-            onRowClick={(event, rowData) =>
-              this.handleUserSelectClick(event, rowData)
-            }
-          />
-          <Modal
-            centered
-            size={this.state.selectedItemId >= 0 ? "lg" : "lg"}
-            show={selectedItemId != null}
-            onHide={this.close}
-          >
-            <Modal.Header closeButton bsPrefix="modal-header">
-              <Modal.Title>Item</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <Row>
-                <Col>
-                  <Form>
-                    <Form.Field>
-                      <label>
-                        First Name:
-                        {this.state.nameError && (
-                          <span className="error-text modal-label-error-text">
-                            Error: Field cannot be empty.
-                          </span>
-                        )}
-                      </label>
-                      <Form.Input
-                        error={this.state.nameError}
-                        name="fname"
-                        placeholder="First Name"
-                        defaultValue={selectedItem.fname}
-                        readOnly
-                      ></Form.Input>
-                    </Form.Field>
-                    <Form.Field>
-                      <label>
-                        Last Name:
-                        {this.state.nameError && (
-                          <span className="error-text modal-label-error-text">
-                            Error: Field cannot be empty.
-                          </span>
-                        )}
-                      </label>
-                      <Form.Input
-                        error={this.state.nameError}
-                        name="lname"
-                        placeholder="Last Name"
-                        defaultValue={selectedItem.lname}
-                        readOnly
-                      ></Form.Input>
-                    </Form.Field>
-                    <Form.Field>
-                      <label>
-                        Item Name:
-                        {this.state.categoryError && (
-                          <span className="error-text modal-label-error-text">
-                            Error: Field cannot be empty.
-                          </span>
-                        )}
-                      </label>
-                      <Form.Input
-                        error={this.state.categoryError}
-                        name="name"
-                        placeholder="name"
-                        defaultValue={selectedItem.category}
-                        readOnly
-                      ></Form.Input>
-                    </Form.Field>
-                    <Form.Field>
-                      <label>
-                        Category:
-                        {this.state.notesError && (
-                          <span className="error-text modal-label-error-text">
-                            Error: Field cannot be empty.
-                          </span>
-                        )}
-                      </label>
-                      <Form.Input
-                        name="category"
-                        error={this.state.notesError}
-                        placeholder="Category"
-                        defaultValue={selectedItem.notes}
-                        readOnly
-                      ></Form.Input>
-                    </Form.Field>
-                    <Form.Field>
-                      <label>
-                        Serial:
-                        {this.state.serialError && (
-                          <span className="error-text modal-label-error-text">
-                            Error: Field cannot be empty.
-                          </span>
-                        )}
-                      </label>
-                      <Form.Input
-                        name="serial"
-                        error={this.state.serialError}
-                        placeholder="Serial"
-                        defaultValue={selectedItem.serial}
-                        onChange={(e) => {
-                          this.handleChange(e, "serial");
-                        }}
-                        readOnly
-                      ></Form.Input>
-                    </Form.Field>
-                    <Form.Field>
-                      <label>
-                        Notes:
-                        {this.state.notesError && (
-                          <span className="error-text modal-label-error-text">
-                            Error: Field cannot be empty.
-                          </span>
-                        )}
-                      </label>
-                      <Form.Input
-                        name="notes"
-                        error={this.state.notesError}
-                        placeholder="Notes"
-                        defaultValue={selectedItem.notes}
-                        onChange={(e) => {
-                          this.handleChange(e, "notes");
-                        }}
-                        readOnly
-                      ></Form.Input>
-                    </Form.Field>
-                    <Form.Field>
-                      <label>Checked Out:</label>
-                      <Form.Input
-                        name="checkedOut"
-                        placeholder="Checked Out"
-                        defaultValue={selectedItem.checkedOutDate}
-                        onChange={(e) => {
-                          this.handleChange(e, "checkedOutDate");
-                        }}
-                        readOnly
-                      ></Form.Input>
-                    </Form.Field>
-                    <Form.Field>
-                      <label>Checked In:</label>
-                      <Form.Input
-                        name="checkedIn"
-                        placeholder="Checked In"
-                        error={!selectedItem.checkedInDate}
-                        defaultValue={selectedItem.checkedInDate}
-                        onChange={(e) => {
-                          this.handleChange(e, "checkedInDate");
-                        }}
-                        readOnly
-                      ></Form.Input>
-                    </Form.Field>
-                    <Form.Field>
-                      <label>Due Date:</label>
-                      <Form.Input
-                        name="due"
-                        placeholder="Due Date"
-                        defaultValue={selectedItem.dueDate}
-                        onChange={(e) => {
-                          this.handleChange(e, "dueDate");
-                        }}
-                        readOnly
-                      ></Form.Input>
-                    </Form.Field>
-                  </Form>
-                </Col>
-              </Row>
-            </Modal.Body>
-            <Modal.Footer></Modal.Footer>
-          </Modal>
-        </Col>
-      </div>
+      <Col className="stretch-h flex-col">
+        <div className="top-bar">
+          <Button basic href="#/checkinout">
+            Create New Transaction
+          </Button>
+          <Divider clearing />
+        </div>
+        <div className="page-content stretch-h">
+          <Col className="stretch-h flex-col">
+            <Table
+              data={transactions}
+              columns={this.state.columnSet}
+              title={<h2>Transaction History</h2>}
+              onRowClick={(event, rowData) =>
+                this.handleUserSelectClick(event, rowData)
+              }
+            />
+            <Modal
+              centered
+              size={this.state.selectedItemId >= 0 ? "lg" : "lg"}
+              show={selectedItemId != null}
+              onHide={this.close}
+            >
+              <Modal.Header closeButton bsPrefix="modal-header">
+                <Modal.Title>Item</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Row>
+                  <Col>
+                    <Form>
+                      <Form.Field>
+                        <label>First Name: )}</label>
+                        <Form.Input
+                          name="fname"
+                          placeholder="First Name"
+                          defaultValue={selectedItem.fname}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Last Name:</label>
+                        <Form.Input
+                          name="lname"
+                          placeholder="Last Name"
+                          defaultValue={selectedItem.lname}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Item Name:</label>
+                        <Form.Input
+                          name="name"
+                          placeholder="name"
+                          defaultValue={selectedItem.name}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Category:</label>
+                        <Form.Input
+                          name="category"
+                          placeholder="Category"
+                          defaultValue={selectedItem.category}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Item ID:</label>
+                        <Form.Input
+                          name="iid"
+                          placeholder="Item ID"
+                          defaultValue={selectedItem.iid}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Notes:</label>
+                        <Form.Input
+                          name="notes"
+                          placeholder="Notes"
+                          defaultValue={selectedItem.notes}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Checked Out:</label>
+                        <Form.Input
+                          name="checkedOut"
+                          placeholder="Checked Out"
+                          defaultValue={this.formatDate(
+                            selectedItem.checkedOutDate
+                          )}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Checked In:</label>
+                        <Form.Input
+                          name="checkedIn"
+                          placeholder="Checked In"
+                          error={!selectedItem.checkedInDate}
+                          defaultValue={this.formatDate(
+                            selectedItem.checkedInDate
+                          )}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Due Date:</label>
+                        <Form.Input
+                          name="due"
+                          placeholder="Due Date"
+                          defaultValue={this.formatDate(selectedItem.dueDate)}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                    </Form>
+                  </Col>
+                </Row>
+              </Modal.Body>
+              <Modal.Footer></Modal.Footer>
+            </Modal>
+          </Col>
+        </div>
+      </Col>
     );
   }
 }

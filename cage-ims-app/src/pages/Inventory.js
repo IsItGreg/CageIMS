@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown } from "semantic-ui-react";
+import { Divider, Button, Form, Dropdown, Icon } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
@@ -12,7 +12,13 @@ class Inventory extends Component {
         { title: "Name", field: "name" },
         { title: "Category", field: "category" },
         { title: "Item ID", field: "iid" },
-        { title: "Transaction ID", field: "tid" },
+        {
+          title: "Availablity",
+          field: "atid",
+          render: (rowData) => {
+            return rowData.atid === "" ? "Available" : "Unavailable";
+          },
+        },
         { title: "Notes", field: "notes" },
         {
           title: "Courses",
@@ -29,12 +35,18 @@ class Inventory extends Component {
               : "";
           },
         },
+        {
+          title: "Expected Return Date",
+          field: "expected",
+          render: (rowData) => this.formatDate(rowData.expected),
+        },
       ],
       open: false,
 
       nameError: false,
       categoryError: false,
       serialError: false,
+      editable: true,
 
       selectedItemId: null,
       selectedItem: {
@@ -42,8 +54,9 @@ class Inventory extends Component {
         iid: "",
         category: "",
         notes: "",
-        tid: "",
+        atid: "",
         courses: [],
+        expected: "",
       },
       courseOptions: [
         { text: "Photography I", value: "Photography I" },
@@ -59,6 +72,7 @@ class Inventory extends Component {
       nameError: false,
       categoryError: false,
       serialError: false,
+      editable: true,
     });
 
   handleChange = (e, userProp) => {
@@ -85,9 +99,17 @@ class Inventory extends Component {
         iid: "",
         category: "",
         notes: "",
-        tid: "",
+        atid: "",
         courses: [],
+        expected: "",
       },
+      editable: false,
+    });
+  };
+
+  handleUserEditClick = () => {
+    this.setState({
+      editable: !this.state.editable,
     });
   };
 
@@ -125,6 +147,14 @@ class Inventory extends Component {
     }));
   };
 
+  formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return (
+      date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear()
+    );
+  };
+
   handleDropdownChange = (e, { value }) => {
     const val = value;
     this.setState((prevState) => {
@@ -137,6 +167,60 @@ class Inventory extends Component {
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
+
+    let editButton;
+    let expetedDateField;
+    let tidField;
+
+    let items = Array.from(this.props.data.items);
+    items.forEach((items) => {
+      let result = this.props.data.transactions.filter(
+        (transaction) => items.atid === transaction.tid
+      );
+      console.log(result);
+      items.expected = !(items.atid === "") ? result[0].dueDate : "";
+      items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
+    });
+
+    if (this.state.selectedItemId != null) {
+      if (this.state.selectedItemId >= 0) {
+        if (!(this.state.selectedItem.expected === "")) {
+          expetedDateField = (
+            <Form.Field>
+              <label>Expected Return Date:</label>
+              <Form.Input
+                name="expected"
+                placeholder="Expected Return Date"
+                defaultValue={this.formatDate(selectedItem.expected)}
+                readOnly
+              ></Form.Input>
+            </Form.Field>
+          );
+          tidField = (
+            <Form.Field>
+              <label>Transaction ID:</label>
+              <Form.Input
+                name="atid"
+                placeholder="Transaction ID"
+                defaultValue={selectedItem.atid}
+                readOnly
+              ></Form.Input>
+            </Form.Field>
+          );
+        }
+        editButton = (
+          <Button
+            className="btn btn-primary mr-auto"
+            toggle
+            active={!this.state.editable}
+            onClick={this.handleUserEditClick}
+          >
+            <Icon name="pencil" />
+            Edit
+          </Button>
+        );
+      }
+    }
 
     const courseOptions = this.state.courseOptions;
     return (
@@ -187,6 +271,7 @@ class Inventory extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "name");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -206,6 +291,7 @@ class Inventory extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "category");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -222,6 +308,7 @@ class Inventory extends Component {
                           value={selectedItem.courses}
                           onAddItem={this.handleDropdownAddition}
                           onChange={this.handleDropdownChange}
+                          disabled={this.state.editable}
                         />
                       </Form.Field>
                       <Form.Field>
@@ -241,15 +328,7 @@ class Inventory extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "iid");
                           }}
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Transaction ID:</label>
-                        <Form.Input
-                          name="tid"
-                          placeholder="Transaction ID"
-                          defaultValue={selectedItem.tid}
-                          readOnly
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
@@ -262,18 +341,23 @@ class Inventory extends Component {
                           onChange={(e) => {
                             this.handleChange(e, "notes");
                           }}
+                          readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
+                      {tidField}
+                      {expetedDateField}
                     </Form>
                   </Col>
                 </Row>
               </Modal.Body>
               <Modal.Footer>
+                {editButton}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >
+                  <Icon name="save" />
                   Submit
                 </Button>
               </Modal.Footer>
