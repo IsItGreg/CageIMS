@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown, Tab } from "semantic-ui-react";
+import { Divider, Button, Form, Dropdown, Tab, Icon } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
@@ -75,7 +75,7 @@ class Users extends Component {
 
   handleUserEditClick = () => {
     this.setState({
-      editable: false,
+      editable: !this.state.editable,
     });
   };
 
@@ -253,10 +253,12 @@ class Users extends Component {
         );
         editButton = (
           <Button
-            id="add-icon-handler"
-            variant="primary"
+            className="btn btn-primary mr-auto"
+            toggle
+            active={!this.state.editable}
             onClick={this.handleUserEditClick}
           >
+            <Icon name="pencil" />
             Edit
           </Button>
         );
@@ -422,14 +424,15 @@ class Users extends Component {
                 </Row>
               </Modal.Body>
               <Modal.Footer>
+                {editButton}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >
+                  <Icon name="save" />
                   Submit
                 </Button>
-                {editButton}
               </Modal.Footer>
             </Modal>
           </Col>

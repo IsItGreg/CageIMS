@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown } from "semantic-ui-react";
+import { Divider, Button, Form, Dropdown, Icon } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
@@ -109,7 +109,7 @@ class Inventory extends Component {
 
   handleUserEditClick = () => {
     this.setState({
-      editable: false,
+      editable: !this.state.editable,
     });
   };
 
@@ -184,15 +184,6 @@ class Inventory extends Component {
 
     if (this.state.selectedItemId != null) {
       if (this.state.selectedItemId >= 0) {
-        editButton = (
-          <Button
-            id="add-icon-handler"
-            variant="primary"
-            onClick={this.handleUserEditClick}
-          >
-            Edit
-          </Button>
-        );
         if (!(this.state.selectedItem.expected === "")) {
           expetedDateField = (
             <Form.Field>
@@ -217,6 +208,17 @@ class Inventory extends Component {
             </Form.Field>
           );
         }
+        editButton = (
+          <Button
+            className="btn btn-primary mr-auto"
+            toggle
+            active={!this.state.editable}
+            onClick={this.handleUserEditClick}
+          >
+            <Icon name="pencil" />
+            Edit
+          </Button>
+        );
       }
     }
 
@@ -349,14 +351,15 @@ class Inventory extends Component {
                 </Row>
               </Modal.Body>
               <Modal.Footer>
+                {editButton}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >
+                  <Icon name="save" />
                   Submit
                 </Button>
-                {editButton}
               </Modal.Footer>
             </Modal>
           </Col>
