@@ -146,7 +146,7 @@ class Transactions extends Component {
                   <Col>
                     <Form>
                       <Form.Field>
-                        <label>First Name: )}</label>
+                        <label>First Name: </label>
                         <Form.Input
                           name="fname"
                           placeholder="First Name"
