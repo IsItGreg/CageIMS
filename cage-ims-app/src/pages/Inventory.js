@@ -58,11 +58,6 @@ class Inventory extends Component {
         courses: [],
         expected: "",
       },
-      courseOptions: [
-        { text: "Photography I", value: "Photography I" },
-        { text: "Photography II", value: "Photography II" },
-        { text: "Documentary Image", value: "Documentary Image" },
-      ],
     };
   }
 
@@ -304,9 +299,9 @@ class Inventory extends Component {
                           search
                           selection
                           allowAdditions
-                          options={courseOptions}
+                          options={this.props.courseOptions}
                           value={selectedItem.courses}
-                          onAddItem={this.handleDropdownAddition}
+                          onAddItem={this.props.dropDownAddition}
                           onChange={this.handleDropdownChange}
                           disabled={this.state.editable}
                         />
