@@ -12,7 +12,6 @@ class Transactions extends Component {
         { title: "First Name", field: "fname" },
         { title: "Last Name", field: "lname" },
         { title: "Item Name", field: "name" },
-        { title: "Item ID", field: "iid" },
         { title: "Category", field: "category" },
         { title: "Notes", field: "notes" },
         {
@@ -38,7 +37,6 @@ class Transactions extends Component {
         fname: "",
         lname: "",
         name: "",
-        iid: "",
         category: "",
         notes: "",
         checkedOutDate: "",
@@ -103,12 +101,10 @@ class Transactions extends Component {
       );
       transaction.fname = result[0] ? result[0].fname : "";
       transaction.lname = result[0] ? result[0].lname : "";
-
       result = this.props.data.items.filter(
         (item) => transaction.iid === item.iid
       );
       transaction.name = result[0] ? result[0].name : "";
-      transaction.iid = result[0] ? result[0].iid : "";
       transaction.category = result[0] ? result[0].category : "";
 
       transaction.backgroundColor =
@@ -177,20 +173,20 @@ class Transactions extends Component {
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
-                        <label>Item ID:</label>
-                        <Form.Input
-                          name="id"
-                          placeholder="id"
-                          defaultValue={selectedItem.iid}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
                         <label>Category:</label>
                         <Form.Input
                           name="category"
                           placeholder="Category"
                           defaultValue={selectedItem.category}
+                          readOnly
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>Item ID:</label>
+                        <Form.Input
+                          name="iid"
+                          placeholder="Item ID"
+                          defaultValue={selectedItem.iid}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
