@@ -12,6 +12,7 @@ class Transactions extends Component {
         { title: "First Name", field: "fname" },
         { title: "Last Name", field: "lname" },
         { title: "Item Name", field: "name" },
+        { title: "Item ID", field: "iid" },
         { title: "Category", field: "category" },
         { title: "Notes", field: "notes" },
         {
@@ -37,6 +38,7 @@ class Transactions extends Component {
         fname: "",
         lname: "",
         name: "",
+        iid: "",
         category: "",
         notes: "",
         checkedOutDate: "",
@@ -105,6 +107,7 @@ class Transactions extends Component {
         (item) => transaction.iid === item.iid
       );
       transaction.name = result[0] ? result[0].name : "";
+      transaction.iid = result[0] ? result[0].iid : "";
       transaction.category = result[0] ? result[0].category : "";
 
       transaction.backgroundColor =
