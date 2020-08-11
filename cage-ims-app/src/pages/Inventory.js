@@ -47,6 +47,10 @@ class Inventory extends Component {
       categoryError: false,
       serialError: false,
       editable: true,
+      isChangesMadeToModal: false,
+
+      submitName: "Close",
+      submitIcon: null,
 
       selectedItemId: null,
       selectedItem: {
@@ -73,6 +77,9 @@ class Inventory extends Component {
       categoryError: false,
       serialError: false,
       editable: true,
+      submitName: "Close",
+      submitIcon: null,
+      isChangesMadeToModal: false,
     });
 
   handleChange = (e, userProp) => {
@@ -81,6 +88,9 @@ class Inventory extends Component {
       let selectedItem = Object.assign({}, prevState.selectedItem);
       selectedItem[userProp] = val;
       return { selectedItem };
+    });
+    this.setState({
+      isChangesMadeToModal: true,
     });
   };
 
@@ -104,6 +114,8 @@ class Inventory extends Component {
         expected: "",
       },
       editable: false,
+      submitName: "Close",
+      submitIcon: null,
     });
   };
 
@@ -357,8 +369,10 @@ class Inventory extends Component {
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >
-                  <Icon name="save" />
-                  Submit
+                  {this.state.isChangesMadeToModal ? (
+                    <Icon name="save"></Icon>
+                  ) : null}
+                  {this.state.isChangesMadeToModal ? "Save" : "Close"}
                 </Button>
               </Modal.Footer>
             </Modal>

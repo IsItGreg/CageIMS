@@ -34,6 +34,7 @@ class Users extends Component {
       idError: false,
       emailError: false,
       editable: true,
+      isChangesMadeToModal: false,
 
       selectedUserId: null,
       selectedUser: {
@@ -62,6 +63,9 @@ class Users extends Component {
       idError: false,
       emailError: false,
       editable: true,
+      submitName: "Close",
+      submitIcon: null,
+      isChangesMadeToModal: false,
     });
 
   handleChange = (e, userProp) => {
@@ -70,6 +74,9 @@ class Users extends Component {
       let selectedUser = Object.assign({}, prevState.selectedUser);
       selectedUser[userProp] = val;
       return { selectedUser };
+    });
+    this.setState({
+      isChangesMadeToModal: true,
     });
   };
 
@@ -430,8 +437,10 @@ class Users extends Component {
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >
-                  <Icon name="save" />
-                  Submit
+                  {this.state.isChangesMadeToModal ? (
+                    <Icon name="save"></Icon>
+                  ) : null}
+                  {this.state.isChangesMadeToModal ? "Save" : "Close"}
                 </Button>
               </Modal.Footer>
             </Modal>
