@@ -35,6 +35,9 @@ class Users extends Component {
       emailError: false,
       editable: true,
 
+      submitName: "Close",
+      submitIcon: null,
+
       selectedUserId: null,
       selectedUser: {
         fname: "",
@@ -62,6 +65,8 @@ class Users extends Component {
       idError: false,
       emailError: false,
       editable: true,
+      submitName: "Close",
+      submitIcon: null,
     });
 
   handleChange = (e, userProp) => {
@@ -70,6 +75,10 @@ class Users extends Component {
       let selectedUser = Object.assign({}, prevState.selectedUser);
       selectedUser[userProp] = val;
       return { selectedUser };
+    });
+    this.setState({
+      submitName: "Submit",
+      submitIcon: <Icon name="save" />,
     });
   };
 
@@ -430,8 +439,8 @@ class Users extends Component {
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >
-                  <Icon name="save" />
-                  Submit
+                  {this.state.submitIcon}
+                  {this.state.submitName}
                 </Button>
               </Modal.Footer>
             </Modal>
