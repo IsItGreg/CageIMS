@@ -48,6 +48,9 @@ class Inventory extends Component {
       serialError: false,
       editable: true,
 
+      submitName: "Close",
+      submitIcon: null,
+
       selectedItemId: null,
       selectedItem: {
         name: "",
@@ -73,6 +76,8 @@ class Inventory extends Component {
       categoryError: false,
       serialError: false,
       editable: true,
+      submitName: "Close",
+      submitIcon: null,
     });
 
   handleChange = (e, userProp) => {
@@ -81,6 +86,10 @@ class Inventory extends Component {
       let selectedItem = Object.assign({}, prevState.selectedItem);
       selectedItem[userProp] = val;
       return { selectedItem };
+    });
+    this.setState({
+      submitName: "Submit",
+      submitIcon: <Icon name="save" />,
     });
   };
 
@@ -104,6 +113,8 @@ class Inventory extends Component {
         expected: "",
       },
       editable: false,
+      submitName: "Close",
+      submitIcon: null,
     });
   };
 
@@ -357,8 +368,8 @@ class Inventory extends Component {
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >
-                  <Icon name="save" />
-                  Submit
+                  {this.state.submitIcon}
+                  {this.state.submitName}
                 </Button>
               </Modal.Footer>
             </Modal>
