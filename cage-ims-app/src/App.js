@@ -120,26 +120,13 @@ class App extends Component {
           },
         ],
       },
-      courseOptions: [
-        { text: "Photography I", value: "Photography I" },
-        { text: "Photography II", value: "Photography II" },
-        { text: "Documentary Image", value: "Documentary Image" },
-      ],
     };
   }
 
   handleDataUpdate(data) {
     this.setState({ data });
+    // console.log("Data Updated", data);
   }
-
-  handleDropdownAddition = (e, { value }) => {
-    this.setState((prevState) => ({
-      courseOptions: [
-        { text: value, value: value },
-        ...prevState.courseOptions,
-      ],
-    }));
-  };
 
   render() {
     return (
@@ -163,17 +150,13 @@ class App extends Component {
                   <Route path="/users">
                     <Users
                       data={this.state.data}
-                      courseOptions={this.state.courseOptions}
                       onUpdateData={this.handleDataUpdate}
-                      dropDownAddition={this.handleDropdownAddition}
                     />
                   </Route>
                   <Route path="/inventory">
                     <Inventory
                       data={this.state.data}
-                      courseOptions={this.state.courseOptions}
                       onUpdateData={this.handleDataUpdate}
-                      dropDownAddition={this.handleDropdownAddition}
                     />
                   </Route>
                   <Route path="/staff">

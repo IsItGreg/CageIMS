@@ -46,6 +46,11 @@ class Users extends Component {
         notes: "",
         transactions: [],
       },
+      courseOptions: [
+        { text: "Photography I", value: "Photography I" },
+        { text: "Photography II", value: "Photography II" },
+        { text: "Documentary Image", value: "Documentary Image" },
+      ],
     };
   }
 
@@ -143,6 +148,12 @@ class Users extends Component {
       },
       this.checkErrorUpdateDataSet
     );
+  };
+
+  handleDropdownAddition = (e, { value }) => {
+    this.setState((prevState) => ({
+      courseOptions: [{ text: value, value }, ...prevState.courseOptions],
+    }));
   };
 
   handleDropdownChange = (e, { value }) => {
@@ -336,9 +347,9 @@ class Users extends Component {
                           search
                           selection
                           allowAdditions
-                          options={this.props.courseOptions}
+                          options={courseOptions}
                           value={selectedUser.courses}
-                          onAddItem={this.props.dropDownAddition}
+                          onAddItem={this.handleDropdownAddition}
                           onChange={this.handleDropdownChange}
                           disabled={this.state.editable}
                         />
