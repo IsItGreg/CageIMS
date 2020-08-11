@@ -8,7 +8,7 @@ class Sidebar extends Component {
       <Navbar variant="dark" className="sidebar flex-column">
         <Nav className="flex-column">
           <Nav.Item>
-            <Nav.Link href="#/checkinout">
+            <Nav.Link href="#/">
               <h4>
                 <Icon name="sync" />
                 Check In/Out

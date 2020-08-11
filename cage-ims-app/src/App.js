@@ -145,19 +145,18 @@ class App extends Component {
               </Col>
               <Col className="no-gutters">
                 <Switch>
-                  <Route
-                    exact
-                    path="/"
-                    render={() => {
-                      return <Redirect to="/checkinout" />;
-                    }}
-                  />
-                  <Route path="/checkinout">
+                  <Route exact path="/">
                     <CheckInOut
                       data={this.state.data}
                       onUpdateData={this.handleDataUpdate}
                     />
                   </Route>
+                  {/* <Route path="/checkinout">
+                    <CheckInOut
+                      data={this.state.data}
+                      onUpdateData={this.handleDataUpdate}
+                    /> */}
+
                   <Route path="/users">
                     <Users
                       data={this.state.data}

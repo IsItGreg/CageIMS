@@ -117,7 +117,7 @@ class Transactions extends Component {
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button basic href="#/checkinout">
+          <Button basic href="#/">
             Create New Transaction
           </Button>
           <Divider clearing />
