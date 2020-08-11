@@ -8,14 +8,6 @@ class Sidebar extends Component {
       <Navbar variant="dark" className="sidebar flex-column">
         <Nav className="flex-column">
           <Nav.Item>
-            <Nav.Link href="#/">
-              <h4>
-                <Icon name="home" />
-                Home
-              </h4>
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
             <Nav.Link href="#/checkinout">
               <h4>
                 <Icon name="sync" />

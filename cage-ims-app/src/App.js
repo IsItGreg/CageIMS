@@ -1,5 +1,10 @@
 import React, { Component } from "react";
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import {
+  HashRouter as Router,
+  Route,
+  Switch,
+  Redirect,
+} from "react-router-dom";
 
 import Header from "./common/Header";
 import Sidebar from "./common/Sidebar";
@@ -140,7 +145,13 @@ class App extends Component {
               </Col>
               <Col className="no-gutters">
                 <Switch>
-                  <Route exact path="/"></Route>
+                  <Route
+                    exact
+                    path="/"
+                    render={() => {
+                      return <Redirect to="/checkinout" />;
+                    }}
+                  />
                   <Route path="/checkinout">
                     <CheckInOut
                       data={this.state.data}
