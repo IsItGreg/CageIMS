@@ -322,7 +322,7 @@ class CheckInOutViewUser extends React.Component {
     };
 
     const currentlyHeldColumnSet = [
-      { title: "Item Name", field: "name" },
+      { title: "Item Name", field: "name", defaultSort: "asc" },
       { title: "Category", field: "category" },
       { title: "Transaction Notes", field: "notes" },
       {
@@ -338,18 +338,18 @@ class CheckInOutViewUser extends React.Component {
     ];
 
     const itemsColumnSet = [
-      { title: "Item Name", field: "name" },
+      { title: "Item Name", field: "name", defaultSort: "asc" },
       { title: "Category", field: "category" },
       { title: "Notes", field: "notes" },
     ];
 
     const cartColumnSet = [
-      { title: "Item Name", field: "name" },
+      { title: "Item Name", field: "name", defaultSort: "asc" },
       { title: "Category", field: "category" },
     ];
 
     const checkOutColumnSet = [
-      { title: "Item Name", field: "name" },
+      { title: "Item Name", field: "name", defaultSort: "asc" },
       { title: "Category", field: "category" },
       // { title: "Checked Out", field: "checkedOutDate", render: (rowData) => <input />},
       {
