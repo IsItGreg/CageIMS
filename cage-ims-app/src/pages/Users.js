@@ -440,7 +440,7 @@ class Users extends Component {
                   {this.state.isChangesMadeToModal ? (
                     <Icon name="save"></Icon>
                   ) : null}
-                  {this.state.isChangesMadeToModal ? "Submit" : "Close"}
+                  {this.state.isChangesMadeToModal ? "Save" : "Close"}
                 </Button>
               </Modal.Footer>
             </Modal>
