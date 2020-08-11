@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import MaterialTable, { MTableToolbar } from "material-table";
+import { Icon } from "semantic-ui-react";
 import { forwardRef } from "react";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
@@ -35,10 +36,16 @@ const tableIcons = {
     <ChevronLeft {...props} ref={ref} />
   )),
   ResetSearch: forwardRef((props, ref) => (
-    <Clear style={{ color: "white" }} {...props} ref={ref} />
+    <Clear style={{ color: "#12558f" }} {...props} ref={ref} />
   )),
   Search: forwardRef((props, ref) => (
-    <Search style={{ color: "white" }} {...props} ref={ref} />
+    <Icon
+      name="search"
+      size="large"
+      style={{ color: "#12558f" }}
+      {...props}
+      ref={ref}
+    />
   )),
   SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
@@ -55,7 +62,6 @@ class Table extends Component {
               <MTableToolbar {...props} />
             </div>
           ),
-          Search: (props) => <div style={{ color: "white" }}></div>,
         }}
         icons={tableIcons}
         title={this.props.title}
@@ -72,6 +78,7 @@ class Table extends Component {
                 ? "#FAFAFA"
                 : "#FFFFFF",
             }),
+            searchFieldStyle: { backgroundColor: "white", color: "black" },
           },
           ...this.props.options,
         }}
