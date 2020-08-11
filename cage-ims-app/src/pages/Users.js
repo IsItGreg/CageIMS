@@ -34,9 +34,7 @@ class Users extends Component {
       idError: false,
       emailError: false,
       editable: true,
-
-      submitName: "Close",
-      submitIcon: null,
+      isChangesMadeToModal: false,
 
       selectedUserId: null,
       selectedUser: {
@@ -67,6 +65,7 @@ class Users extends Component {
       editable: true,
       submitName: "Close",
       submitIcon: null,
+      isChangesMadeToModal: false,
     });
 
   handleChange = (e, userProp) => {
@@ -77,8 +76,7 @@ class Users extends Component {
       return { selectedUser };
     });
     this.setState({
-      submitName: "Submit",
-      submitIcon: <Icon name="save" />,
+      isChangesMadeToModal: true,
     });
   };
 
@@ -439,8 +437,10 @@ class Users extends Component {
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >
-                  {this.state.submitIcon}
-                  {this.state.submitName}
+                  {this.state.isChangesMadeToModal ? (
+                    <Icon name="save"></Icon>
+                  ) : null}
+                  {this.state.isChangesMadeToModal ? "Submit" : "Close"}
                 </Button>
               </Modal.Footer>
             </Modal>
