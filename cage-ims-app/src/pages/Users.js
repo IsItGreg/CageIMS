@@ -9,8 +9,8 @@ class Users extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       columnSet: [
-        { title: "First Name", field: "fname", defaultSort: "asc" },
-        { title: "Last Name", field: "lname" },
+        { title: "Last Name", field: "lname", defaultSort: "asc" },
+        { title: "First Name", field: "fname" },
         {
           title: "Courses",
           field: "courses",
