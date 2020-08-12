@@ -8,21 +8,6 @@ class Inventory extends Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      monthNames: [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ],
-
       columnSet: [
         { title: "Item Name", field: "name" },
         { title: "Category", field: "category" },
@@ -187,32 +172,29 @@ class Inventory extends Component {
   };
 
   formatDateForSearchBar = (dateString) => {
+    let monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
     if (!dateString) return "";
     const date = new Date(dateString);
     console.log(date.getMonth());
     return (
-      this.state.monthNames[date.getMonth()] +
+      monthNames[date.getMonth()] +
       " " +
       date.getDate() +
       " " +
       date.getFullYear()
-    );
-  };
-
-  formatDateForItemCreation = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return (
-      date.getMonth() +
-      1 +
-      "/" +
-      date.getDate() +
-      "/" +
-      date.getFullYear() +
-      " " +
-      date.getHours() +
-      ":" +
-      (!date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes())
     );
   };
 
@@ -248,6 +230,7 @@ class Inventory extends Component {
     }
 
     const courseOptions = this.state.courseOptions;
+
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
@@ -375,7 +358,7 @@ class Inventory extends Component {
                           <Form.Input
                             name="creationDate"
                             placeholder="creationDate"
-                            defaultValue={this.formatDateForItemCreation(
+                            defaultValue={this.formatDate(
                               selectedItem.creationDate
                             )}
                             readOnly

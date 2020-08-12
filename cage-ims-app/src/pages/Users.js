@@ -183,29 +183,10 @@ class Users extends Component {
     );
   };
 
-  formatDateForUserCreation = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    return (
-      date.getMonth() +
-      1 +
-      "/" +
-      date.getDate() +
-      "/" +
-      date.getFullYear() +
-      " " +
-      date.getHours() +
-      ":" +
-      (!date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes())
-    );
-  };
-
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
     let table;
-    let editButton;
-    let creationDateForm;
     if (this.state.selectedUserId != null) {
       if (this.state.selectedUserId >= 0) {
         const panes = [
@@ -279,30 +260,6 @@ class Users extends Component {
             <Tab panes={panes} className="stretch-h flex-col" />
           </Col>
         );
-        editButton = (
-          <Button
-            className="btn btn-primary mr-auto"
-            toggle
-            active={!this.state.editable}
-            onClick={this.handleUserEditClick}
-          >
-            <Icon name="pencil" />
-            Edit
-          </Button>
-        );
-        creationDateForm = (
-          <Form.Field>
-            <label>Date Created:</label>
-            <Form.Input
-              name="creationDate"
-              placeholder="creationDate"
-              defaultValue={this.formatDateForUserCreation(
-                selectedUser.creationDate
-              )}
-              readOnly
-            ></Form.Input>
-          </Form.Field>
-        );
       }
     }
 
@@ -327,7 +284,7 @@ class Users extends Component {
             />
             <Modal
               centered
-              size={this.state.selectedUserId >= 0 ? "xl" : "lg"}
+              size={selectedUserId >= 0 ? "xl" : "lg"}
               show={selectedUserId != null}
               onHide={this.close}
             >
@@ -459,14 +416,36 @@ class Users extends Component {
                           readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
-                      {creationDateForm}
+                      {selectedUserId >= 0 ? (
+                        <Form.Field>
+                          <label>Date Created:</label>
+                          <Form.Input
+                            name="creationDate"
+                            placeholder="creationDate"
+                            defaultValue={this.formatDate(
+                              selectedUser.creationDate
+                            )}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Field>
+                      ) : null}
                     </Form>
                   </Col>
                   {table}
                 </Row>
               </Modal.Body>
               <Modal.Footer>
-                {editButton}
+                {this.state.selectedUserId >= 0 ? (
+                  <Button
+                    className="btn btn-primary mr-auto"
+                    toggle
+                    active={!this.state.editable}
+                    onClick={this.handleUserEditClick}
+                  >
+                    <Icon name="pencil" />
+                    Edit
+                  </Button>
+                ) : null}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
