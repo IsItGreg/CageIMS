@@ -9,7 +9,7 @@ class Inventory extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       columnSet: [
-        { title: "Item Name", field: "name" },
+        { title: "Item Name", field: "name", defaultSort: "asc" },
         { title: "Category", field: "category" },
         { title: "Item ID", field: "iid" },
         {
