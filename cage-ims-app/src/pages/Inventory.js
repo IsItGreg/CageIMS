@@ -38,7 +38,12 @@ class Inventory extends Component {
         {
           title: "Expected Return Date",
           field: "expected",
-          render: (rowData) => this.formatDate(rowData.expected),
+          render: (rowData) => {
+            return this.formatDate(rowData.expected);
+          },
+          customFilterAndSearch: (term, rowData) =>
+            this.formatDateForSearchBar(rowData.expected).indexOf(term) != -1 ||
+            this.formatDate(rowData.expected).indexOf(term) != -1,
         },
       ],
       open: false,
@@ -49,9 +54,6 @@ class Inventory extends Component {
       editable: true,
       isChangesMadeToModal: false,
 
-      submitName: "Close",
-      submitIcon: null,
-
       selectedItemId: null,
       selectedItem: {
         name: "",
@@ -61,6 +63,7 @@ class Inventory extends Component {
         atid: "",
         courses: [],
         expected: "",
+        creationDate: "",
       },
       courseOptions: [
         { text: "Photography I", value: "Photography I" },
@@ -99,6 +102,7 @@ class Inventory extends Component {
       selectedItemId: rowData.tableData.id,
       selectedItem: this.props.data.items[rowData.tableData.id],
     });
+    console.log(this.state.selectedItem);
   };
 
   handleAddUserClick = () => {
@@ -111,11 +115,10 @@ class Inventory extends Component {
         notes: "",
         atid: "",
         courses: [],
+        creationDate: "",
         expected: "",
       },
       editable: false,
-      submitName: "Close",
-      submitIcon: null,
     });
   };
 
@@ -135,6 +138,7 @@ class Inventory extends Component {
       if (this.state.selectedItemId >= 0) {
         data.items[this.state.selectedItemId] = this.state.selectedItem;
       } else {
+        this.state.selectedItem.creationDate = new Date().getTime();
         data.items.push(this.state.selectedItem);
       }
       this.props.onUpdateData(data);
@@ -167,6 +171,33 @@ class Inventory extends Component {
     );
   };
 
+  formatDateForSearchBar = (dateString) => {
+    let monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    console.log(date.getMonth());
+    return (
+      monthNames[date.getMonth()] +
+      " " +
+      date.getDate() +
+      " " +
+      date.getFullYear()
+    );
+  };
+
   handleDropdownChange = (e, { value }) => {
     const val = value;
     this.setState((prevState) => {
@@ -180,7 +211,6 @@ class Inventory extends Component {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
 
-    let editButton;
     let expetedDateField;
     let tidField;
 
@@ -196,45 +226,11 @@ class Inventory extends Component {
 
     if (this.state.selectedItemId != null) {
       if (this.state.selectedItemId >= 0) {
-        if (!(this.state.selectedItem.expected === "")) {
-          expetedDateField = (
-            <Form.Field>
-              <label>Expected Return Date:</label>
-              <Form.Input
-                name="expected"
-                placeholder="Expected Return Date"
-                defaultValue={this.formatDate(selectedItem.expected)}
-                readOnly
-              ></Form.Input>
-            </Form.Field>
-          );
-          tidField = (
-            <Form.Field>
-              <label>Transaction ID:</label>
-              <Form.Input
-                name="atid"
-                placeholder="Transaction ID"
-                defaultValue={selectedItem.atid}
-                readOnly
-              ></Form.Input>
-            </Form.Field>
-          );
-        }
-        editButton = (
-          <Button
-            className="btn btn-primary mr-auto"
-            toggle
-            active={!this.state.editable}
-            onClick={this.handleUserEditClick}
-          >
-            <Icon name="pencil" />
-            Edit
-          </Button>
-        );
       }
     }
 
     const courseOptions = this.state.courseOptions;
+
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
@@ -357,14 +353,59 @@ class Inventory extends Component {
                           readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
-                      {tidField}
-                      {expetedDateField}
+                      {this.state.selectedItemId >= 0 ? (
+                        <Form.Field>
+                          <label>Date Created:</label>
+                          <Form.Input
+                            name="creationDate"
+                            placeholder="creationDate"
+                            defaultValue={this.formatDate(
+                              selectedItem.creationDate
+                            )}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Field>
+                      ) : null}
+                      {!(this.state.selectedItem.expected === "") ? (
+                        <div>
+                          <Form.Field>
+                            <label>Transaction ID:</label>
+                            <Form.Input
+                              name="atid"
+                              placeholder="Transaction ID"
+                              defaultValue={selectedItem.atid}
+                              readOnly
+                            ></Form.Input>
+                          </Form.Field>
+                          <Form.Field>
+                            <label>Expected Return Date:</label>
+                            <Form.Input
+                              name="expected"
+                              placeholder="Expected Return Date"
+                              defaultValue={this.formatDate(
+                                selectedItem.expected
+                              )}
+                              readOnly
+                            ></Form.Input>
+                          </Form.Field>
+                        </div>
+                      ) : null}
                     </Form>
                   </Col>
                 </Row>
               </Modal.Body>
               <Modal.Footer>
-                {editButton}
+                {this.state.selectedItemId >= 0 ? (
+                  <Button
+                    className="btn btn-primary mr-auto"
+                    toggle
+                    active={!this.state.editable}
+                    onClick={this.handleUserEditClick}
+                  >
+                    <Icon name="pencil" />
+                    Edit
+                  </Button>
+                ) : null}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
