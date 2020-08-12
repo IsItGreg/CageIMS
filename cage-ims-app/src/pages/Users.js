@@ -9,8 +9,8 @@ class Users extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       columnSet: [
+        { title: "Last Name", field: "lname", defaultSort: "asc" },
         { title: "First Name", field: "fname" },
-        { title: "Last Name", field: "lname" },
         {
           title: "Courses",
           field: "courses",
@@ -46,6 +46,7 @@ class Users extends Component {
         phone: "",
         notes: "",
         transactions: [],
+        creationDate: "",
       },
       courseOptions: [
         { text: "Photography I", value: "Photography I" },
@@ -121,6 +122,7 @@ class Users extends Component {
         email: "",
         phone: "",
         notes: "",
+        creationDate: "",
         tranactions: [],
       },
       editable: false,
@@ -138,6 +140,7 @@ class Users extends Component {
       if (this.state.selectedUserId >= 0) {
         data.users[this.state.selectedUserId] = this.state.selectedUser;
       } else {
+        this.state.selectedUser.creationDate = new Date().getTime();
         data.users.push(this.state.selectedUser);
       }
       this.props.onUpdateData(data);
@@ -184,7 +187,6 @@ class Users extends Component {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
     let table;
-    let editButton;
     if (this.state.selectedUserId != null) {
       if (this.state.selectedUserId >= 0) {
         const panes = [
@@ -258,17 +260,6 @@ class Users extends Component {
             <Tab panes={panes} className="stretch-h flex-col" />
           </Col>
         );
-        editButton = (
-          <Button
-            className="btn btn-primary mr-auto"
-            toggle
-            active={!this.state.editable}
-            onClick={this.handleUserEditClick}
-          >
-            <Icon name="pencil" />
-            Edit
-          </Button>
-        );
       }
     }
 
@@ -293,7 +284,7 @@ class Users extends Component {
             />
             <Modal
               centered
-              size={this.state.selectedUserId >= 0 ? "xl" : "lg"}
+              size={selectedUserId >= 0 ? "xl" : "lg"}
               show={selectedUserId != null}
               onHide={this.close}
             >
@@ -425,13 +416,36 @@ class Users extends Component {
                           readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
+                      {selectedUserId >= 0 ? (
+                        <Form.Field>
+                          <label>Date Created:</label>
+                          <Form.Input
+                            name="creationDate"
+                            placeholder="creationDate"
+                            defaultValue={this.formatDate(
+                              selectedUser.creationDate
+                            )}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Field>
+                      ) : null}
                     </Form>
                   </Col>
                   {table}
                 </Row>
               </Modal.Body>
               <Modal.Footer>
-                {editButton}
+                {this.state.selectedUserId >= 0 ? (
+                  <Button
+                    className="btn btn-primary mr-auto"
+                    toggle
+                    active={!this.state.editable}
+                    onClick={this.handleUserEditClick}
+                  >
+                    <Icon name="pencil" />
+                    Edit
+                  </Button>
+                ) : null}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
