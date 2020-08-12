@@ -147,7 +147,7 @@ class Inventory extends Component {
       {
         nameError: this.state.selectedItem.name === "",
         categoryError: this.state.selectedItem.category === "",
-        serialError: this.state.selectedItem.serial === "",
+        serialError: this.state.selectedItem.iid === "",
       },
       this.checkErrorUpdateDataSet
     );
@@ -298,6 +298,7 @@ class Inventory extends Component {
                         <Form.Input
                           error={this.state.categoryError}
                           name="category"
+                          maxLength="15"
                           placeholder="Category"
                           defaultValue={selectedItem.category}
                           onChange={(e) => {
