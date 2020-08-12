@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown, Icon } from "semantic-ui-react";
+import { Divider, Button, Form, Dropdown, Icon, Tab } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
@@ -9,20 +9,62 @@ class Inventory extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       columnSet: [
-        { title: "Item Name", field: "name" },
-        { title: "Category", field: "category" },
-        { title: "Item ID", field: "iid" },
+        {
+          title: "Item Name",
+          field: "name",
+          headerStyle: {
+            backgroundColor: "#E2E2E2",
+            color: "black",
+            fontSize: "24",
+          },
+        },
+        {
+          title: "Category",
+          field: "category",
+          headerStyle: {
+            backgroundColor: "#E2E2E2",
+            color: "black",
+            fontSize: "24",
+          },
+        },
+        {
+          title: "Item ID",
+          field: "iid",
+          headerStyle: {
+            backgroundColor: "#E2E2E2",
+            color: "black",
+            fontSize: "24",
+          },
+        },
         {
           title: "Availablity",
           field: "atid",
+          headerStyle: {
+            backgroundColor: "#E2E2E2",
+            color: "black",
+            fontSize: "24",
+          },
           render: (rowData) => {
             return rowData.atid === "" ? "Available" : "Unavailable";
           },
         },
-        { title: "Notes", field: "notes" },
+        {
+          title: "Notes",
+          field: "notes",
+          headerStyle: {
+            backgroundColor: "#E2E2E2",
+            color: "black",
+            fontSize: "24",
+          },
+        },
         {
           title: "Courses",
           field: "courses",
+          headerStyle: {
+            backgroundColor: "#E2E2E2",
+            color: "black",
+            fontSize: "24",
+          },
           render: (rowData) => {
             return rowData.courses.length > 0
               ? rowData.courses.reduce((result, item) => (
@@ -38,6 +80,11 @@ class Inventory extends Component {
         {
           title: "Expected Return Date",
           field: "expected",
+          headerStyle: {
+            backgroundColor: "#E2E2E2",
+            color: "black",
+            fontSize: "24",
+          },
           render: (rowData) => this.formatDate(rowData.expected),
         },
       ],
@@ -234,6 +281,56 @@ class Inventory extends Component {
       }
     }
 
+    const inventoryTablePanes = [
+      {
+        menuItem: "All",
+        render: () => (
+          <Table
+            data={Array.from(this.props.data.items)}
+            columns={this.state.columnSet}
+            title={<h2>Inventory</h2>}
+            onRowClick={(event, rowData) =>
+              this.handleUserSelectClick(event, rowData)
+            }
+          />
+        ),
+      },
+      {
+        menuItem: "Available",
+        render: () => (
+          <Table
+            data={Array.from(
+              this.props.data.items.filter(
+                (name) => name.backgroundColor !== "mistyrose"
+              )
+            )}
+            columns={this.state.columnSet}
+            title={<h2>Inventory</h2>}
+            onRowClick={(event, rowData) =>
+              this.handleUserSelectClick(event, rowData)
+            }
+          />
+        ),
+      },
+      {
+        menuItem: "Unavailable",
+        render: () => (
+          <Table
+            data={Array.from(
+              this.props.data.items.filter(
+                (name) => name.backgroundColor === "mistyrose"
+              )
+            )}
+            columns={this.state.columnSet}
+            title={<h2>Inventory</h2>}
+            onRowClick={(event, rowData) =>
+              this.handleUserSelectClick(event, rowData)
+            }
+          />
+        ),
+      },
+    ];
+
     const courseOptions = this.state.courseOptions;
     return (
       <Col className="stretch-h flex-col">
@@ -245,14 +342,7 @@ class Inventory extends Component {
         </div>
         <div className="page-content stretch-h">
           <Col className="stretch-h flex-col">
-            <Table
-              data={Array.from(this.props.data.items)}
-              columns={this.state.columnSet}
-              title={<h2>Inventory</h2>}
-              onRowClick={(event, rowData) =>
-                this.handleUserSelectClick(event, rowData)
-              }
-            />
+            <Tab panes={inventoryTablePanes} className="stretch-h flex-col" />
             <Modal
               centered
               size={this.state.selectedItemId >= 0 ? "lg" : "lg"}
