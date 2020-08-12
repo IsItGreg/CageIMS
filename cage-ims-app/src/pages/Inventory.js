@@ -38,9 +38,8 @@ class Inventory extends Component {
         {
           title: "Expected Return Date",
           field: "expected",
-          render: (rowData) => {
-            return this.formatDate(rowData.expected);
-          },
+          defaultSort: "desc",
+          render: (rowData) => this.formatDate(rowData.expected),
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.expected).indexOf(term) != -1 ||
             this.formatDate(rowData.expected).indexOf(term) != -1,
