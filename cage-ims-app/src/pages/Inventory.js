@@ -7,43 +7,32 @@ class Inventory extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
     this.state = {
       columnSet: [
         {
           title: "Item Name",
           field: "name",
-          headerStyle: {
-            backgroundColor: "#E2E2E2",
-            color: "black",
-            fontSize: "24",
-          },
+          headerStyle: headerStyleGrey,
         },
         {
           title: "Category",
           field: "category",
-          headerStyle: {
-            backgroundColor: "#E2E2E2",
-            color: "black",
-            fontSize: "24",
-          },
+          headerStyle: headerStyleGrey,
         },
         {
           title: "Item ID",
           field: "iid",
-          headerStyle: {
-            backgroundColor: "#E2E2E2",
-            color: "black",
-            fontSize: "24",
-          },
+          headerStyle: headerStyleGrey,
         },
         {
           title: "Availablity",
           field: "atid",
-          headerStyle: {
-            backgroundColor: "#E2E2E2",
-            color: "black",
-            fontSize: "24",
-          },
+          headerStyle: headerStyleGrey,
           render: (rowData) => {
             return rowData.atid === "" ? "Available" : "Unavailable";
           },
@@ -51,20 +40,12 @@ class Inventory extends Component {
         {
           title: "Notes",
           field: "notes",
-          headerStyle: {
-            backgroundColor: "#E2E2E2",
-            color: "black",
-            fontSize: "24",
-          },
+          headerStyle: headerStyleGrey,
         },
         {
           title: "Courses",
           field: "courses",
-          headerStyle: {
-            backgroundColor: "#E2E2E2",
-            color: "black",
-            fontSize: "24",
-          },
+          headerStyle: headerStyleGrey,
           render: (rowData) => {
             return rowData.courses.length > 0
               ? rowData.courses.reduce((result, item) => (
@@ -80,11 +61,7 @@ class Inventory extends Component {
         {
           title: "Expected Return Date",
           field: "expected",
-          headerStyle: {
-            backgroundColor: "#E2E2E2",
-            color: "black",
-            fontSize: "24",
-          },
+          headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.expected),
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.expected).indexOf(term) != -1 ||
