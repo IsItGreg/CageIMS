@@ -46,6 +46,7 @@ class Users extends Component {
         phone: "",
         notes: "",
         transactions: [],
+        creationDate: "",
       },
       courseOptions: [
         { text: "Photography I", value: "Photography I" },
@@ -121,6 +122,7 @@ class Users extends Component {
         email: "",
         phone: "",
         notes: "",
+        creationDate: "",
         tranactions: [],
       },
       editable: false,
@@ -138,6 +140,7 @@ class Users extends Component {
       if (this.state.selectedUserId >= 0) {
         data.users[this.state.selectedUserId] = this.state.selectedUser;
       } else {
+        this.state.selectedUser.creationDate = new Date().getTime();
         data.users.push(this.state.selectedUser);
       }
       this.props.onUpdateData(data);
@@ -180,11 +183,29 @@ class Users extends Component {
     );
   };
 
+  formatDateForUserCreation = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return (
+      date.getMonth() +
+      1 +
+      "/" +
+      date.getDate() +
+      "/" +
+      date.getFullYear() +
+      " " +
+      date.getHours() +
+      ":" +
+      (!date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes())
+    );
+  };
+
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
     let table;
     let editButton;
+    let creationDateForm;
     if (this.state.selectedUserId != null) {
       if (this.state.selectedUserId >= 0) {
         const panes = [
@@ -268,6 +289,19 @@ class Users extends Component {
             <Icon name="pencil" />
             Edit
           </Button>
+        );
+        creationDateForm = (
+          <Form.Field>
+            <label>Date Created:</label>
+            <Form.Input
+              name="creationDate"
+              placeholder="creationDate"
+              defaultValue={this.formatDateForUserCreation(
+                selectedUser.creationDate
+              )}
+              readOnly
+            ></Form.Input>
+          </Form.Field>
         );
       }
     }
@@ -425,6 +459,7 @@ class Users extends Component {
                           readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
+                      {creationDateForm}
                     </Form>
                   </Col>
                   {table}

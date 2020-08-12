@@ -27,6 +27,7 @@ class App extends Component {
             email: "srioux@email.com",
             phone: "123-456-7891",
             notes: "Optional notes for Seamus",
+            creationDate: new Date().getTime(),
             courses: ["Photography I"],
           },
           {
@@ -36,6 +37,7 @@ class App extends Component {
             email: "greg@email.com",
             phone: "123-456-7891",
             notes: "Optional notes for Greg",
+            creationDate: new Date().getTime(),
             courses: ["Photography I", "Photography II"],
           },
         ],
@@ -47,6 +49,7 @@ class App extends Component {
             notes: "",
             atid: "3",
             courses: ["Photography II"],
+            creationDate: new Date().getTime(),
           },
           {
             name: "Canon 18-55 F4.0",
@@ -55,6 +58,7 @@ class App extends Component {
             notes: "Missing lens cap",
             atid: "4",
             courses: ["Photography I", "Photography II"],
+            creationDate: new Date().getTime(),
           },
           {
             name: "Mavic Drone",
@@ -63,6 +67,7 @@ class App extends Component {
             notes: "Goes whirrr",
             atid: "",
             courses: ["Photography I", "Photography II"],
+            creationDate: new Date().getTime(),
           },
           {
             name: "Canon 5D Mk II",
@@ -71,6 +76,7 @@ class App extends Component {
             notes: "",
             atid: "",
             courses: ["Photography II"],
+            creationDate: new Date().getTime(),
           },
           {
             name: "Canon 18-55 F4.0",
@@ -79,6 +85,7 @@ class App extends Component {
             notes: "Missing lens cap",
             atid: "",
             courses: ["Photography I", "Photography II"],
+            creationDate: new Date().getTime(),
           },
         ],
         transactions: [
@@ -105,7 +112,7 @@ class App extends Component {
             uid: "12345",
             iid: "1",
             checkedOutDate: new Date("7/25/2020").getTime(),
-            dueDate: new Date("7/27/2020").getTime(),
+            dueDate: new Date("7/28/2020").getTime(),
             checkedInDate: "",
             notes: "Example of transaction notes",
           },
@@ -129,6 +136,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.data);
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Router>
