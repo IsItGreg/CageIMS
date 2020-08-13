@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown, Icon } from "semantic-ui-react";
+import { Divider, Button, Form, Dropdown, Icon, Tab } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 
@@ -7,22 +7,45 @@ class Inventory extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
     this.state = {
       columnSet: [
-        { title: "Item Name", field: "name" },
-        { title: "Category", field: "category" },
-        { title: "Item ID", field: "iid" },
+        {
+          title: "Item Name",
+          field: "name",
+          headerStyle: headerStyleGrey,
+        },
+        {
+          title: "Category",
+          field: "category",
+          headerStyle: headerStyleGrey,
+        },
+        {
+          title: "Item ID",
+          field: "iid",
+          headerStyle: headerStyleGrey,
+        },
         {
           title: "Availablity",
           field: "atid",
+          headerStyle: headerStyleGrey,
           render: (rowData) => {
             return rowData.atid === "" ? "Available" : "Unavailable";
           },
         },
-        { title: "Notes", field: "notes" },
+        {
+          title: "Notes",
+          field: "notes",
+          headerStyle: headerStyleGrey,
+        },
         {
           title: "Courses",
           field: "courses",
+          headerStyle: headerStyleGrey,
           render: (rowData) => {
             return rowData.courses.length > 0
               ? rowData.courses.reduce((result, item) => (
@@ -39,6 +62,7 @@ class Inventory extends Component {
           title: "Expected Return Date",
           field: "expected",
           defaultSort: "desc",
+          headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.expected),
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.expected).indexOf(term) != -1 ||
@@ -228,6 +252,56 @@ class Inventory extends Component {
       }
     }
 
+    const inventoryTablePanes = [
+      {
+        menuItem: "All",
+        render: () => (
+          <Table
+            data={Array.from(this.props.data.items)}
+            columns={this.state.columnSet}
+            title={<h2>Inventory</h2>}
+            onRowClick={(event, rowData) =>
+              this.handleUserSelectClick(event, rowData)
+            }
+          />
+        ),
+      },
+      {
+        menuItem: "Available",
+        render: () => (
+          <Table
+            data={Array.from(
+              this.props.data.items.filter(
+                (name) => name.backgroundColor !== "mistyrose"
+              )
+            )}
+            columns={this.state.columnSet}
+            title={<h2>Inventory</h2>}
+            onRowClick={(event, rowData) =>
+              this.handleUserSelectClick(event, rowData)
+            }
+          />
+        ),
+      },
+      {
+        menuItem: "Unavailable",
+        render: () => (
+          <Table
+            data={Array.from(
+              this.props.data.items.filter(
+                (name) => name.backgroundColor === "mistyrose"
+              )
+            )}
+            columns={this.state.columnSet}
+            title={<h2>Inventory</h2>}
+            onRowClick={(event, rowData) =>
+              this.handleUserSelectClick(event, rowData)
+            }
+          />
+        ),
+      },
+    ];
+
     const courseOptions = this.state.courseOptions;
 
     return (
@@ -240,14 +314,7 @@ class Inventory extends Component {
         </div>
         <div className="page-content stretch-h">
           <Col className="stretch-h flex-col">
-            <Table
-              data={Array.from(this.props.data.items)}
-              columns={this.state.columnSet}
-              title={<h2>Inventory</h2>}
-              onRowClick={(event, rowData) =>
-                this.handleUserSelectClick(event, rowData)
-              }
-            />
+            <Tab panes={inventoryTablePanes} className="stretch-h flex-col" />
             <Modal
               centered
               size={this.state.selectedItemId >= 0 ? "lg" : "lg"}

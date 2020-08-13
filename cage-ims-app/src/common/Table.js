@@ -58,8 +58,11 @@ class Table extends Component {
         style={{ flexGrow: 1 }}
         components={{
           Toolbar: (props) => (
-            <div className="table-header MuiPaper-rounded MuiPaper-elevation2">
-              <MTableToolbar {...props} />
+            <div>
+              <div className="table-header MuiPaper-rounded MuiPaper-elevation2">
+                <MTableToolbar {...props} />
+              </div>
+              {this.props.toolbarComponents}
             </div>
           ),
         }}
@@ -67,6 +70,14 @@ class Table extends Component {
         title={this.props.title}
         columns={this.props.columns}
         data={this.props.data}
+        localization={{
+          toolbar: {
+            nRowsSelected:
+              "{0} " +
+              (this.props.itemType ? this.props.itemType : "row") +
+              "(s) selected",
+          },
+        }}
         options={{
           ...{
             search: true,
@@ -83,6 +94,7 @@ class Table extends Component {
           ...this.props.options,
         }}
         onRowClick={this.props.onRowClick}
+        onSelectionChange={this.props.onSelectionChange}
       ></MaterialTable>
     );
   }

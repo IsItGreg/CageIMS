@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { Input, Button, Icon, Form, Tab } from "semantic-ui-react";
 import { Container, Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
-import { KeyboardDatePicker } from "@material-ui/pickers";
+import { KeyboardDatePicker, DatePicker } from "@material-ui/pickers";
+import IconButton from "@material-ui/core/IconButton";
+import DateRange from "@material-ui/icons/DateRange";
 
 class CheckInOut extends Component {
   constructor(props) {
@@ -125,6 +127,7 @@ class CheckInOutViewUser extends React.Component {
       newTransactions: [],
 
       isCheckoutModalOpen: false,
+      isCheckoutModalAllDateSelectorOpen: false,
     };
   }
 
@@ -208,7 +211,7 @@ class CheckInOutViewUser extends React.Component {
     });
   };
 
-  handleRowItemClick = (e, rowData) => {
+  handleRowItemClick = (e, rowData, rowClick = true) => {
     if (this.state.op === "checkin") {
       let transactions = this.state.transactions;
       const index = transactions.indexOf(rowData);
@@ -217,8 +220,8 @@ class CheckInOutViewUser extends React.Component {
       this.setState({ transactions });
     } else if (this.state.op === "checkout") {
       let items = this.state.items;
-      const index = items.indexOf(rowData);
-      items[index].tableData.checked = !items[index].tableData.checked;
+      const item = items.find((item) => item.iid === rowData.iid);
+      if (rowClick) item.tableData.checked = !item.tableData.checked;
       this.setState({ items });
     } else {
       this.setState({
@@ -270,7 +273,7 @@ class CheckInOutViewUser extends React.Component {
         uid: this.props.selectedUser.uid,
         iid: item.iid,
         checkedOutDate: new Date().getTime(),
-        dueDate: new Date().getTime() + 1000 * 60 * 60 * 24 * 2, //temp; adds two days to today
+        dueDate: null,
         checkedInDate: "",
       });
     });
@@ -279,12 +282,11 @@ class CheckInOutViewUser extends React.Component {
   };
 
   handleConfirmCheckOutButtonClick = (e) => {
+    if (this.state.newTransactions.some((transaction) => !transaction.dueDate))
+      return;
+
     let data = Object.assign({}, this.props.data);
-
-    console.log(this.state.newTransactions);
     data.transactions = data.transactions.concat(this.state.newTransactions);
-    console.log(data);
-
     this.state.newTransactions.forEach(
       (transaction) =>
         (data.items.find((item) => item.iid === transaction.iid).atid =
@@ -321,6 +323,17 @@ class CheckInOutViewUser extends React.Component {
       this.setState({ newTransactions });
     };
 
+    const handleAllCheckoutDateChange = (date) => {
+      let newTransactions = Array.from(this.state.newTransactions);
+      newTransactions.forEach(
+        (transaction) => (transaction.dueDate = date.getTime())
+      );
+      this.setState({
+        newTransactions,
+        isCheckoutModalAllDateSelectorOpen: false,
+      });
+    };
+
     const currentlyHeldColumnSet = [
       { title: "Item Name", field: "name" },
       { title: "Category", field: "category" },
@@ -351,23 +364,31 @@ class CheckInOutViewUser extends React.Component {
     const checkOutColumnSet = [
       { title: "Item Name", field: "name" },
       { title: "Category", field: "category" },
-      // { title: "Checked Out", field: "checkedOutDate", render: (rowData) => <input />},
       {
         title: "Due Date",
         field: "dueDate",
         render: (rowData) => (
           <KeyboardDatePicker
             autoOk
+            error={
+              !this.state.newTransactions.find(
+                (transaction) => rowData.iid === transaction.iid
+              ).dueDate
+            }
             variant="inline"
             inputVariant="outlined"
             label="Select due date"
             format="MM/dd/yyyy"
             value={
-              new Date(
-                this.state.newTransactions.find(
-                  (transaction) => rowData.iid === transaction.iid
-                ).dueDate
-              )
+              this.state.newTransactions.find(
+                (transaction) => rowData.iid === transaction.iid
+              ).dueDate
+                ? new Date(
+                    this.state.newTransactions.find(
+                      (transaction) => rowData.iid === transaction.iid
+                    ).dueDate
+                  )
+                : null
             }
             InputAdornmentProps={{ position: "end" }}
             onChange={(date) => handleDateChange(date, rowData.iid)}
@@ -382,11 +403,15 @@ class CheckInOutViewUser extends React.Component {
         render: () => (
           <Table
             data={this.state.items}
+            itemType={"item"}
             columns={itemsColumnSet}
             title={<h3>All</h3>}
             onRowClick={(event, rowData) =>
               this.handleRowItemClick(event, rowData)
             }
+            onSelectionChange={(event, rowData) => {
+              this.handleRowItemClick(event, rowData, false);
+            }}
             options={{ selection: true }}
           />
         ),
@@ -402,11 +427,15 @@ class CheckInOutViewUser extends React.Component {
         render: () => (
           <Table
             data={this.state.items.filter((item) => item.category === category)}
+            itemType={"item"}
             columns={itemsColumnSet}
             title={<h3>{category}</h3>}
             onRowClick={(event, rowData) =>
               this.handleRowItemClick(event, rowData)
             }
+            onSelectionChange={(event, rowData) => {
+              this.handleRowItemClick(event, rowData, false);
+            }}
             options={{ selection: true }}
           />
         ),
@@ -418,13 +447,21 @@ class CheckInOutViewUser extends React.Component {
         menuItem: "",
         render: () => (
           <Table
-            data={this.state.items.filter((item) => item.tableData?.checked)}
+            data={JSON.parse(
+              JSON.stringify(
+                this.state.items.filter((item) => item.tableData?.checked)
+              )
+            )}
+            itemType={"item"}
             columns={cartColumnSet}
             title={<h3>Cart</h3>}
             onRowClick={(event, rowData) =>
               this.handleRowItemClick(event, rowData)
             }
-            options={{ selection: true }}
+            onSelectionChange={(event, rowData) => {
+              this.handleRowItemClick(event, rowData, false);
+            }}
+            options={{ selection: true, search: false }}
           />
         ),
       },
@@ -459,6 +496,7 @@ class CheckInOutViewUser extends React.Component {
             <div className="current-table-container">
               <Table
                 data={this.state.transactions}
+                itemType={"item"}
                 columns={currentlyHeldColumnSet}
                 title={<h3>Currently held items:</h3>}
                 onRowClick={(event, rowData) =>
@@ -531,15 +569,55 @@ class CheckInOutViewUser extends React.Component {
                   <Row>
                     <Col>
                       <Table
-                        data={this.state.items.filter(
-                          (item) => item.tableData?.checked
+                        data={JSON.parse(
+                          JSON.stringify(
+                            this.state.items.filter(
+                              (item) => item.tableData?.checked
+                            )
+                          )
                         )}
+                        itemType={"item"}
                         columns={checkOutColumnSet}
                         title={<h3>Cart</h3>}
-                        // onRowClick={(event, rowData) =>
-                        //     this.handleRowItemClick(event, rowData)
-                        // }
-                        options={{ selection: false }}
+                        options={{ selection: false, search: false }}
+                        toolbarComponents={
+                          <div className="toolbarSetAllDate">
+                            <div>
+                              Set all due dates:
+                              <IconButton
+                                onClick={() =>
+                                  this.setState({
+                                    isCheckoutModalAllDateSelectorOpen: true,
+                                  })
+                                }
+                              >
+                                <DateRange />
+                              </IconButton>
+                              <DatePicker
+                                autoOk
+                                variant="inline"
+                                // ERROR: issue with open not finding correct render location,
+                                //   seems like it might be resolved in next datepicker update
+                                //   update plugin when possible
+                                //   otherwise will work temporarily
+                                open={
+                                  this.state.isCheckoutModalAllDateSelectorOpen
+                                }
+                                onClose={() =>
+                                  this.setState({
+                                    isCheckoutModalAllDateSelectorOpen: false,
+                                  })
+                                }
+                                format="MM/dd/yyyy"
+                                onChange={(date) =>
+                                  handleAllCheckoutDateChange(date)
+                                }
+                                value={null}
+                                style={{ display: "none" }}
+                              />
+                            </div>
+                          </div>
+                        }
                       />
                     </Col>
                   </Row>
@@ -614,6 +692,7 @@ class CheckInOutViewUser extends React.Component {
             <div className="current-table-container">
               <Table
                 data={this.state.transactions}
+                itemType={"item"}
                 columns={currentlyHeldColumnSet}
                 title={<h3>Currently held items:</h3>}
                 onRowClick={(event, rowData) =>
@@ -794,7 +873,7 @@ class CheckInOutViewUser extends React.Component {
               color="orange"
               size="big"
             >
-              <Button.Content visible>Check In/Return</Button.Content>
+              <Button.Content visible>Return Items</Button.Content>
             </Button>
             <Button
               onClick={(e) => {
@@ -803,7 +882,7 @@ class CheckInOutViewUser extends React.Component {
               color="blue"
               size="big"
             >
-              <Button.Content visible>Check Out/Borrow</Button.Content>
+              <Button.Content visible>Check Out Items</Button.Content>
             </Button>
           </Row>
         </div>

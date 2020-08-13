@@ -38,6 +38,12 @@
   float: right;
 }
 
+.toolbarSetAllDate {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
 .header {
   background-color: #12558f;
   color: white;
@@ -87,12 +93,12 @@
       margin-top: 3em;
     }
     .current-table-container {
-      height: 400px;
+      min-height: 400px;
       width: 100%;
     }
     .checkout-table-wrapper {
       width: 100%;
-      height: 400px;
+      min-height: 400px;
       display: flex;
       justify-content: space-between;
 
@@ -139,4 +145,8 @@
 .edit-button {
   padding-right: 5%;
   margin-right: 5%;
+}
+
+.inventory-tabs {
+  background-color: #467591;
 }
