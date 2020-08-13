@@ -19,16 +19,26 @@ class Transactions extends Component {
           title: "Checked Out",
           field: "checkedOutDate",
           render: (rowData) => this.formatDate(rowData.checkedOutDate),
+          customFilterAndSearch: (term, rowData) =>
+            this.formatDateForSearchBar(rowData.checkedOutDate).indexOf(term) !=
+              -1 || this.formatDate(rowData.checkedOutDate).indexOf(term) != -1,
         },
         {
           title: "Due Date",
           field: "dueDate",
           render: (rowData) => this.formatDate(rowData.dueDate),
+          customFilterAndSearch: (term, rowData) =>
+            this.formatDateForSearchBar(rowData.dueDate).indexOf(term) != -1 ||
+            this.formatDate(rowData.dueDate).indexOf(term) != -1,
         },
         {
           title: "Checked In",
           field: "checkedInDate",
           render: (rowData) => this.formatDate(rowData.checkedInDate),
+          defaultSort: "dec",
+          customFilterAndSearch: (term, rowData) =>
+            this.formatDateForSearchBar(rowData.checkedInDate).indexOf(term) !=
+              -1 || this.formatDate(rowData.checkedInDate).indexOf(term) != -1,
         },
       ],
       open: false,
@@ -89,6 +99,33 @@ class Transactions extends Component {
     const date = new Date(dateString);
     return (
       date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear()
+    );
+  };
+
+  formatDateForSearchBar = (dateString) => {
+    let monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    console.log(date.getMonth());
+    return (
+      monthNames[date.getMonth()] +
+      " " +
+      date.getDate() +
+      " " +
+      date.getFullYear()
     );
   };
 
