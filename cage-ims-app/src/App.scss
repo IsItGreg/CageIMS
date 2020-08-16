@@ -48,7 +48,11 @@
   background-color: #12558f;
   color: white;
   z-index: 11;
+  text-decoration-line: none;
   h2,
+  a {
+    color: white;
+  }
   h3 {
     padding: 5px;
     vertical-align: middle;
