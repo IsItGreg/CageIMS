@@ -120,7 +120,7 @@ class Inventory extends Component {
   handleChange = (e, userProp) => {
     let val = e.target.value;
     if (userProp === "iid") {
-      val = this.handleItemIDVerify(val);
+      val = this.handleItemIdVerify(val);
     }
     this.setState((prevState) => {
       let selectedItem = Object.assign({}, prevState.selectedItem);
@@ -141,7 +141,7 @@ class Inventory extends Component {
       selectedItemId: -1,
       selectedItem: {
         name: "",
-        iid: "",
+        iid: this.generateInitialNextItemId(),
         serial: "",
         category: "",
         notes: "",
@@ -151,6 +151,7 @@ class Inventory extends Component {
         expected: "",
       },
       editable: false,
+      isChangesMadeToModal: false,
     });
   };
 
@@ -182,6 +183,10 @@ class Inventory extends Component {
   handleSubmitClick = () => {
     console.log(this.state.selectedItem.iid);
     console.log(this.state.isItemIDAvailable);
+    if (!this.state.isChangesMadeToModal) {
+      this.close();
+      return;
+    }
     this.setState(
       {
         nameError: this.state.selectedItem.name === "",
@@ -286,23 +291,29 @@ class Inventory extends Component {
     });
   };
 
-  handleItemIDVerify = (iid) => {
+  handleItemIdVerify = (iid) => {
     if (iid === "") return "";
-    let size = iid.length;
-    let fullID = "0".repeat(4 - size) + iid;
-    let items = Array.from(this.props.data.items);
-    let checkItem = false;
-    items.forEach((items, i) => {
-      if (this.state.selectedItemId !== i) {
-        if (items.iid === fullID) {
-          checkItem = true;
-        }
-      }
-    });
+    if (isNaN(iid)) {
+      this.setState({ isItemIDAvailable: true });
+      return iid;
+    }
+    let fullID = "0".repeat(4 - iid.length) + iid;
     this.setState({
-      isItemIDAvailable: checkItem,
+      isItemIDAvailable: this.props.data.items.some(
+        (item, i) => item.iid === fullID && this.state.selectedItemId !== i
+      ),
     });
     return fullID;
+  };
+
+  generateInitialNextItemId = () => {
+    let idList = this.props.data.items.sort((a, b) => (a.iid > b.iid ? 1 : -1));
+    return (
+      "0".repeat(
+        4 - Number(idList[idList.length - 1].iid + 1).toString.length
+      ) +
+      (Number(idList[idList.length - 1].iid) + 1)
+    );
   };
 
   render() {
@@ -505,21 +516,22 @@ class Inventory extends Component {
                       <Form.Field>
                         <label>
                           Item ID:
-                          {this.state.iidError && (
+                          {(this.state.iidError && (
                             <span className="error-text modal-label-error-text">
                               Error: Field cannot be empty.
                             </span>
-                          )}
-                          {this.state.isItemIDAvailable && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Item ID taken
-                            </span>
-                          )}
+                          )) ||
+                            (this.state.isItemIDAvailable && (
+                              <span className="error-text modal-label-error-text">
+                                Error: Item ID is Taken or Incorrect
+                              </span>
+                            ))}
+                          {}
                         </label>
                         <Form.Input
                           name="iid"
                           error={
-                            this.state.iidError && this.state.isItemIDAvailable
+                            this.state.iidError || this.state.isItemIDAvailable
                           }
                           maxLength="4"
                           placeholder="Item ID"
