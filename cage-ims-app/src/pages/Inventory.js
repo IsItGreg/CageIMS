@@ -20,6 +20,11 @@ class Inventory extends Component {
           headerStyle: headerStyleGrey,
         },
         {
+          title: "Brand",
+          field: "brand",
+          headerStyle: headerStyleGrey,
+        },
+        {
           title: "Category",
           field: "category",
           headerStyle: headerStyleGrey,
@@ -88,11 +93,6 @@ class Inventory extends Component {
         expected: "",
         creationDate: "",
       },
-      courseOptions: [
-        { text: "Photography I", value: "Photography I" },
-        { text: "Photography II", value: "Photography II" },
-        { text: "Documentary Image", value: "Documentary Image" },
-      ],
     };
   }
 
@@ -113,10 +113,7 @@ class Inventory extends Component {
     this.setState((prevState) => {
       let selectedItem = Object.assign({}, prevState.selectedItem);
       selectedItem[userProp] = val;
-      return { selectedItem };
-    });
-    this.setState({
-      isChangesMadeToModal: true,
+      return { selectedItem, isChangesMadeToModal: true };
     });
   };
 
@@ -125,7 +122,6 @@ class Inventory extends Component {
       selectedItemId: rowData.tableData.id,
       selectedItem: this.props.data.items[rowData.tableData.id],
     });
-    console.log(this.state.selectedItem);
   };
 
   handleAddUserClick = () => {
@@ -180,12 +176,6 @@ class Inventory extends Component {
     );
   };
 
-  handleDropdownAddition = (e, { value }) => {
-    this.setState((prevState) => ({
-      courseOptions: [{ text: value, value }, ...prevState.courseOptions],
-    }));
-  };
-
   formatDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -211,7 +201,6 @@ class Inventory extends Component {
     ];
     if (!dateString) return "";
     const date = new Date(dateString);
-    console.log(date.getMonth());
     return (
       monthNames[date.getMonth()] +
       " " +
@@ -221,12 +210,30 @@ class Inventory extends Component {
     );
   };
 
-  handleDropdownChange = (e, { value }) => {
+  handleCourseDropdownChange = (e, { value }) => {
     const val = value;
     this.setState((prevState) => {
       let selectedItem = Object.assign({}, prevState.selectedItem);
       selectedItem.courses = val;
-      return { selectedItem };
+      return { selectedItem, isChangesMadeToModal: true };
+    });
+  };
+
+  handleBrandDropdownChange = (e, { value }) => {
+    const val = value;
+    this.setState((prevState) => {
+      let selectedItem = Object.assign({}, prevState.selectedItem);
+      selectedItem.brand = val;
+      return { selectedItem, isChangesMadeToModal: true };
+    });
+  };
+
+  handleCategoryDropdownChange = (e, { value }) => {
+    const val = value;
+    this.setState((prevState) => {
+      let selectedItem = Object.assign({}, prevState.selectedItem);
+      selectedItem.category = val;
+      return { selectedItem, isChangesMadeToModal: true };
     });
   };
 
@@ -242,7 +249,6 @@ class Inventory extends Component {
       let result = this.props.data.transactions.filter(
         (transaction) => items.atid === transaction.tid
       );
-      console.log(result);
       items.expected = !(items.atid === "") ? result[0].dueDate : "";
       items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
     });
@@ -302,7 +308,40 @@ class Inventory extends Component {
       },
     ];
 
-    const courseOptions = this.state.courseOptions;
+    const courseOptions = Array.from(
+      new Set(
+        [].concat.apply(
+          [],
+          [
+            this.state.selectedItem,
+            ...this.props.data.items,
+            ...this.props.data.users,
+          ]
+            .filter((item) => item.courses)
+            .map((item) => item.courses)
+        )
+      )
+    )
+      .sort()
+      .map((item) => ({ text: item, value: item }));
+    const brandOptions = Array.from(
+      new Set(
+        [this.state.selectedItem, ...this.props.data.items]
+          .filter((item) => item.brand)
+          .map((item) => item.brand)
+      )
+    )
+      .sort()
+      .map((item) => ({ text: item, value: item }));
+    const categoryOptions = Array.from(
+      new Set(
+        [this.state.selectedItem, ...this.props.data.items]
+          .filter((item) => item.category)
+          .map((item) => item.category)
+      )
+    )
+      .sort()
+      .map((item) => ({ text: item, value: item }));
 
     return (
       <Col className="stretch-h flex-col">
@@ -349,6 +388,22 @@ class Inventory extends Component {
                         ></Form.Input>
                       </Form.Field>
                       <Form.Field>
+                        <label>Brand:</label>
+                        <Dropdown
+                          placeholder="Brand"
+                          name="brand"
+                          fluid
+                          search
+                          selection
+                          allowAdditions
+                          clearable
+                          options={brandOptions}
+                          value={selectedItem.brand}
+                          onChange={this.handleBrandDropdownChange}
+                          disabled={this.state.editable}
+                        />
+                      </Form.Field>
+                      <Form.Field>
                         <label>
                           Category:
                           {this.state.categoryError && (
@@ -357,17 +412,19 @@ class Inventory extends Component {
                             </span>
                           )}
                         </label>
-                        <Form.Input
-                          error={this.state.categoryError}
-                          name="category"
-                          maxLength="15"
+                        <Dropdown
                           placeholder="Category"
-                          defaultValue={selectedItem.category}
-                          onChange={(e) => {
-                            this.handleChange(e, "category");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
+                          name="category"
+                          fluid
+                          error={this.state.categoryError}
+                          search
+                          selection
+                          allowAdditions
+                          options={categoryOptions}
+                          value={selectedItem.category}
+                          onChange={this.handleCategoryDropdownChange}
+                          disabled={this.state.editable}
+                        />
                       </Form.Field>
                       <Form.Field>
                         <label>Courses:</label>
@@ -381,8 +438,7 @@ class Inventory extends Component {
                           allowAdditions
                           options={courseOptions}
                           value={selectedItem.courses}
-                          onAddItem={this.handleDropdownAddition}
-                          onChange={this.handleDropdownChange}
+                          onChange={this.handleCourseDropdownChange}
                           disabled={this.state.editable}
                         />
                       </Form.Field>
