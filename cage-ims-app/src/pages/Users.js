@@ -48,11 +48,6 @@ class Users extends Component {
         transactions: [],
         creationDate: "",
       },
-      courseOptions: [
-        { text: "Photography I", value: "Photography I" },
-        { text: "Photography II", value: "Photography II" },
-        { text: "Documentary Image", value: "Documentary Image" },
-      ],
     };
   }
 
@@ -74,10 +69,7 @@ class Users extends Component {
     this.setState((prevState) => {
       let selectedUser = Object.assign({}, prevState.selectedUser);
       selectedUser[userProp] = val;
-      return { selectedUser };
-    });
-    this.setState({
-      isChangesMadeToModal: true,
+      return { selectedUser, isChangesMadeToModal: true };
     });
   };
 
@@ -159,18 +151,12 @@ class Users extends Component {
     );
   };
 
-  handleDropdownAddition = (e, { value }) => {
-    this.setState((prevState) => ({
-      courseOptions: [{ text: value, value }, ...prevState.courseOptions],
-    }));
-  };
-
   handleDropdownChange = (e, { value }) => {
     const val = value;
     this.setState((prevState) => {
       let selectedUser = Object.assign({}, prevState.selectedUser);
       selectedUser.courses = val;
-      return { selectedUser };
+      return { selectedUser, isChangesMadeToModal: true };
     });
   };
 
@@ -294,7 +280,23 @@ class Users extends Component {
       }
     }
 
-    const courseOptions = this.state.courseOptions;
+    const courseOptions = Array.from(
+      new Set(
+        [].concat.apply(
+          [],
+          [
+            this.state.selectedUser,
+            ...this.props.data.items,
+            ...this.props.data.users,
+          ]
+            .filter((item) => item.courses)
+            .map((item) => item.courses)
+        )
+      )
+    )
+      .sort()
+      .map((item) => ({ text: item, value: item }));
+
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
@@ -378,7 +380,6 @@ class Users extends Component {
                           allowAdditions
                           options={courseOptions}
                           value={selectedUser.courses}
-                          onAddItem={this.handleDropdownAddition}
                           onChange={this.handleDropdownChange}
                           disabled={this.state.editable}
                         />
