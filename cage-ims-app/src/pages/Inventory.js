@@ -30,6 +30,11 @@ class Inventory extends Component {
           headerStyle: headerStyleGrey,
         },
         {
+          title: "Serial",
+          field: "serial",
+          headerStyle: headerStyleGrey,
+        },
+        {
           title: "Availablity",
           field: "atid",
           headerStyle: headerStyleGrey,
@@ -73,6 +78,7 @@ class Inventory extends Component {
 
       nameError: false,
       categoryError: false,
+      iidError: false,
       serialError: false,
       editable: true,
       isChangesMadeToModal: false,
@@ -81,6 +87,7 @@ class Inventory extends Component {
       selectedItem: {
         name: "",
         iid: "",
+        serial: "",
         category: "",
         notes: "",
         atid: "",
@@ -134,6 +141,7 @@ class Inventory extends Component {
       selectedItem: {
         name: "",
         iid: "",
+        serial: "",
         category: "",
         notes: "",
         atid: "",
@@ -155,7 +163,8 @@ class Inventory extends Component {
     if (
       !this.state.nameError &&
       !this.state.categoryError &&
-      !this.state.serialError
+      !this.state.serialError &&
+      !this.state.iidError
     ) {
       let data = Object.assign({}, this.props.data);
       if (this.state.selectedItemId >= 0) {
@@ -173,7 +182,8 @@ class Inventory extends Component {
       {
         nameError: this.state.selectedItem.name === "",
         categoryError: this.state.selectedItem.category === "",
-        serialError: this.state.selectedItem.iid === "",
+        iidError: this.state.selectedItem.iid === "",
+        serialError: this.state.selectedItem.serial === "",
       },
       this.checkErrorUpdateDataSet
     );
@@ -417,7 +427,7 @@ class Inventory extends Component {
                       <Form.Field>
                         <label>
                           Item ID:
-                          {this.state.serialError && (
+                          {this.state.iidError && (
                             <span className="error-text modal-label-error-text">
                               Error: Field cannot be empty.
                             </span>
@@ -425,11 +435,31 @@ class Inventory extends Component {
                         </label>
                         <Form.Input
                           name="iid"
-                          error={this.state.serialError}
+                          error={this.state.iidError}
                           placeholder="Item ID"
                           defaultValue={selectedItem.iid}
                           onChange={(e) => {
                             this.handleChange(e, "iid");
+                          }}
+                          readOnly={this.state.editable}
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>
+                          Serial ID:
+                          {this.state.serialError && (
+                            <span className="error-text modal-label-error-text">
+                              Error: Field cannot be empty.
+                            </span>
+                          )}
+                        </label>
+                        <Form.Input
+                          name="serial"
+                          error={this.state.serialError}
+                          placeholder="Serial"
+                          defaultValue={selectedItem.serial}
+                          onChange={(e) => {
+                            this.handleChange(e, "serial");
                           }}
                           readOnly={this.state.editable}
                         ></Form.Input>
