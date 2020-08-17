@@ -44,7 +44,7 @@ class App extends Component {
         items: [
           {
             name: "Canon 5D Mk II",
-            iid: "1",
+            iid: "0001",
             category: "Camera",
             notes: "",
             atid: "3",
@@ -53,7 +53,7 @@ class App extends Component {
           },
           {
             name: "Canon 18-55 F4.0",
-            iid: "2",
+            iid: "0002",
             category: "Lens",
             notes: "Missing lens cap",
             atid: "4",
@@ -62,7 +62,7 @@ class App extends Component {
           },
           {
             name: "Mavic Drone",
-            iid: "3",
+            iid: "0003",
             category: "Other",
             notes: "Goes whirrr",
             atid: "",
@@ -71,7 +71,7 @@ class App extends Component {
           },
           {
             name: "Canon 5D Mk II",
-            iid: "4",
+            iid: "0004",
             category: "Camera",
             notes: "",
             atid: "",
@@ -80,7 +80,7 @@ class App extends Component {
           },
           {
             name: "Canon 18-55 F4.0",
-            iid: "5",
+            iid: "0005",
             category: "Lens",
             notes: "Missing lens cap",
             atid: "",

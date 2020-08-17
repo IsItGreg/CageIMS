@@ -76,6 +76,7 @@ class Inventory extends Component {
       serialError: false,
       editable: true,
       isChangesMadeToModal: false,
+      isItemIDAvailable: false,
 
       selectedItemId: null,
       selectedItem: {
@@ -106,10 +107,14 @@ class Inventory extends Component {
       submitName: "Close",
       submitIcon: null,
       isChangesMadeToModal: false,
+      isItemIDAvailable: false,
     });
 
   handleChange = (e, userProp) => {
-    const val = e.target.value;
+    let val = e.target.value;
+    if (userProp === "iid") {
+      val = this.handleItemIDVerify(val);
+    }
     this.setState((prevState) => {
       let selectedItem = Object.assign({}, prevState.selectedItem);
       selectedItem[userProp] = val;
@@ -155,7 +160,8 @@ class Inventory extends Component {
     if (
       !this.state.nameError &&
       !this.state.categoryError &&
-      !this.state.serialError
+      !this.state.serialError &&
+      !this.state.isItemIDAvailable
     ) {
       let data = Object.assign({}, this.props.data);
       if (this.state.selectedItemId >= 0) {
@@ -170,6 +176,8 @@ class Inventory extends Component {
   };
 
   handleSubmitClick = () => {
+    console.log(this.state.selectedItem.iid);
+    console.log(this.state.isItemIDAvailable);
     this.setState(
       {
         nameError: this.state.selectedItem.name === "",
@@ -230,6 +238,25 @@ class Inventory extends Component {
     });
   };
 
+  handleItemIDVerify = (iid) => {
+    if (iid === "") return "";
+    let size = iid.length;
+    let fullID = "0".repeat(4 - size) + iid;
+    let items = Array.from(this.props.data.items);
+    let checkItem = false;
+    items.forEach((items, i) => {
+      if (this.state.selectedItemId !== i) {
+        if (items.iid === fullID) {
+          checkItem = true;
+        }
+      }
+    });
+    this.setState({
+      isItemIDAvailable: checkItem,
+    });
+    return fullID;
+  };
+
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
@@ -246,11 +273,6 @@ class Inventory extends Component {
       items.expected = !(items.atid === "") ? result[0].dueDate : "";
       items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
     });
-
-    if (this.state.selectedItemId != null) {
-      if (this.state.selectedItemId >= 0) {
-      }
-    }
 
     const inventoryTablePanes = [
       {
@@ -394,10 +416,19 @@ class Inventory extends Component {
                               Error: Field cannot be empty.
                             </span>
                           )}
+                          {this.state.isItemIDAvailable && (
+                            <span className="error-text modal-label-error-text">
+                              Error: Item ID taken
+                            </span>
+                          )}
                         </label>
                         <Form.Input
                           name="iid"
-                          error={this.state.serialError}
+                          error={
+                            this.state.serialError &&
+                            this.state.isItemIDAvailable
+                          }
+                          maxLength="4"
                           placeholder="Item ID"
                           defaultValue={selectedItem.iid}
                           onChange={(e) => {
