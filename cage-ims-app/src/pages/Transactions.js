@@ -20,16 +20,18 @@ class Transactions extends Component {
           field: "checkedOutDate",
           render: (rowData) => this.formatDate(rowData.checkedOutDate),
           customFilterAndSearch: (term, rowData) =>
-            this.formatDateForSearchBar(rowData.checkedOutDate).indexOf(term) !=
-              -1 || this.formatDate(rowData.checkedOutDate).indexOf(term) != -1,
+            this.formatDateForSearchBar(rowData.checkedOutDate).indexOf(
+              term
+            ) !== -1 ||
+            this.formatDate(rowData.checkedOutDate).indexOf(term) !== -1,
         },
         {
           title: "Due Date",
           field: "dueDate",
           render: (rowData) => this.formatDate(rowData.dueDate),
           customFilterAndSearch: (term, rowData) =>
-            this.formatDateForSearchBar(rowData.dueDate).indexOf(term) != -1 ||
-            this.formatDate(rowData.dueDate).indexOf(term) != -1,
+            this.formatDateForSearchBar(rowData.dueDate).indexOf(term) !== -1 ||
+            this.formatDate(rowData.dueDate).indexOf(term) !== -1,
         },
         {
           title: "Checked In",
@@ -37,8 +39,8 @@ class Transactions extends Component {
           render: (rowData) => this.formatDate(rowData.checkedInDate),
           defaultSort: "dec",
           customFilterAndSearch: (term, rowData) =>
-            this.formatDateForSearchBar(rowData.checkedInDate).indexOf(term) !=
-              -1 || this.formatDate(rowData.checkedInDate).indexOf(term) != -1,
+            this.formatDateForSearchBar(rowData.checkedInDate).indexOf(term) !==
+              -1 || this.formatDate(rowData.checkedInDate).indexOf(term) !== -1,
         },
       ],
       open: false,
