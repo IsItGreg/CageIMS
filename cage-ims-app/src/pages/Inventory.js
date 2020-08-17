@@ -65,8 +65,8 @@ class Inventory extends Component {
           headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.expected),
           customFilterAndSearch: (term, rowData) =>
-            this.formatDateForSearchBar(rowData.expected).indexOf(term) != -1 ||
-            this.formatDate(rowData.expected).indexOf(term) != -1,
+            this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
+              -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
         },
       ],
       open: false,
@@ -138,7 +138,7 @@ class Inventory extends Component {
         notes: "",
         atid: "",
         courses: [],
-        creationDate: "",
+        creationDate: new Date().getTime(),
         expected: "",
       },
       editable: false,
@@ -161,7 +161,6 @@ class Inventory extends Component {
       if (this.state.selectedItemId >= 0) {
         data.items[this.state.selectedItemId] = this.state.selectedItem;
       } else {
-        this.state.selectedItem.creationDate = new Date().getTime();
         data.items.push(this.state.selectedItem);
       }
       this.props.onUpdateData(data);
@@ -221,6 +220,38 @@ class Inventory extends Component {
     );
   };
 
+  formatItemDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    let hours = date.getHours();
+    let daynnite = "";
+    if (hours > 12) {
+      hours = hours - 12;
+      daynnite = "PM";
+    } else if (hours === 0) {
+      hours = 12;
+      daynnite = "AM";
+    } else if (hours < 12) {
+      daynnite = "AM";
+    }
+    return (
+      date.getMonth() +
+      1 +
+      "/" +
+      date.getDate() +
+      "/" +
+      date.getFullYear() +
+      " " +
+      hours +
+      ":" +
+      (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+      ":" +
+      (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()) +
+      " " +
+      daynnite
+    );
+  };
+
   handleDropdownChange = (e, { value }) => {
     const val = value;
     this.setState((prevState) => {
@@ -233,9 +264,6 @@ class Inventory extends Component {
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
-
-    let expetedDateField;
-    let tidField;
 
     let items = Array.from(this.props.data.items);
     items.forEach((items) => {
@@ -425,7 +453,7 @@ class Inventory extends Component {
                           <Form.Input
                             name="creationDate"
                             placeholder="creationDate"
-                            defaultValue={this.formatDate(
+                            defaultValue={this.formatItemDate(
                               selectedItem.creationDate
                             )}
                             readOnly
