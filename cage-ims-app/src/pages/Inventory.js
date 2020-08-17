@@ -35,6 +35,11 @@ class Inventory extends Component {
           headerStyle: headerStyleGrey,
         },
         {
+          title: "Serial",
+          field: "serial",
+          headerStyle: headerStyleGrey,
+        },
+        {
           title: "Availablity",
           field: "atid",
           headerStyle: headerStyleGrey,
@@ -70,14 +75,15 @@ class Inventory extends Component {
           headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.expected),
           customFilterAndSearch: (term, rowData) =>
-            this.formatDateForSearchBar(rowData.expected).indexOf(term) != -1 ||
-            this.formatDate(rowData.expected).indexOf(term) != -1,
+            this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
+              -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
         },
       ],
       open: false,
 
       nameError: false,
       categoryError: false,
+      iidError: false,
       serialError: false,
       editable: true,
       isChangesMadeToModal: false,
@@ -86,6 +92,7 @@ class Inventory extends Component {
       selectedItem: {
         name: "",
         iid: "",
+        serial: "",
         category: "",
         notes: "",
         atid: "",
@@ -130,11 +137,12 @@ class Inventory extends Component {
       selectedItem: {
         name: "",
         iid: "",
+        serial: "",
         category: "",
         notes: "",
         atid: "",
         courses: [],
-        creationDate: "",
+        creationDate: new Date().getTime(),
         expected: "",
       },
       editable: false,
@@ -151,13 +159,13 @@ class Inventory extends Component {
     if (
       !this.state.nameError &&
       !this.state.categoryError &&
-      !this.state.serialError
+      !this.state.serialError &&
+      !this.state.iidError
     ) {
       let data = Object.assign({}, this.props.data);
       if (this.state.selectedItemId >= 0) {
         data.items[this.state.selectedItemId] = this.state.selectedItem;
       } else {
-        this.state.selectedItem.creationDate = new Date().getTime();
         data.items.push(this.state.selectedItem);
       }
       this.props.onUpdateData(data);
@@ -170,7 +178,8 @@ class Inventory extends Component {
       {
         nameError: this.state.selectedItem.name === "",
         categoryError: this.state.selectedItem.category === "",
-        serialError: this.state.selectedItem.iid === "",
+        iidError: this.state.selectedItem.iid === "",
+        serialError: this.state.selectedItem.serial === "",
       },
       this.checkErrorUpdateDataSet
     );
@@ -210,6 +219,38 @@ class Inventory extends Component {
     );
   };
 
+  formatItemDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    let hours = date.getHours();
+    let daynnite = "";
+    if (hours > 12) {
+      hours = hours - 12;
+      daynnite = "PM";
+    } else if (hours === 0) {
+      hours = 12;
+      daynnite = "AM";
+    } else if (hours < 12) {
+      daynnite = "AM";
+    }
+    return (
+      date.getMonth() +
+      1 +
+      "/" +
+      date.getDate() +
+      "/" +
+      date.getFullYear() +
+      " " +
+      hours +
+      ":" +
+      (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+      ":" +
+      (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()) +
+      " " +
+      daynnite
+    );
+  };
+
   handleCourseDropdownChange = (e, { value }) => {
     const val = value;
     this.setState((prevState) => {
@@ -240,9 +281,6 @@ class Inventory extends Component {
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
-
-    let expetedDateField;
-    let tidField;
 
     let items = Array.from(this.props.data.items);
     items.forEach((items) => {
@@ -445,7 +483,7 @@ class Inventory extends Component {
                       <Form.Field>
                         <label>
                           Item ID:
-                          {this.state.serialError && (
+                          {this.state.iidError && (
                             <span className="error-text modal-label-error-text">
                               Error: Field cannot be empty.
                             </span>
@@ -453,11 +491,31 @@ class Inventory extends Component {
                         </label>
                         <Form.Input
                           name="iid"
-                          error={this.state.serialError}
+                          error={this.state.iidError}
                           placeholder="Item ID"
                           defaultValue={selectedItem.iid}
                           onChange={(e) => {
                             this.handleChange(e, "iid");
+                          }}
+                          readOnly={this.state.editable}
+                        ></Form.Input>
+                      </Form.Field>
+                      <Form.Field>
+                        <label>
+                          Serial ID:
+                          {this.state.serialError && (
+                            <span className="error-text modal-label-error-text">
+                              Error: Field cannot be empty.
+                            </span>
+                          )}
+                        </label>
+                        <Form.Input
+                          name="serial"
+                          error={this.state.serialError}
+                          placeholder="Serial"
+                          defaultValue={selectedItem.serial}
+                          onChange={(e) => {
+                            this.handleChange(e, "serial");
                           }}
                           readOnly={this.state.editable}
                         ></Form.Input>
@@ -481,7 +539,7 @@ class Inventory extends Component {
                           <Form.Input
                             name="creationDate"
                             placeholder="creationDate"
-                            defaultValue={this.formatDate(
+                            defaultValue={this.formatItemDate(
                               selectedItem.creationDate
                             )}
                             readOnly
