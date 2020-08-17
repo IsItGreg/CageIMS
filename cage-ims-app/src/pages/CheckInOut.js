@@ -69,7 +69,7 @@ class Search extends React.Component {
     this.setState({ searchInput: e.target.value });
   };
 
-  handleClick = () => {
+  handleSearchButtonClick = () => {
     const users = this.props.users.filter(
       (user) => user.uid === this.state.searchInput
     );
@@ -77,6 +77,12 @@ class Search extends React.Component {
       this.props.onSuccessfulSearchResult(users[0]);
     } else {
       this.setState({ error: true });
+    }
+  };
+
+  handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      this.handleSearchButtonClick();
     }
   };
 
@@ -88,6 +94,7 @@ class Search extends React.Component {
         <Input
           error={this.state.error}
           onChange={this.handleChange}
+          onKeyPress={this.handleKeyDown}
           size="huge"
           fluid
           icon="users"
@@ -99,7 +106,7 @@ class Search extends React.Component {
             <p>Error: ID is invalid.</p>
           </div>
         )}
-        <Button size="big" animated onClick={this.handleClick}>
+        <Button size="big" animated onClick={this.handleSearchButtonClick}>
           <Button.Content visible>Search</Button.Content>
           <Button.Content hidden>
             <Icon name="search" />
