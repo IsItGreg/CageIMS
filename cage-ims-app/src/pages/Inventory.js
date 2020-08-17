@@ -27,6 +27,7 @@ class Inventory extends Component {
         {
           title: "Item ID",
           field: "iid",
+          defaultSort: "asc",
           headerStyle: headerStyleGrey,
         },
         {
@@ -61,7 +62,6 @@ class Inventory extends Component {
         {
           title: "Expected Return Date",
           field: "expected",
-          defaultSort: "desc",
           headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.expected),
           customFilterAndSearch: (term, rowData) =>
