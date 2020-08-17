@@ -17,7 +17,9 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.handleDataUpdate = this.handleDataUpdate.bind(this);
+    this.handlePageUpdate = this.handlePageUpdate.bind(this);
     this.state = {
+      activePage: "",
       data: {
         users: [
           {
@@ -144,9 +146,13 @@ class App extends Component {
     this.setState({ data });
     // console.log("Data Updated", data);
   }
+  handlePageUpdate(page) {
+    this.setState({
+      activePage: page,
+    });
+  }
 
   render() {
-    console.log(this.state.data);
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Router>
@@ -154,7 +160,7 @@ class App extends Component {
             <Header />
             <Row className="flex-grow no-gutters">
               <Col md="auto" className="no-gutters">
-                <Sidebar />
+                <Sidebar activePage={this.state.activePage} />
               </Col>
               <Col className="no-gutters">
                 <Switch>
@@ -162,7 +168,8 @@ class App extends Component {
                     <CheckInOut
                       data={this.state.data}
                       onUpdateData={this.handleDataUpdate}
-                    />
+                      setPage={this.handlePageUpdate}
+                    ></CheckInOut>
                   </Route>
                   {/* <Route path="/checkinout">
                     <CheckInOut
@@ -174,21 +181,27 @@ class App extends Component {
                     <Users
                       data={this.state.data}
                       onUpdateData={this.handleDataUpdate}
+                      setPage={this.handlePageUpdate}
                     />
                   </Route>
                   <Route path="/inventory">
                     <Inventory
                       data={this.state.data}
                       onUpdateData={this.handleDataUpdate}
+                      setPage={this.handlePageUpdate}
                     />
                   </Route>
                   <Route path="/staff">
-                    <Staff onUpdateData={this.handleDataUpdate} />
+                    <Staff
+                      onUpdateData={this.handleDataUpdate}
+                      setPage={this.handlePageUpdate}
+                    />
                   </Route>
                   <Route path="/transactions">
                     <Transactions
                       data={this.state.data}
                       onUpdateData={this.handleDataUpdate}
+                      setPage={this.handlePageUpdate}
                     />
                   </Route>
                 </Switch>

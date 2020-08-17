@@ -7,6 +7,7 @@ class Users extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    this.props.setPage("users");
     this.state = {
       columnSet: [
         { title: "Last Name", field: "lname", defaultSort: "asc" },
