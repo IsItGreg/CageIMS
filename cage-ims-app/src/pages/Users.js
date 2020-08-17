@@ -48,11 +48,6 @@ class Users extends Component {
         transactions: [],
         creationDate: "",
       },
-      courseOptions: [
-        { text: "Photography I", value: "Photography I" },
-        { text: "Photography II", value: "Photography II" },
-        { text: "Documentary Image", value: "Documentary Image" },
-      ],
     };
   }
 
@@ -74,10 +69,7 @@ class Users extends Component {
     this.setState((prevState) => {
       let selectedUser = Object.assign({}, prevState.selectedUser);
       selectedUser[userProp] = val;
-      return { selectedUser };
-    });
-    this.setState({
-      isChangesMadeToModal: true,
+      return { selectedUser, isChangesMadeToModal: true };
     });
   };
 
@@ -122,7 +114,7 @@ class Users extends Component {
         email: "",
         phone: "",
         notes: "",
-        creationDate: "",
+        creationDate: new Date().getTime(),
         tranactions: [],
       },
       editable: false,
@@ -140,7 +132,6 @@ class Users extends Component {
       if (this.state.selectedUserId >= 0) {
         data.users[this.state.selectedUserId] = this.state.selectedUser;
       } else {
-        this.state.selectedUser.creationDate = new Date().getTime();
         data.users.push(this.state.selectedUser);
       }
       this.props.onUpdateData(data);
@@ -160,18 +151,12 @@ class Users extends Component {
     );
   };
 
-  handleDropdownAddition = (e, { value }) => {
-    this.setState((prevState) => ({
-      courseOptions: [{ text: value, value }, ...prevState.courseOptions],
-    }));
-  };
-
   handleDropdownChange = (e, { value }) => {
     const val = value;
     this.setState((prevState) => {
       let selectedUser = Object.assign({}, prevState.selectedUser);
       selectedUser.courses = val;
-      return { selectedUser };
+      return { selectedUser, isChangesMadeToModal: true };
     });
   };
 
@@ -180,6 +165,38 @@ class Users extends Component {
     const date = new Date(dateString);
     return (
       date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear()
+    );
+  };
+
+  formatUserDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    let hours = date.getHours();
+    let daynnite = "";
+    if (hours > 12) {
+      hours = hours - 12;
+      daynnite = "PM";
+    } else if (hours === 0) {
+      hours = 12;
+      daynnite = "AM";
+    } else if (hours < 12) {
+      daynnite = "AM";
+    }
+    return (
+      date.getMonth() +
+      1 +
+      "/" +
+      date.getDate() +
+      "/" +
+      date.getFullYear() +
+      " " +
+      hours +
+      ":" +
+      (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
+      ":" +
+      (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()) +
+      " " +
+      daynnite
     );
   };
 
@@ -263,7 +280,23 @@ class Users extends Component {
       }
     }
 
-    const courseOptions = this.state.courseOptions;
+    const courseOptions = Array.from(
+      new Set(
+        [].concat.apply(
+          [],
+          [
+            this.state.selectedUser,
+            ...this.props.data.items,
+            ...this.props.data.users,
+          ]
+            .filter((item) => item.courses)
+            .map((item) => item.courses)
+        )
+      )
+    )
+      .sort()
+      .map((item) => ({ text: item, value: item }));
+
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
@@ -347,7 +380,6 @@ class Users extends Component {
                           allowAdditions
                           options={courseOptions}
                           value={selectedUser.courses}
-                          onAddItem={this.handleDropdownAddition}
                           onChange={this.handleDropdownChange}
                           disabled={this.state.editable}
                         />
@@ -422,7 +454,7 @@ class Users extends Component {
                           <Form.Input
                             name="creationDate"
                             placeholder="creationDate"
-                            defaultValue={this.formatDate(
+                            defaultValue={this.formatUserDate(
                               selectedUser.creationDate
                             )}
                             readOnly
