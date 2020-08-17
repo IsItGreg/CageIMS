@@ -11,7 +11,6 @@ class CheckInOut extends Component {
     super(props);
     this.handleSearchResult = this.handleSearchResult.bind(this);
     this.handleTransactionsChanges = this.handleDataChanges.bind(this);
-    this.props.setPage("checkinout");
     this.state = {
       error: false,
       userFound: "",

@@ -12,11 +12,19 @@ const trigger = (
 );
 
 class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.onClickHomeButton = this.onClickHomeButton.bind(this);
+  }
+  onClickHomeButton() {
+    this.props.setPage("checkinout");
+  }
+
   render() {
     return (
       <Row className="header">
         <Col>
-          <Nav.Link href="#/">
+          <Nav.Link href="#/" onClick={this.onClickHomeButton}>
             <h2>
               <Icon name="camera" />
               CageIMS
