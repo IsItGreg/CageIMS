@@ -305,7 +305,7 @@ class Inventory extends Component {
   };
 
   generateInitialNextItemId = () => {
-    if (this.props.data.items.length === 0) return "0000";
+    if (this.props.data.items.length === 0) return "0001";
     const ids = this.props.data.items
       .map((item) => parseInt(item.iid))
       .sort((a, b) => a - b);
