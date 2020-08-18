@@ -8,25 +8,6 @@ class Users extends Component {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
-      columnSet: [
-        { title: "Last Name", field: "lname", defaultSort: "asc" },
-        { title: "First Name", field: "fname" },
-        {
-          title: "Courses",
-          field: "courses",
-          render: (rowData) => {
-            return rowData.courses.length > 0
-              ? rowData.courses.reduce((result, item) => (
-                  <>
-                    {result}
-                    {", "}
-                    {item}
-                  </>
-                ))
-              : "";
-          },
-        },
-      ],
       open: false,
 
       firstNameError: false,
@@ -309,7 +290,25 @@ class Users extends Component {
           <Col className="stretch-h flex-col">
             <Table
               data={Array.from(this.props.data.users)}
-              columns={this.state.columnSet}
+              columns={[
+                { title: "Last Name", field: "lname", defaultSort: "asc" },
+                { title: "First Name", field: "fname" },
+                {
+                  title: "Courses",
+                  field: "courses",
+                  render: (rowData) => {
+                    return rowData.courses.length > 0
+                      ? rowData.courses.reduce((result, item) => (
+                          <>
+                            {result}
+                            {", "}
+                            {item}
+                          </>
+                        ))
+                      : "";
+                  },
+                },
+              ]}
               title={<h2>Users</h2>}
               onRowClick={(event, rowData) =>
                 this.handleUserSelectClick(event, rowData)
