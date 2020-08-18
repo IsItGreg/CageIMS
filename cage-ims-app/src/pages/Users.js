@@ -477,6 +477,16 @@ class Users extends Component {
                     Edit
                   </Button>
                 ) : null}
+                {this.state.selectedUserId >= 0 ? (
+                  <Button
+                    toggle
+                    active={!this.state.editable}
+                    onClick={this.handleUserEditClick}
+                  >
+                    <Icon name="trash" />
+                    Delete
+                  </Button>
+                ) : null}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
