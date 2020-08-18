@@ -7,9 +7,7 @@ class Transactions extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    this.onClickCreateNewTransactionButton = this.onClickCreateNewTransactionButton.bind(
-      this
-    );
+    this.props.setPage("transactions");
     this.state = {
       columnSet: [
         { title: "First Name", field: "fname" },
@@ -134,10 +132,6 @@ class Transactions extends Component {
     );
   };
 
-  onClickCreateNewTransactionButton() {
-    this.props.setPage("checkinout");
-  }
-
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
@@ -166,11 +160,7 @@ class Transactions extends Component {
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button
-            basic
-            href="#/"
-            onClick={this.onClickCreateNewTransactionButton}
-          >
+          <Button basic href="#/">
             Create New Transaction
           </Button>
           <Divider clearing />

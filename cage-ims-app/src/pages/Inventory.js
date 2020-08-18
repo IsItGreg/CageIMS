@@ -7,6 +7,7 @@ class Inventory extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    this.props.setPage("inventory");
     const headerStyleGrey = {
       backgroundColor: "#E2E2E2",
       color: "black",

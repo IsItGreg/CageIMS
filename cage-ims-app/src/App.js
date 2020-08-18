@@ -157,7 +157,7 @@ class App extends Component {
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Router>
           <Container fluid className="no-gutters flex-col stretch-hw">
-            <Header setPage={this.handlePageUpdate} />
+            <Header />
             <Row className="flex-grow no-gutters">
               <Col md="auto" className="no-gutters">
                 <Sidebar activePage={this.state.activePage} />
@@ -168,6 +168,7 @@ class App extends Component {
                     <CheckInOut
                       data={this.state.data}
                       onUpdateData={this.handleDataUpdate}
+                      setPage={this.handlePageUpdate}
                     ></CheckInOut>
                   </Route>
                   {/* <Route path="/checkinout">
