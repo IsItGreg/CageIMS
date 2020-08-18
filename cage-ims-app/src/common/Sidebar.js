@@ -8,10 +8,7 @@ class Sidebar extends Component {
       <Navbar variant="dark" className="sidebar flex-column">
         <Nav className="flex-column">
           <Nav.Item>
-            <Nav.Link
-              href="#/"
-              active={this.props.activePage === "checkinout" ? true : false}
-            >
+            <Nav.Link href="#/">
               <h4>
                 <Icon name="sync" />
                 Check In/Out
@@ -19,10 +16,7 @@ class Sidebar extends Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link
-              href="#/users"
-              active={this.props.activePage === "users" ? true : false}
-            >
+            <Nav.Link href="#/users">
               <h4>
                 <Icon name="users" />
                 Users
@@ -30,10 +24,7 @@ class Sidebar extends Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link
-              href="#/inventory"
-              active={this.props.activePage === "inventory" ? true : false}
-            >
+            <Nav.Link href="#/inventory">
               <h4>
                 <Icon name="camera" />
                 Inventory
@@ -41,10 +32,7 @@ class Sidebar extends Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link
-              href="#/staff"
-              active={this.props.activePage === "staff" ? true : false}
-            >
+            <Nav.Link href="#/staff">
               <h4>
                 <Icon name="user" />
                 Staff
@@ -52,10 +40,7 @@ class Sidebar extends Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link
-              href="#/transactions"
-              active={this.props.activePage === "transactions" ? true : false}
-            >
+            <Nav.Link href="#/transactions">
               <h4>
                 <Icon name="history" />
                 Transactions

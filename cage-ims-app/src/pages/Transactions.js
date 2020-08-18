@@ -7,7 +7,6 @@ class Transactions extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    this.props.setPage("transactions");
     this.state = {
       columnSet: [
         { title: "First Name", field: "fname" },
@@ -38,7 +37,7 @@ class Transactions extends Component {
           title: "Checked In",
           field: "checkedInDate",
           render: (rowData) => this.formatDate(rowData.checkedInDate),
-          defaultSort: "desc",
+          defaultSort: "dec",
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.checkedInDate).indexOf(term) !==
               -1 || this.formatDate(rowData.checkedInDate).indexOf(term) !== -1,

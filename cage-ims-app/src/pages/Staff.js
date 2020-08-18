@@ -7,7 +7,6 @@ class Staff extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    this.props.setPage("staff");
     this.state = {
       dataSet: [
         {
