@@ -87,7 +87,7 @@ class Inventory extends Component {
       serialError: false,
       editable: true,
       isChangesMadeToModal: false,
-      isItemIDAvailable: false,
+      isItemIdAvailable: false,
 
       selectedItemId: null,
       selectedItem: {
@@ -114,7 +114,7 @@ class Inventory extends Component {
       submitName: "Close",
       submitIcon: null,
       isChangesMadeToModal: false,
-      isItemIDAvailable: false,
+      isItemIdAvailable: false,
     });
 
   handleChange = (e, userProp) => {
@@ -166,7 +166,7 @@ class Inventory extends Component {
       !this.state.nameError &&
       !this.state.categoryError &&
       !this.state.serialError &&
-      !this.state.isItemIDAvailable &&
+      !this.state.isItemIdAvailable &&
       !this.state.iidError
     ) {
       let data = Object.assign({}, this.props.data);
@@ -182,7 +182,7 @@ class Inventory extends Component {
 
   handleSubmitClick = () => {
     console.log(this.state.selectedItem.iid);
-    console.log(this.state.isItemIDAvailable);
+    console.log(this.state.isItemIdAvailable);
     if (!this.state.isChangesMadeToModal) {
       this.close();
       return;
@@ -294,12 +294,12 @@ class Inventory extends Component {
   handleItemIdVerify = (iid) => {
     if (iid === "") return "";
     if (isNaN(iid)) {
-      this.setState({ isItemIDAvailable: true });
+      this.setState({ isItemIdAvailable: true });
       return iid;
     }
     let fullID = "0".repeat(4 - iid.length) + iid;
     this.setState({
-      isItemIDAvailable: this.props.data.items.some(
+      isItemIdAvailable: this.props.data.items.some(
         (item, i) => item.iid === fullID && this.state.selectedItemId !== i
       ),
     });
@@ -521,7 +521,7 @@ class Inventory extends Component {
                               Error: Field cannot be empty.
                             </span>
                           )) ||
-                            (this.state.isItemIDAvailable && (
+                            (this.state.isItemIdAvailable && (
                               <span className="error-text modal-label-error-text">
                                 Error: Item ID is Taken or Incorrect
                               </span>
@@ -531,7 +531,7 @@ class Inventory extends Component {
                         <Form.Input
                           name="iid"
                           error={
-                            this.state.iidError || this.state.isItemIDAvailable
+                            this.state.iidError || this.state.isItemIdAvailable
                           }
                           maxLength="4"
                           placeholder="Item ID"
