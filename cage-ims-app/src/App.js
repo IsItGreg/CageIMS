@@ -44,7 +44,7 @@ class App extends Component {
         items: [
           {
             name: "Canon 5D Mk II",
-            iid: "1",
+            iid: "0001",
             brand: "Canon",
             serial: "123456",
             category: "Camera",
@@ -55,7 +55,7 @@ class App extends Component {
           },
           {
             name: "Canon 18-55 F4.0",
-            iid: "2",
+            iid: "0002",
             brand: "Canon",
             serial: "223456",
             category: "Lens",
@@ -66,7 +66,7 @@ class App extends Component {
           },
           {
             name: "Mavic Drone",
-            iid: "3",
+            iid: "0003",
             brand: "Mavic",
             serial: "323456",
             category: "Other",
@@ -77,7 +77,7 @@ class App extends Component {
           },
           {
             name: "Canon 5D Mk II",
-            iid: "4",
+            iid: "0004",
             brand: "Canon",
             serial: "423456",
             category: "Camera",
@@ -88,7 +88,7 @@ class App extends Component {
           },
           {
             name: "Canon 18-55 F4.0",
-            iid: "5",
+            iid: "0005",
             brand: "Canon",
             serial: "523456",
             category: "Lens",
@@ -102,7 +102,7 @@ class App extends Component {
           {
             tid: "1",
             uid: "54321",
-            iid: "1",
+            iid: "0001",
             checkedOutDate: new Date("7/22/2020").getTime(),
             dueDate: new Date("7/26/2020").getTime(),
             checkedInDate: new Date("7/24/2020").getTime(),
@@ -111,7 +111,7 @@ class App extends Component {
           {
             tid: "2",
             uid: "54321",
-            iid: "2",
+            iid: "0002",
             checkedOutDate: new Date("7/22/2020").getTime(),
             dueDate: new Date("7/26/2020").getTime(),
             checkedInDate: new Date("7/24/2020").getTime(),
@@ -120,7 +120,7 @@ class App extends Component {
           {
             tid: "3",
             uid: "12345",
-            iid: "1",
+            iid: "0001",
             checkedOutDate: new Date("7/25/2020").getTime(),
             dueDate: new Date("7/28/2020").getTime(),
             checkedInDate: "",
@@ -129,7 +129,7 @@ class App extends Component {
           {
             tid: "4",
             uid: "12345",
-            iid: "2",
+            iid: "0002",
             checkedOutDate: new Date("7/25/2020").getTime(),
             dueDate: new Date("7/27/2020").getTime(),
             checkedInDate: "",
@@ -146,7 +146,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.data);
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Router>

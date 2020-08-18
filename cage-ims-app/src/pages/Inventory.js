@@ -32,6 +32,7 @@ class Inventory extends Component {
         {
           title: "Item ID",
           field: "iid",
+          defaultSort: "asc",
           headerStyle: headerStyleGrey,
         },
         {
@@ -71,7 +72,6 @@ class Inventory extends Component {
         {
           title: "Expected Return Date",
           field: "expected",
-          defaultSort: "desc",
           headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.expected),
           customFilterAndSearch: (term, rowData) =>
@@ -87,6 +87,7 @@ class Inventory extends Component {
       serialError: false,
       editable: true,
       isChangesMadeToModal: false,
+      isItemIdUnavailable: false,
 
       selectedItemId: null,
       selectedItem: {
@@ -113,10 +114,14 @@ class Inventory extends Component {
       submitName: "Close",
       submitIcon: null,
       isChangesMadeToModal: false,
+      isItemIdUnavailable: false,
     });
 
   handleChange = (e, userProp) => {
-    const val = e.target.value;
+    let val = e.target.value;
+    if (userProp === "iid") {
+      val = this.handleItemIdVerify(val);
+    }
     this.setState((prevState) => {
       let selectedItem = Object.assign({}, prevState.selectedItem);
       selectedItem[userProp] = val;
@@ -136,7 +141,7 @@ class Inventory extends Component {
       selectedItemId: -1,
       selectedItem: {
         name: "",
-        iid: "",
+        iid: this.generateInitialNextItemId(),
         serial: "",
         category: "",
         notes: "",
@@ -146,6 +151,7 @@ class Inventory extends Component {
         expected: "",
       },
       editable: false,
+      isChangesMadeToModal: false,
     });
   };
 
@@ -160,6 +166,7 @@ class Inventory extends Component {
       !this.state.nameError &&
       !this.state.categoryError &&
       !this.state.serialError &&
+      !this.state.isItemIdUnavailable &&
       !this.state.iidError
     ) {
       let data = Object.assign({}, this.props.data);
@@ -174,6 +181,10 @@ class Inventory extends Component {
   };
 
   handleSubmitClick = () => {
+    if (!this.state.isChangesMadeToModal) {
+      this.close();
+      return;
+    }
     this.setState(
       {
         nameError: this.state.selectedItem.name === "",
@@ -278,6 +289,30 @@ class Inventory extends Component {
     });
   };
 
+  handleItemIdVerify = (iid) => {
+    if (iid === "") return "";
+    if (isNaN(iid)) {
+      this.setState({ isItemIdUnavailable: true });
+      return iid;
+    }
+    let fullID = "0".repeat(4 - iid.length) + iid;
+    this.setState({
+      isItemIdUnavailable: this.props.data.items.some(
+        (item, i) => item.iid === fullID && this.state.selectedItemId !== i
+      ),
+    });
+    return fullID;
+  };
+
+  generateInitialNextItemId = () => {
+    if (this.props.data.items.length === 0) return "0001";
+    const ids = this.props.data.items
+      .map((item) => parseInt(item.iid))
+      .sort((a, b) => a - b);
+    const newId = (ids.find((id) => !ids.includes(id + 1)) + 1).toString();
+    return "0".repeat(4 - newId.length) + newId;
+  };
+
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
@@ -290,11 +325,6 @@ class Inventory extends Component {
       items.expected = !(items.atid === "") ? result[0].dueDate : "";
       items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
     });
-
-    if (this.state.selectedItemId != null) {
-      if (this.state.selectedItemId >= 0) {
-      }
-    }
 
     const inventoryTablePanes = [
       {
@@ -483,15 +513,25 @@ class Inventory extends Component {
                       <Form.Field>
                         <label>
                           Item ID:
-                          {this.state.iidError && (
+                          {(this.state.iidError && (
                             <span className="error-text modal-label-error-text">
                               Error: Field cannot be empty.
                             </span>
-                          )}
+                          )) ||
+                            (this.state.isItemIdUnavailable && (
+                              <span className="error-text modal-label-error-text">
+                                Error: Item ID is Taken or Incorrect
+                              </span>
+                            ))}
+                          {}
                         </label>
                         <Form.Input
                           name="iid"
-                          error={this.state.iidError}
+                          error={
+                            this.state.iidError ||
+                            this.state.isItemIdUnavailable
+                          }
+                          maxLength="4"
                           placeholder="Item ID"
                           defaultValue={selectedItem.iid}
                           onChange={(e) => {
