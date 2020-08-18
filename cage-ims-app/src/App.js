@@ -66,7 +66,7 @@ class App extends Component {
           },
           {
             name: "Mavic Drone",
-            iid: "0003",
+            iid: "0200",
             brand: "Mavic",
             serial: "323456",
             category: "Other",
@@ -88,7 +88,7 @@ class App extends Component {
           },
           {
             name: "Canon 18-55 F4.0",
-            iid: "0005",
+            iid: "0240",
             brand: "Canon",
             serial: "523456",
             category: "Lens",
@@ -146,7 +146,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.data);
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Router>
