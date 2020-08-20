@@ -226,7 +226,7 @@ class Staff extends Component {
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>Staff</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
-                  <ClearIcon></ClearIcon>
+                  <ClearIcon />
                 </IconButton>
               </Modal.Header>
               <Modal.Body>
