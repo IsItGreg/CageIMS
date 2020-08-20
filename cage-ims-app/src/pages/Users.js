@@ -29,7 +29,6 @@ class Users extends Component {
           },
         },
       ],
-      open: false,
 
       firstNameError: false,
       lastNameError: false,
