@@ -205,6 +205,9 @@ class Users extends Component {
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
+    this.props.data.users.forEach((d) => {
+      if (d.tableData) d.tableData.checked = false;
+    });
     let table;
     if (this.state.selectedUserId != null) {
       if (this.state.selectedUserId >= 0) {
