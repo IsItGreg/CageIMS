@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Form, Divider, Button } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
+import IconButton from "@material-ui/core/IconButton";
+import ClearIcon from "@material-ui/icons/Clear";
 
 class Transactions extends Component {
   constructor(props) {
@@ -180,8 +182,11 @@ class Transactions extends Component {
               show={selectedItemId != null}
               onHide={this.close}
             >
-              <Modal.Header closeButton bsPrefix="modal-header">
-                <Modal.Title>Item</Modal.Title>
+              <Modal.Header bsPrefix="modal-header">
+                <Modal.Title>Transaction</Modal.Title>
+                <IconButton onClick={this.close} size="small" color="inherit">
+                  <ClearIcon></ClearIcon>
+                </IconButton>
               </Modal.Header>
               <Modal.Body>
                 <Row>

@@ -126,6 +126,9 @@
 .modal-header {
   background-color: #12558f;
   color: white;
+  *:focus {
+    outline: none;
+  }
 }
 .table-header {
   background-color: #467591;
