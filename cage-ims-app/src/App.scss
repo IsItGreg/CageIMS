@@ -126,7 +126,7 @@
 .modal-header {
   background-color: #12558f;
   color: white;
-  *:focus {
+  :focus {
     outline: none;
   }
 }
