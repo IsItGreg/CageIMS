@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Divider, Button, Form, Dropdown, Tab, Icon } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
+import IconButton from "@material-ui/core/IconButton";
+import ClearIcon from "@material-ui/icons/Clear";
 import Table from "../common/Table";
 
 class Users extends Component {
@@ -321,8 +323,11 @@ class Users extends Component {
               show={selectedUserId != null}
               onHide={this.close}
             >
-              <Modal.Header closeButton bsPrefix="modal-header">
+              <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>User</Modal.Title>
+                <IconButton onClick={this.close} size="small" color="inherit">
+                  <ClearIcon />
+                </IconButton>
               </Modal.Header>
               <Modal.Body>
                 <Row>
