@@ -414,7 +414,6 @@ class CheckInOutViewUser extends React.Component {
             columns={itemsColumnSet}
             title={<h3>All</h3>}
             onRowClick={(event, rowData) => {
-              console.log(rowData);
               this.handleRowItemClick(event, rowData);
             }}
             onSelectionChange={(rowData, event) => {
