@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Icon } from "semantic-ui-react";
 import { Nav, Navbar } from "react-bootstrap";
+import { withRouter } from "react-router-dom";
 
 class Sidebar extends Component {
   render() {
@@ -8,7 +9,7 @@ class Sidebar extends Component {
       <Navbar variant="dark" className="sidebar flex-column">
         <Nav className="flex-column">
           <Nav.Item>
-            <Nav.Link href="#/">
+            <Nav.Link href="#/" active={this.props.location.pathname === "/"}>
               <h4>
                 <Icon name="sync" />
                 Check In/Out
@@ -16,7 +17,10 @@ class Sidebar extends Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#/users">
+            <Nav.Link
+              href="#/users"
+              active={this.props.location.pathname === "/users"}
+            >
               <h4>
                 <Icon name="users" />
                 Users
@@ -24,7 +28,10 @@ class Sidebar extends Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#/inventory">
+            <Nav.Link
+              href="#/inventory"
+              active={this.props.location.pathname === "/inventory"}
+            >
               <h4>
                 <Icon name="camera" />
                 Inventory
@@ -32,7 +39,10 @@ class Sidebar extends Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#/staff">
+            <Nav.Link
+              href="#/staff"
+              active={this.props.location.pathname === "/staff"}
+            >
               <h4>
                 <Icon name="user" />
                 Staff
@@ -40,7 +50,10 @@ class Sidebar extends Component {
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#/transactions">
+            <Nav.Link
+              href="#/transactions"
+              active={this.props.location.pathname === "/transactions"}
+            >
               <h4>
                 <Icon name="history" />
                 Transactions
@@ -53,4 +66,4 @@ class Sidebar extends Component {
   }
 }
 
-export default Sidebar;
+export default withRouter(Sidebar);

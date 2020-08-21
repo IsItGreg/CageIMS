@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Nav } from "react-bootstrap";
 import { Dropdown, Icon } from "semantic-ui-react";
 
 // const sampleUser = { firstName: "User", lastName: "Name" };
@@ -62,10 +62,12 @@ class Header extends Component {
         style={{ display: "flex", flexDirection: "row" }}
       >
         <Col>
-          <h2>
-            <Icon name="camera" />
-            CageIMS
-          </h2>
+          <Nav.Link href="#/">
+            <h2>
+              <Icon name="camera" />
+              CageIMS
+            </h2>
+          </Nav.Link>
         </Col>
         <Col xs={{ span: 3, offset: 3 }}>
           <div>
