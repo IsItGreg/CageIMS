@@ -413,10 +413,11 @@ class CheckInOutViewUser extends React.Component {
             itemType={"item"}
             columns={itemsColumnSet}
             title={<h3>All</h3>}
-            onRowClick={(event, rowData) =>
-              this.handleRowItemClick(event, rowData)
-            }
-            onSelectionChange={(event, rowData) => {
+            onRowClick={(event, rowData) => {
+              console.log(rowData);
+              this.handleRowItemClick(event, rowData);
+            }}
+            onSelectionChange={(rowData, event) => {
               this.handleRowItemClick(event, rowData, false);
             }}
             options={{ selection: true }}
@@ -440,7 +441,7 @@ class CheckInOutViewUser extends React.Component {
             onRowClick={(event, rowData) =>
               this.handleRowItemClick(event, rowData)
             }
-            onSelectionChange={(event, rowData) => {
+            onSelectionChange={(rowData, event) => {
               this.handleRowItemClick(event, rowData, false);
             }}
             options={{ selection: true }}

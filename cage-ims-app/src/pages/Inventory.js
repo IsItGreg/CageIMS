@@ -315,7 +315,24 @@ class Inventory extends Component {
     return "0".repeat(4 - newId.length) + newId;
   };
 
+  //Function to clear lifted state items of tableData
+  //
+  //returns: lifted state item data without tableData
+  getList = (items) => {
+    var returnData = [];
+    items.forEach((element) => {
+      var elCopy = Object.assign({}, element);
+      delete elCopy["tableData"];
+      returnData.push(elCopy);
+    });
+    return returnData;
+  };
+
   render() {
+    //Reset checked table data
+    this.props.data.items.forEach((d) => {
+      if (d.tableData) d.tableData.checked = false;
+    });
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
 
@@ -333,7 +350,7 @@ class Inventory extends Component {
         menuItem: "All",
         render: () => (
           <Table
-            data={Array.from(this.props.data.items)}
+            data={this.props.data.items}
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
             onRowClick={(event, rowData) =>
@@ -346,10 +363,8 @@ class Inventory extends Component {
         menuItem: "Available",
         render: () => (
           <Table
-            data={Array.from(
-              this.props.data.items.filter(
-                (name) => name.backgroundColor !== "mistyrose"
-              )
+            data={this.props.data.items.filter(
+              (name) => name.backgroundColor !== "mistyrose"
             )}
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
@@ -363,10 +378,8 @@ class Inventory extends Component {
         menuItem: "Unavailable",
         render: () => (
           <Table
-            data={Array.from(
-              this.props.data.items.filter(
-                (name) => name.backgroundColor === "mistyrose"
-              )
+            data={this.props.data.items.filter(
+              (name) => name.backgroundColor === "mistyrose"
             )}
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
