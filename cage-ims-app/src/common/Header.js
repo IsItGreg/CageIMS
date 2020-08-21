@@ -12,14 +12,65 @@ const trigger = (
 );
 
 class Header extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      curTime: new Date()
+        .toLocaleString(
+          [],
+          ("en-US",
+          {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })
+        )
+        .split(",")
+        .join("\t"),
+    };
+  }
+
+  componentDidMount() {
+    setInterval(() => {
+      this.setState({
+        curTime: new Date()
+          .toLocaleString(
+            [],
+            ("en-US",
+            {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })
+          )
+          .split(",")
+          .join("\t"),
+      });
+    }, 1000);
+  }
+
   render() {
     return (
-      <Row className="header">
+      <Row
+        className="header align-items-center"
+        style={{ display: "flex", flexDirection: "row" }}
+      >
         <Col>
           <h2>
             <Icon name="camera" />
             CageIMS
           </h2>
+        </Col>
+        <Col xs={{ span: 3, offset: 3 }}>
+          <div>
+            <h5>{this.state.curTime}</h5>
+          </div>
         </Col>
         <Col>
           <Dropdown
