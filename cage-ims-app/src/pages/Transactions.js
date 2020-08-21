@@ -20,6 +20,7 @@ class Transactions extends Component {
         {
           title: "Checked Out",
           field: "checkedOutDate",
+          defaultSort: "desc",
           render: (rowData) => this.formatDate(rowData.checkedOutDate),
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.checkedOutDate).indexOf(
@@ -39,7 +40,6 @@ class Transactions extends Component {
           title: "Checked In",
           field: "checkedInDate",
           render: (rowData) => this.formatDate(rowData.checkedInDate),
-          defaultSort: "dec",
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.checkedInDate).indexOf(term) !==
               -1 || this.formatDate(rowData.checkedInDate).indexOf(term) !== -1,
@@ -134,6 +134,10 @@ class Transactions extends Component {
   };
 
   render() {
+    //Reset checked table data
+    this.props.data.transactions.forEach((d) => {
+      if (d.tableData) d.tableData.checked = false;
+    });
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
 
