@@ -351,7 +351,7 @@ class Inventory extends Component {
           menuItem: "Active",
           render: () => (
             <Table
-              title={this.state.selectedItem.name}
+              title={<h5>{this.state.selectedItem.name}</h5>}
               columns={[
                 { title: "User ID", field: "uid" },
                 { title: "Transaction ID", field: "tid" },
@@ -378,7 +378,7 @@ class Inventory extends Component {
           menuItem: "Completed",
           render: () => (
             <Table
-              title={this.state.selectedItem.name}
+              title={<h5>{this.state.selectedItem.name}</h5>}
               columns={[
                 { title: "User ID", field: "uid" },
                 { title: "Transaction ID", field: "tid" },
@@ -502,12 +502,7 @@ class Inventory extends Component {
         <div className="page-content stretch-h">
           <Col className="stretch-h flex-col">
             <Tab panes={inventoryTablePanes} className="stretch-h flex-col" />
-            <Modal
-              centered
-              dialogClassName="modal-90w"
-              show={selectedItemId != null}
-              onHide={this.close}
-            >
+            <Modal centered show={selectedItemId != null} onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>Item</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
