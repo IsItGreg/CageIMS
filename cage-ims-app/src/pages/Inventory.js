@@ -43,17 +43,18 @@ class Inventory extends Component {
           headerStyle: headerStyleGrey,
         },
         {
-          title: "Availablity",
-          field: "atid",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => {
-            return rowData.atid === "" ? "Available" : "Unavailable";
-          },
-        },
-        {
           title: "Notes",
           field: "notes",
           headerStyle: headerStyleGrey,
+          render: (rowData) => {
+            return rowData.notes ? (
+              <Icon
+                size="large"
+                name="check circle"
+                className="notes-icon"
+              ></Icon>
+            ) : null;
+          },
         },
         {
           title: "Courses",
@@ -75,7 +76,8 @@ class Inventory extends Component {
           title: "Expected Return Date",
           field: "expected",
           headerStyle: headerStyleGrey,
-          render: (rowData) => this.formatDate(rowData.expected),
+          render: (rowData) =>
+            rowData.expected ? this.formatDate(rowData.expected) : "Available",
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
               -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
