@@ -48,7 +48,11 @@ class Inventory extends Component {
           headerStyle: headerStyleGrey,
           render: (rowData) => {
             return rowData.notes ? (
-              <Icon size="large" name="check circle"></Icon>
+              <Icon
+                size="large"
+                name="check circle"
+                className="notes-icon"
+              ></Icon>
             ) : null;
           },
         },
