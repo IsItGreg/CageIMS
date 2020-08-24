@@ -8,7 +8,7 @@ import {
   Tab,
   Menu,
 } from "semantic-ui-react";
-import { Col, Row, Modal } from "react-bootstrap";
+import { Col, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
