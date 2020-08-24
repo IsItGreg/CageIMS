@@ -51,17 +51,18 @@ class Inventory extends Component {
           headerStyle: headerStyleGrey,
         },
         {
-          title: "Availablity",
-          field: "atid",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => {
-            return rowData.atid === "" ? "Available" : "Unavailable";
-          },
-        },
-        {
           title: "Notes",
           field: "notes",
           headerStyle: headerStyleGrey,
+          render: (rowData) => {
+            return rowData.notes ? (
+              <Icon
+                size="large"
+                name="check circle"
+                className="notes-icon"
+              ></Icon>
+            ) : null;
+          },
         },
         {
           title: "Courses",
