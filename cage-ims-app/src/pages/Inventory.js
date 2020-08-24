@@ -717,7 +717,7 @@ class Inventory extends Component {
                       onClick={this.handleItemClick}
                     >
                       <Icon name="clipboard list" />
-                      User Form
+                      Item Form
                     </Menu.Item>
                     <Menu.Item
                       name="table"
