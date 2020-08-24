@@ -36,6 +36,7 @@ class Transactions extends Component {
         {
           title: "Checked Out",
           field: "checkedOutDate",
+          defaultSort: "desc",
           headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.checkedOutDate),
           customFilterAndSearch: (term, rowData) =>
@@ -58,7 +59,6 @@ class Transactions extends Component {
           field: "checkedInDate",
           headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.checkedInDate),
-          defaultSort: "dec",
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.checkedInDate).indexOf(term) !==
               -1 || this.formatDate(rowData.checkedInDate).indexOf(term) !== -1,
