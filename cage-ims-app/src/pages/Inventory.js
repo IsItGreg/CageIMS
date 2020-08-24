@@ -329,10 +329,6 @@ class Inventory extends Component {
   };
 
   render() {
-    //Reset checked table data
-    this.props.data.items.forEach((d) => {
-      if (d.tableData) d.tableData.checked = false;
-    });
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
 
@@ -350,7 +346,7 @@ class Inventory extends Component {
         menuItem: "All",
         render: () => (
           <Table
-            data={this.props.data.items}
+            data={this.getList(this.props.data.items)}
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
             onRowClick={(event, rowData) =>
@@ -363,8 +359,10 @@ class Inventory extends Component {
         menuItem: "Available",
         render: () => (
           <Table
-            data={this.props.data.items.filter(
-              (name) => name.backgroundColor !== "mistyrose"
+            data={this.getList(
+              this.props.data.items.filter(
+                (name) => name.backgroundColor !== "mistyrose"
+              )
             )}
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
@@ -378,8 +376,10 @@ class Inventory extends Component {
         menuItem: "Unavailable",
         render: () => (
           <Table
-            data={this.props.data.items.filter(
-              (name) => name.backgroundColor === "mistyrose"
+            data={this.getList(
+              this.props.data.items.filter(
+                (name) => name.backgroundColor === "mistyrose"
+              )
             )}
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}

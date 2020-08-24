@@ -134,10 +134,6 @@ class Transactions extends Component {
   };
 
   render() {
-    //Reset checked table data
-    this.props.data.transactions.forEach((d) => {
-      if (d.tableData) d.tableData.checked = false;
-    });
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
 

@@ -203,10 +203,6 @@ class Users extends Component {
   };
 
   render() {
-    //Reset checked table data
-    this.props.data.users.forEach((d) => {
-      if (d.tableData) d.tableData.checked = false;
-    });
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
     let table;
