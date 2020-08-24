@@ -1,7 +1,17 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown, Icon, Tab } from "semantic-ui-react";
-import { Col, Row, Modal } from "react-bootstrap";
+import {
+  Divider,
+  Button,
+  Form,
+  Dropdown,
+  Icon,
+  Tab,
+  Menu,
+} from "semantic-ui-react";
+import { Col, Modal } from "react-bootstrap";
 import Table from "../common/Table";
+import IconButton from "@material-ui/core/IconButton";
+import ClearIcon from "@material-ui/icons/Clear";
 
 class Inventory extends Component {
   constructor(props) {
@@ -41,17 +51,18 @@ class Inventory extends Component {
           headerStyle: headerStyleGrey,
         },
         {
-          title: "Availablity",
-          field: "atid",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => {
-            return rowData.atid === "" ? "Available" : "Unavailable";
-          },
-        },
-        {
           title: "Notes",
           field: "notes",
           headerStyle: headerStyleGrey,
+          render: (rowData) => {
+            return rowData.notes ? (
+              <Icon
+                size="large"
+                name="check circle"
+                className="notes-icon"
+              ></Icon>
+            ) : null;
+          },
         },
         {
           title: "Courses",
@@ -73,12 +84,15 @@ class Inventory extends Component {
           title: "Expected Return Date",
           field: "expected",
           headerStyle: headerStyleGrey,
-          render: (rowData) => this.formatDate(rowData.expected),
+          render: (rowData) =>
+            rowData.expected ? this.formatDate(rowData.expected) : "Available",
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
               -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
         },
       ],
+
+      activeItem: "item",
       open: false,
 
       nameError: false,
@@ -100,6 +114,7 @@ class Inventory extends Component {
         courses: [],
         expected: "",
         creationDate: "",
+        transactions: [],
       },
     };
   }
@@ -129,14 +144,32 @@ class Inventory extends Component {
     });
   };
 
-  handleUserSelectClick = (e, rowData) => {
+  handleItemSelectClick = (e, rowData) => {
+    let selectedItemId = rowData.iid;
+    let selectedItem = Object.assign(
+      {},
+      this.props.data.items.find((item) => item.iid === selectedItemId)
+    );
+    let transactions = Array.from(
+      this.props.data.transactions.filter(
+        (transaction) => transaction.iid === selectedItem.iid
+      )
+    );
+    transactions.forEach((transaction) => {
+      transaction.backgroundColor =
+        !transaction.checkedInDate &&
+        new Date(transaction.dueDate).getTime() < new Date().getTime()
+          ? "mistyrose"
+          : "";
+    });
+    selectedItem["transactions"] = transactions;
     this.setState({
-      selectedItemId: rowData.tableData.id,
-      selectedItem: this.props.data.items[rowData.tableData.id],
+      selectedItemId,
+      selectedItem,
     });
   };
 
-  handleAddUserClick = () => {
+  handleItemAddClick = () => {
     this.setState({
       selectedItemId: -1,
       selectedItem: {
@@ -149,13 +182,14 @@ class Inventory extends Component {
         courses: [],
         creationDate: new Date().getTime(),
         expected: "",
+        transactions: [],
       },
       editable: false,
       isChangesMadeToModal: false,
     });
   };
 
-  handleUserEditClick = () => {
+  handleItemEditClick = () => {
     this.setState({
       editable: !this.state.editable,
     });
@@ -233,32 +267,17 @@ class Inventory extends Component {
   formatItemDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    let hours = date.getHours();
-    let daynnite = "";
-    if (hours > 12) {
-      hours = hours - 12;
-      daynnite = "PM";
-    } else if (hours === 0) {
-      hours = 12;
-      daynnite = "AM";
-    } else if (hours < 12) {
-      daynnite = "AM";
-    }
-    return (
-      date.getMonth() +
-      1 +
-      "/" +
-      date.getDate() +
-      "/" +
-      date.getFullYear() +
-      " " +
-      hours +
-      ":" +
-      (date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()) +
-      ":" +
-      (date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds()) +
-      " " +
-      daynnite
+    return date.toLocaleDateString(
+      [],
+      ("en-US",
+      {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
     );
   };
 
@@ -313,9 +332,12 @@ class Inventory extends Component {
     return "0".repeat(4 - newId.length) + newId;
   };
 
+  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
+    let formTablePanes = [];
 
     let items = Array.from(this.props.data.items);
     items.forEach((items) => {
@@ -326,6 +348,64 @@ class Inventory extends Component {
       items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
     });
 
+    if (this.state.selectedItem != null && this.state.selectedItemId >= 0) {
+      formTablePanes = [
+        {
+          menuItem: "Active",
+          render: () => (
+            <Table
+              title={<h5>{this.state.selectedItem.name}</h5>}
+              columns={[
+                { title: "User ID", field: "uid" },
+                { title: "Transaction ID", field: "tid" },
+                {
+                  title: "Checked Out Date",
+                  field: "checkedOutDate",
+                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                },
+                {
+                  title: "Due Date",
+                  field: "dueDate",
+                  render: (rowData) => this.formatDate(rowData.dueDate),
+                },
+              ]}
+              data={Array.from(
+                this.state.selectedItem.transactions.filter(
+                  (name) => name.checkedInDate === ""
+                )
+              )}
+            ></Table>
+          ),
+        },
+        {
+          menuItem: "Completed",
+          render: () => (
+            <Table
+              title={<h5>{this.state.selectedItem.name}</h5>}
+              columns={[
+                { title: "User ID", field: "uid" },
+                { title: "Transaction ID", field: "tid" },
+                {
+                  title: "Checked Out Date",
+                  field: "checkedOutDate",
+                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                },
+                {
+                  title: "Checked In Date",
+                  field: "checkedInDate",
+                  render: (rowData) => this.formatDate(rowData.checkedInDate),
+                },
+              ]}
+              data={Array.from(
+                this.state.selectedItem.transactions.filter(
+                  (name) => !(name.checkedInDate === "")
+                )
+              )}
+            ></Table>
+          ),
+        },
+      ];
+    }
     const inventoryTablePanes = [
       {
         menuItem: "All",
@@ -335,7 +415,7 @@ class Inventory extends Component {
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
             onRowClick={(event, rowData) =>
-              this.handleUserSelectClick(event, rowData)
+              this.handleItemSelectClick(event, rowData)
             }
           />
         ),
@@ -352,7 +432,7 @@ class Inventory extends Component {
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
             onRowClick={(event, rowData) =>
-              this.handleUserSelectClick(event, rowData)
+              this.handleItemSelectClick(event, rowData)
             }
           />
         ),
@@ -369,7 +449,7 @@ class Inventory extends Component {
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
             onRowClick={(event, rowData) =>
-              this.handleUserSelectClick(event, rowData)
+              this.handleItemSelectClick(event, rowData)
             }
           />
         ),
@@ -414,7 +494,10 @@ class Inventory extends Component {
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button basic onClick={this.handleAddUserClick}>
+          <Button
+            style={{ backgroundColor: "#46C88C", color: "white" }}
+            onClick={this.handleItemAddClick}
+          >
             Create New Item
           </Button>
           <Divider clearing />
@@ -422,94 +505,37 @@ class Inventory extends Component {
         <div className="page-content stretch-h">
           <Col className="stretch-h flex-col">
             <Tab panes={inventoryTablePanes} className="stretch-h flex-col" />
-            <Modal
-              centered
-              size={this.state.selectedItemId >= 0 ? "lg" : "lg"}
-              show={selectedItemId != null}
-              onHide={this.close}
-            >
-              <Modal.Header closeButton bsPrefix="modal-header">
+            <Modal centered show={selectedItemId != null} onHide={this.close}>
+              <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>Item</Modal.Title>
+                <IconButton onClick={this.close} size="small" color="inherit">
+                  <ClearIcon />
+                </IconButton>
               </Modal.Header>
               <Modal.Body>
-                <Row>
-                  <Col>
-                    <Form>
-                      <Form.Field>
-                        <label>
-                          Name:
-                          {this.state.nameError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
-                        <Form.Input
-                          error={this.state.nameError}
-                          name="name"
-                          placeholder="Name"
-                          defaultValue={selectedItem.name}
-                          onChange={(e) => {
-                            this.handleChange(e, "name");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Brand:</label>
-                        <Dropdown
-                          placeholder="Brand"
-                          name="brand"
-                          fluid
-                          search
-                          selection
-                          allowAdditions
-                          clearable
-                          options={brandOptions}
-                          value={selectedItem.brand}
-                          onChange={this.handleBrandDropdownChange}
-                          disabled={this.state.editable}
-                        />
-                      </Form.Field>
-                      <Form.Field>
-                        <label>
-                          Category:
-                          {this.state.categoryError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
-                        <Dropdown
-                          placeholder="Category"
-                          name="category"
-                          fluid
-                          error={this.state.categoryError}
-                          search
-                          selection
-                          allowAdditions
-                          options={categoryOptions}
-                          value={selectedItem.category}
-                          onChange={this.handleCategoryDropdownChange}
-                          disabled={this.state.editable}
-                        />
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Courses:</label>
-                        <Dropdown
-                          placeholder="Courses"
-                          name="courses"
-                          fluid
-                          multiple
-                          search
-                          selection
-                          allowAdditions
-                          options={courseOptions}
-                          value={selectedItem.courses}
-                          onChange={this.handleCourseDropdownChange}
-                          disabled={this.state.editable}
-                        />
-                      </Form.Field>
+                {this.state.activeItem === "item" && (
+                  <Form>
+                    <Form.Field>
+                      <label>
+                        Name:
+                        {this.state.nameError && (
+                          <span className="error-text modal-label-error-text">
+                            Error: Field cannot be empty.
+                          </span>
+                        )}
+                      </label>
+                      <Form.Input
+                        error={this.state.nameError}
+                        name="name"
+                        placeholder="Name"
+                        defaultValue={selectedItem.name}
+                        onChange={(e) => {
+                          this.handleChange(e, "name");
+                        }}
+                        readOnly={this.state.editable}
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Group widths="equal">
                       <Form.Field>
                         <label>
                           Item ID:
@@ -560,19 +586,78 @@ class Inventory extends Component {
                           readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
+                    </Form.Group>
+                    <Form.Group widths="equal">
                       <Form.Field>
-                        <label>Notes:</label>
-                        <Form.Input
-                          name="notes"
-                          error={this.state.notesError}
-                          placeholder="Notes"
-                          defaultValue={selectedItem.notes}
-                          onChange={(e) => {
-                            this.handleChange(e, "notes");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
+                        <label>Brand:</label>
+                        <Dropdown
+                          placeholder="Brand"
+                          name="brand"
+                          fluid
+                          search
+                          selection
+                          allowAdditions
+                          clearable
+                          options={brandOptions}
+                          value={selectedItem.brand}
+                          onChange={this.handleBrandDropdownChange}
+                          disabled={this.state.editable}
+                        />
                       </Form.Field>
+                      <Form.Field>
+                        <label>
+                          Category:
+                          {this.state.categoryError && (
+                            <span className="error-text modal-label-error-text">
+                              Error: Field cannot be empty.
+                            </span>
+                          )}
+                        </label>
+                        <Dropdown
+                          placeholder="Category"
+                          name="category"
+                          fluid
+                          error={this.state.categoryError}
+                          search
+                          selection
+                          allowAdditions
+                          options={categoryOptions}
+                          value={selectedItem.category}
+                          onChange={this.handleCategoryDropdownChange}
+                          disabled={this.state.editable}
+                        />
+                      </Form.Field>
+                    </Form.Group>
+                    <Form.Field>
+                      <label>Courses:</label>
+                      <Dropdown
+                        placeholder="Courses"
+                        name="courses"
+                        fluid
+                        multiple
+                        search
+                        selection
+                        allowAdditions
+                        options={courseOptions}
+                        value={selectedItem.courses}
+                        onChange={this.handleCourseDropdownChange}
+                        disabled={this.state.editable}
+                      />
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Notes:</label>
+                      <Form.Input
+                        name="notes"
+                        error={this.state.notesError}
+                        placeholder="Notes"
+                        defaultValue={selectedItem.notes}
+                        onChange={(e) => {
+                          this.handleChange(e, "notes");
+                        }}
+                        readOnly={this.state.editable}
+                      ></Form.Input>
+                    </Form.Field>
+                    <Form.Group widths="equal">
                       {this.state.selectedItemId >= 0 ? (
                         <Form.Field>
                           <label>Date Created:</label>
@@ -586,33 +671,29 @@ class Inventory extends Component {
                           ></Form.Input>
                         </Form.Field>
                       ) : null}
-                      {!(this.state.selectedItem.expected === "") ? (
-                        <div>
-                          <Form.Field>
-                            <label>Transaction ID:</label>
-                            <Form.Input
-                              name="atid"
-                              placeholder="Transaction ID"
-                              defaultValue={selectedItem.atid}
-                              readOnly
-                            ></Form.Input>
-                          </Form.Field>
-                          <Form.Field>
-                            <label>Expected Return Date:</label>
-                            <Form.Input
-                              name="expected"
-                              placeholder="Expected Return Date"
-                              defaultValue={this.formatDate(
-                                selectedItem.expected
-                              )}
-                              readOnly
-                            ></Form.Input>
-                          </Form.Field>
-                        </div>
-                      ) : null}
-                    </Form>
-                  </Col>
-                </Row>
+                      {this.state.selectedItem.expected && (
+                        <Form.Field>
+                          <label>Expected Return Date:</label>
+                          <Form.Input
+                            name="expected"
+                            placeholder="Expected"
+                            defaultValue={this.formatDate(
+                              selectedItem.expected
+                            )}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Field>
+                      )}
+                    </Form.Group>
+                  </Form>
+                )}
+                {this.state.activeItem === "table" &&
+                  this.state.selectedItemId >= 0 && (
+                    <Tab
+                      panes={formTablePanes}
+                      className="stretch-h flex-col"
+                    />
+                  )}
               </Modal.Body>
               <Modal.Footer>
                 {this.state.selectedItemId >= 0 ? (
@@ -620,14 +701,34 @@ class Inventory extends Component {
                     className="btn btn-primary mr-auto"
                     toggle
                     active={!this.state.editable}
-                    onClick={this.handleUserEditClick}
+                    onClick={this.handleItemEditClick}
                   >
                     <Icon name="pencil" />
                     Edit
                   </Button>
                 ) : null}
+                {this.state.selectedItemId >= 0 && (
+                  <Menu compact className="mr-auto">
+                    <Menu.Item
+                      name="item"
+                      active={this.state.activeItem === "item"}
+                      onClick={this.handleItemClick}
+                    >
+                      <Icon name="clipboard list" />
+                      Item Form
+                    </Menu.Item>
+                    <Menu.Item
+                      name="table"
+                      active={this.state.activeItem === "table"}
+                      onClick={this.handleItemClick}
+                    >
+                      <Icon name="book" />
+                      Transactions
+                    </Menu.Item>
+                  </Menu>
+                )}
                 <Button
-                  id="add-icon-handler"
+                  id="add-icon-handler ml-auto"
                   variant="primary"
                   onClick={this.handleSubmitClick}
                 >

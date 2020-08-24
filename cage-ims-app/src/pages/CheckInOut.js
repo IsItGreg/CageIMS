@@ -832,7 +832,9 @@ class CheckInOutViewUser extends React.Component {
                           <Form.Input
                             name="checkedOut"
                             placeholder="Checked Out"
-                            defaultValue={selectedItem.checkedOutDate}
+                            defaultValue={this.formatDate(
+                              selectedItem.checkedOutDate
+                            )}
                             onChange={(e) => {
                               this.handleChange(e, "checkedOutDate");
                             }}
@@ -845,7 +847,9 @@ class CheckInOutViewUser extends React.Component {
                             name="checkedIn"
                             placeholder="Checked In"
                             error={!selectedItem.checkedInDate}
-                            defaultValue={selectedItem.checkedInDate}
+                            defaultValue={this.formatDate(
+                              selectedItem.checkedInDate
+                            )}
                             onChange={(e) => {
                               this.handleChange(e, "checkedInDate");
                             }}
@@ -857,7 +861,7 @@ class CheckInOutViewUser extends React.Component {
                           <Form.Input
                             name="due"
                             placeholder="Due Date"
-                            defaultValue={selectedItem.dueDate}
+                            defaultValue={this.formatDate(selectedItem.dueDate)}
                             onChange={(e) => {
                               this.handleChange(e, "dueDate");
                             }}

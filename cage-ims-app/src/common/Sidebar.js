@@ -1,56 +1,70 @@
 import React, { Component } from "react";
 import { Icon } from "semantic-ui-react";
-import { Nav, Navbar } from "react-bootstrap";
+import { Nav, Navbar, Dropdown } from "react-bootstrap";
+import { withRouter } from "react-router-dom";
 
 class Sidebar extends Component {
   render() {
     return (
-      <Navbar variant="dark" className="sidebar flex-column">
-        <Nav className="flex-column">
+      <Navbar variant="light" className="sidebar flex-column">
+        <Nav variant="pills" className="flex-column">
           <Nav.Item>
-            <Nav.Link href="#/">
-              <h4>
-                <Icon name="sync" />
+            <Nav.Link href="#/" active={this.props.location.pathname === "/"}>
+              <h5>
+                <Icon name="handshake" />
                 Check In/Out
-              </h4>
+              </h5>
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#/users">
-              <h4>
+            <Nav.Link
+              href="#/users"
+              active={this.props.location.pathname === "/users"}
+            >
+              <h5>
                 <Icon name="users" />
                 Users
-              </h4>
+              </h5>
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#/inventory">
-              <h4>
+            <Nav.Link
+              href="#/inventory"
+              active={this.props.location.pathname === "/inventory"}
+            >
+              <h5>
                 <Icon name="camera" />
                 Inventory
-              </h4>
+              </h5>
             </Nav.Link>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link href="#/staff">
-              <h4>
-                <Icon name="user" />
+            <Nav.Link
+              href="#/transactions"
+              active={this.props.location.pathname === "/transactions"}
+            >
+              <h5>
+                <Icon name="book" />
+                History
+              </h5>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              href="#/staff"
+              active={this.props.location.pathname === "/staff"}
+            >
+              <h5>
+                <Icon name="id card" />
                 Staff
-              </h4>
+              </h5>
             </Nav.Link>
           </Nav.Item>
-          <Nav.Item>
-            <Nav.Link href="#/transactions">
-              <h4>
-                <Icon name="history" />
-                Transactions
-              </h4>
-            </Nav.Link>
-          </Nav.Item>
+          <Dropdown.Divider />
         </Nav>
       </Navbar>
     );
   }
 }
 
-export default Sidebar;
+export default withRouter(Sidebar);
