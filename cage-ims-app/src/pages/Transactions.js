@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, Divider, Button } from "semantic-ui-react";
+import { Form, Divider, Button, Icon } from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import Table from "../common/Table";
 import IconButton from "@material-ui/core/IconButton";
@@ -9,17 +9,34 @@ class Transactions extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
     this.state = {
       columnSet: [
-        { title: "First Name", field: "fname" },
-        { title: "Last Name", field: "lname" },
-        { title: "Item Name", field: "name" },
-        { title: "Item ID", field: "iid" },
-        { title: "Category", field: "category" },
-        { title: "Notes", field: "notes" },
+        { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
+        { title: "Last Name", field: "lname", headerStyle: headerStyleGrey },
+        { title: "Item Name", field: "name", headerStyle: headerStyleGrey },
+        { title: "Item ID", field: "iid", headerStyle: headerStyleGrey },
+        { title: "Category", field: "category", headerStyle: headerStyleGrey },
+        {
+          title: "Notes",
+          field: "notes",
+          headerStyle: headerStyleGrey,
+          render: (rowData) => {
+            return (
+              rowData.notes && (
+                <Icon size="large" className="notes-icon" name="check circle" />
+              )
+            );
+          },
+        },
         {
           title: "Checked Out",
           field: "checkedOutDate",
+          headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.checkedOutDate),
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.checkedOutDate).indexOf(
@@ -30,6 +47,7 @@ class Transactions extends Component {
         {
           title: "Due Date",
           field: "dueDate",
+          headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.dueDate),
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.dueDate).indexOf(term) !== -1 ||
@@ -38,6 +56,7 @@ class Transactions extends Component {
         {
           title: "Checked In",
           field: "checkedInDate",
+          headerStyle: headerStyleGrey,
           render: (rowData) => this.formatDate(rowData.checkedInDate),
           defaultSort: "dec",
           customFilterAndSearch: (term, rowData) =>
@@ -45,8 +64,6 @@ class Transactions extends Component {
               -1 || this.formatDate(rowData.checkedInDate).indexOf(term) !== -1,
         },
       ],
-      open: false,
-
       selectedItemId: null,
       selectedItem: {
         fname: "",
@@ -192,41 +209,42 @@ class Transactions extends Component {
                 <Row>
                   <Col>
                     <Form>
+                      <Form.Group widths="equal">
+                        <Form.Field>
+                          <label>Item Name:</label>
+                          <Form.Input
+                            name="name"
+                            placeholder="name"
+                            defaultValue={selectedItem.name}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Field>
+                        <Form.Field>
+                          <label>Category:</label>
+                          <Form.Input
+                            name="category"
+                            placeholder="Category"
+                            defaultValue={selectedItem.category}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Field>
+                      </Form.Group>
                       <Form.Field>
-                        <label>First Name: </label>
-                        <Form.Input
-                          name="fname"
-                          placeholder="First Name"
-                          defaultValue={selectedItem.fname}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Last Name:</label>
-                        <Form.Input
-                          name="lname"
-                          placeholder="Last Name"
-                          defaultValue={selectedItem.lname}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Item Name:</label>
-                        <Form.Input
-                          name="name"
-                          placeholder="name"
-                          defaultValue={selectedItem.name}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Category:</label>
-                        <Form.Input
-                          name="category"
-                          placeholder="Category"
-                          defaultValue={selectedItem.category}
-                          readOnly
-                        ></Form.Input>
+                        <label>Rented by:</label>
+                        <Form.Group widths="equal">
+                          <Form.Input
+                            name="fname"
+                            placeholder="First Name"
+                            defaultValue={selectedItem.fname}
+                            readOnly
+                          ></Form.Input>
+                          <Form.Input
+                            name="lname"
+                            placeholder="Last Name"
+                            defaultValue={selectedItem.lname}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Group>
                       </Form.Field>
                       <Form.Field>
                         <label>Item ID:</label>
@@ -246,38 +264,42 @@ class Transactions extends Component {
                           readOnly
                         ></Form.Input>
                       </Form.Field>
-                      <Form.Field>
-                        <label>Checked Out:</label>
-                        <Form.Input
-                          name="checkedOut"
-                          placeholder="Checked Out"
-                          defaultValue={this.formatDate(
-                            selectedItem.checkedOutDate
-                          )}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Checked In:</label>
-                        <Form.Input
-                          name="checkedIn"
-                          placeholder="Checked In"
-                          error={!selectedItem.checkedInDate}
-                          defaultValue={this.formatDate(
-                            selectedItem.checkedInDate
-                          )}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Due Date:</label>
-                        <Form.Input
-                          name="due"
-                          placeholder="Due Date"
-                          defaultValue={this.formatDate(selectedItem.dueDate)}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
+                      <Form.Group widths="equal">
+                        <Form.Field>
+                          <label>Checked Out:</label>
+                          <Form.Input
+                            name="checkedOut"
+                            placeholder="Checked Out"
+                            defaultValue={this.formatDate(
+                              selectedItem.checkedOutDate
+                            )}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Field>
+                        {this.state.selectedItem.checkedInDate && (
+                          <Form.Field>
+                            <label>Checked In:</label>
+                            <Form.Input
+                              name="checkedIn"
+                              placeholder="Checked In"
+                              error={!selectedItem.checkedInDate}
+                              defaultValue={this.formatDate(
+                                selectedItem.checkedInDate
+                              )}
+                              readOnly
+                            ></Form.Input>
+                          </Form.Field>
+                        )}
+                        <Form.Field>
+                          <label>Due Date:</label>
+                          <Form.Input
+                            name="due"
+                            placeholder="Due Date"
+                            defaultValue={this.formatDate(selectedItem.dueDate)}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Field>
+                      </Form.Group>
                     </Form>
                   </Col>
                 </Row>
