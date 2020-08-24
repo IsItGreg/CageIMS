@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown, Tab, Icon } from "semantic-ui-react";
+import {
+  Divider,
+  Button,
+  Form,
+  Dropdown,
+  Tab,
+  Icon,
+  Menu,
+} from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -30,6 +38,7 @@ class Users extends Component {
         },
       ],
 
+      activeItem: "user",
       firstNameError: false,
       lastNameError: false,
       idError: false,
@@ -141,15 +150,19 @@ class Users extends Component {
   };
 
   handleSubmitClick = () => {
-    this.setState(
-      {
-        firstNameError: this.state.selectedUser.fname === "",
-        lastNameError: this.state.selectedUser.lname === "",
-        idError: this.state.selectedUser.uid === "",
-        emailError: this.state.selectedUser.email === "",
-      },
-      this.checkErrorUpdateDataSet
-    );
+    if (this.state.isChangesMadeToModal) {
+      this.setState(
+        {
+          firstNameError: this.state.selectedUser.fname === "",
+          lastNameError: this.state.selectedUser.lname === "",
+          idError: this.state.selectedUser.uid === "",
+          emailError: this.state.selectedUser.email === "",
+        },
+        this.checkErrorUpdateDataSet
+      );
+    } else {
+      this.close();
+    }
   };
 
   handleDropdownChange = (e, { value }) => {
@@ -201,84 +214,77 @@ class Users extends Component {
     );
   };
 
+  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
-    let table;
-    if (this.state.selectedUserId != null) {
-      if (this.state.selectedUserId >= 0) {
-        const panes = [
-          {
-            menuItem: "Due Items",
-            render: () => (
-              <Table
-                title={
-                  this.state.selectedUser.fname +
-                  " " +
-                  this.state.selectedUser.lname
-                }
-                columns={[
-                  { title: "Item ID", field: "iid" },
-                  { title: "Transaction ID", field: "tid" },
-                  {
-                    title: "Checked Out Date",
-                    field: "checkedOutDate",
-                    render: (rowData) =>
-                      this.formatDate(rowData.checkedOutDate),
-                  },
-                  {
-                    title: "Due Date",
-                    field: "dueDate",
-                    render: (rowData) => this.formatDate(rowData.dueDate),
-                  },
-                ]}
-                data={Array.from(
-                  this.state.selectedUser.transactions.filter(
-                    (name) => name.checkedInDate === ""
-                  )
-                )}
-              ></Table>
-            ),
-          },
-          {
-            menuItem: "Completed Transactions",
-            render: () => (
-              <Table
-                title={
-                  this.state.selectedUser.fname +
-                  " " +
-                  this.state.selectedUser.lname
-                }
-                columns={[
-                  { title: "Item ID", field: "iid" },
-                  { title: "Transaction ID", field: "tid" },
-                  {
-                    title: "Checked Out Date",
-                    field: "checkedOutDate",
-                    render: (rowData) =>
-                      this.formatDate(rowData.checkedOutDate),
-                  },
-                  {
-                    title: "Checked In Date",
-                    field: "checkedInDate",
-                    render: (rowData) => this.formatDate(rowData.checkedInDate),
-                  },
-                ]}
-                data={Array.from(
-                  this.state.selectedUser.transactions.filter(
-                    (name) => !(name.checkedInDate === "")
-                  )
-                )}
-              ></Table>
-            ),
-          },
-        ];
-        table = (
-          <Col>
-            <Tab panes={panes} className="stretch-h flex-col" />
-          </Col>
-        );
-      }
+    let formTablePanes = [];
+    if (this.state.selectedUserId != null && this.state.selectedUserId >= 0) {
+      formTablePanes = [
+        {
+          menuItem: "Due Items",
+          render: () => (
+            <Table
+              title={
+                this.state.selectedUser.fname +
+                " " +
+                this.state.selectedUser.lname
+              }
+              columns={[
+                { title: "Item ID", field: "iid" },
+                { title: "Transaction ID", field: "tid" },
+                {
+                  title: "Checked Out Date",
+                  field: "checkedOutDate",
+                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                },
+                {
+                  title: "Due Date",
+                  field: "dueDate",
+                  render: (rowData) => this.formatDate(rowData.dueDate),
+                },
+              ]}
+              data={Array.from(
+                this.state.selectedUser.transactions.filter(
+                  (name) => name.checkedInDate === ""
+                )
+              )}
+            ></Table>
+          ),
+        },
+        {
+          menuItem: "Completed Transactions",
+          render: () => (
+            <Table
+              title={
+                this.state.selectedUser.fname +
+                " " +
+                this.state.selectedUser.lname
+              }
+              columns={[
+                { title: "Item ID", field: "iid" },
+                { title: "Transaction ID", field: "tid" },
+                {
+                  title: "Checked Out Date",
+                  field: "checkedOutDate",
+                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                },
+                {
+                  title: "Checked In Date",
+                  field: "checkedInDate",
+                  render: (rowData) => this.formatDate(rowData.checkedInDate),
+                },
+              ]}
+              data={Array.from(
+                this.state.selectedUser.transactions.filter(
+                  (name) => !(name.checkedInDate === "")
+                )
+              )}
+            ></Table>
+          ),
+        },
+      ];
     }
 
     const courseOptions = Array.from(
@@ -301,7 +307,10 @@ class Users extends Component {
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button basic onClick={this.handleAddUserClick}>
+          <Button
+            style={{ backgroundColor: "#46C88C", color: "white" }}
+            onClick={this.handleAddUserClick}
+          >
             Create New User
           </Button>
           <Divider clearing />
@@ -318,7 +327,7 @@ class Users extends Component {
             />
             <Modal
               centered
-              size={selectedUserId >= 0 ? "xl" : "lg"}
+              dialogClassName="modal-30w"
               show={selectedUserId != null}
               onHide={this.close}
             >
@@ -329,49 +338,51 @@ class Users extends Component {
                 </IconButton>
               </Modal.Header>
               <Modal.Body>
-                <Row>
-                  <Col>
+                {this.state.activeItem == "user" &&
+                  this.state.selectedUser !== null && (
                     <Form>
-                      <Form.Field>
-                        <label>
-                          First Name:
-                          {this.state.firstNameError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
-                        <Form.Input
-                          error={this.state.firstNameError}
-                          name="fname"
-                          placeholder="First Name"
-                          defaultValue={selectedUser.fname}
-                          onChange={(e) => {
-                            this.handleChange(e, "fname");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>
-                          Last Name:
-                          {this.state.lastNameError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
-                        <Form.Input
-                          error={this.state.lastNameError}
-                          name="lname"
-                          placeholder="Last Name"
-                          defaultValue={selectedUser.lname}
-                          onChange={(e) => {
-                            this.handleChange(e, "lname");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
-                      </Form.Field>
+                      <Form.Group widths={2}>
+                        <Form.Field>
+                          <label>
+                            First Name:
+                            {this.state.firstNameError && (
+                              <span className="error-text modal-label-error-text">
+                                Error: Field cannot be empty.
+                              </span>
+                            )}
+                          </label>
+                          <Form.Input
+                            error={this.state.firstNameError}
+                            name="fname"
+                            placeholder="First Name"
+                            defaultValue={selectedUser.fname}
+                            onChange={(e) => {
+                              this.handleChange(e, "fname");
+                            }}
+                            readOnly={this.state.editable}
+                          ></Form.Input>
+                        </Form.Field>
+                        <Form.Field>
+                          <label>
+                            Last Name:
+                            {this.state.lastNameError && (
+                              <span className="error-text modal-label-error-text">
+                                Error: Field cannot be empty.
+                              </span>
+                            )}
+                          </label>
+                          <Form.Input
+                            error={this.state.lastNameError}
+                            name="lname"
+                            placeholder="Last Name"
+                            defaultValue={selectedUser.lname}
+                            onChange={(e) => {
+                              this.handleChange(e, "lname");
+                            }}
+                            readOnly={this.state.editable}
+                          ></Form.Input>
+                        </Form.Field>
+                      </Form.Group>
                       <Form.Field>
                         <label>Courses:</label>
                         <Dropdown
@@ -408,38 +419,40 @@ class Users extends Component {
                           readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
-                      <Form.Field>
-                        <label>
-                          Email:
-                          {this.state.emailError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
-                        <Form.Input
-                          name="email"
-                          error={this.state.emailError}
-                          placeholder="Email"
-                          defaultValue={selectedUser.email}
-                          onChange={(e) => {
-                            this.handleChange(e, "email");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Phone Number:</label>
-                        <Form.Input
-                          name="phone"
-                          placeholder="Phone Number"
-                          defaultValue={selectedUser.phone}
-                          onChange={(e) => {
-                            this.handleChange(e, "phone");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
-                      </Form.Field>
+                      <Form.Group widths={2}>
+                        <Form.Field>
+                          <label>
+                            Email:
+                            {this.state.emailError && (
+                              <span className="error-text modal-label-error-text">
+                                Error: Field cannot be empty.
+                              </span>
+                            )}
+                          </label>
+                          <Form.Input
+                            name="email"
+                            error={this.state.emailError}
+                            placeholder="Email"
+                            defaultValue={selectedUser.email}
+                            onChange={(e) => {
+                              this.handleChange(e, "email");
+                            }}
+                            readOnly={this.state.editable}
+                          ></Form.Input>
+                        </Form.Field>
+                        <Form.Field>
+                          <label>Phone Number:</label>
+                          <Form.Input
+                            name="phone"
+                            placeholder="Phone Number"
+                            defaultValue={selectedUser.phone}
+                            onChange={(e) => {
+                              this.handleChange(e, "phone");
+                            }}
+                            readOnly={this.state.editable}
+                          ></Form.Input>
+                        </Form.Field>
+                      </Form.Group>
                       <Form.Field>
                         <label>Notes:</label>
                         <Form.Input
@@ -466,9 +479,14 @@ class Users extends Component {
                         </Form.Field>
                       ) : null}
                     </Form>
-                  </Col>
-                  {table}
-                </Row>
+                  )}
+                {this.state.activeItem === "table" &&
+                  this.state.selectedUserId >= 0 && (
+                    <Tab
+                      panes={formTablePanes}
+                      className="stretch-h flex-col"
+                    />
+                  )}
               </Modal.Body>
               <Modal.Footer>
                 {this.state.selectedUserId >= 0 ? (
@@ -482,6 +500,26 @@ class Users extends Component {
                     Edit
                   </Button>
                 ) : null}
+                {this.state.selectedUserId >= 0 && (
+                  <Menu compact className="mr-auto">
+                    <Menu.Item
+                      name="user"
+                      active={this.state.activeItem === "user"}
+                      onClick={this.handleItemClick}
+                    >
+                      <Icon name="clipboard list" />
+                      User Form
+                    </Menu.Item>
+                    <Menu.Item
+                      name="table"
+                      active={this.state.activeItem === "table"}
+                      onClick={this.handleItemClick}
+                    >
+                      <Icon name="book" />
+                      Transactions
+                    </Menu.Item>
+                  </Menu>
+                )}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
