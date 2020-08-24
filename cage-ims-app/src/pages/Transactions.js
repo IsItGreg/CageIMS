@@ -178,7 +178,10 @@ class Transactions extends Component {
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button basic href="#/">
+          <Button
+            style={{ backgroundColor: "#46C88C", color: "white" }}
+            href="#/"
+          >
             Create New Transaction
           </Button>
           <Divider clearing />
@@ -193,12 +196,7 @@ class Transactions extends Component {
                 this.handleUserSelectClick(event, rowData)
               }
             />
-            <Modal
-              centered
-              size={this.state.selectedItemId >= 0 ? "lg" : "lg"}
-              show={selectedItemId != null}
-              onHide={this.close}
-            >
+            <Modal centered show={selectedItemId != null} onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>Transaction</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
@@ -264,7 +262,9 @@ class Transactions extends Component {
                           readOnly
                         ></Form.Input>
                       </Form.Field>
-                      <Form.Group widths="equal">
+                      <Form.Group
+                        widths={this.state.selectedItem.checkedInDate ? 3 : 2}
+                      >
                         <Form.Field>
                           <label>Checked Out:</label>
                           <Form.Input
@@ -304,7 +304,6 @@ class Transactions extends Component {
                   </Col>
                 </Row>
               </Modal.Body>
-              <Modal.Footer></Modal.Footer>
             </Modal>
           </Col>
         </div>
