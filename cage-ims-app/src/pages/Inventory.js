@@ -90,7 +90,7 @@ class Inventory extends Component {
         },
       ],
 
-      activeItem: "user",
+      activeItem: "item",
       open: false,
 
       nameError: false,
@@ -353,8 +353,7 @@ class Inventory extends Component {
             <Table
               title={this.state.selectedItem.name}
               columns={[
-                { title: "First Name", field: "fname" },
-                { title: "Last Name", field: "lname" },
+                { title: "User ID", field: "uid" },
                 { title: "Transaction ID", field: "tid" },
                 {
                   title: "Checked Out Date",
@@ -381,8 +380,7 @@ class Inventory extends Component {
             <Table
               title={this.state.selectedItem.name}
               columns={[
-                { title: "First Name", field: "fname" },
-                { title: "Last Name", field: "lname" },
+                { title: "User ID", field: "uid" },
                 { title: "Transaction ID", field: "tid" },
                 {
                   title: "Checked Out Date",
@@ -493,7 +491,10 @@ class Inventory extends Component {
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button basic onClick={this.handleAddUserClick}>
+          <Button
+            style={{ backgroundColor: "#46C88C", color: "white" }}
+            onClick={this.handleAddUserClick}
+          >
             Create New Item
           </Button>
           <Divider clearing />
@@ -503,7 +504,7 @@ class Inventory extends Component {
             <Tab panes={inventoryTablePanes} className="stretch-h flex-col" />
             <Modal
               centered
-              size={this.state.selectedItemId >= 0 ? "lg" : "lg"}
+              dialogClassName="modal-90w"
               show={selectedItemId != null}
               onHide={this.close}
             >
@@ -514,7 +515,7 @@ class Inventory extends Component {
                 </IconButton>
               </Modal.Header>
               <Modal.Body>
-                {this.state.activeItem === "user" && (
+                {this.state.activeItem === "item" && (
                   <Form>
                     <Form.Field>
                       <label>
@@ -711,8 +712,8 @@ class Inventory extends Component {
                 {this.state.selectedItemId >= 0 && (
                   <Menu compact className="mr-auto">
                     <Menu.Item
-                      name="user"
-                      active={this.state.activeItem === "user"}
+                      name="item"
+                      active={this.state.activeItem === "item"}
                       onClick={this.handleItemClick}
                     >
                       <Icon name="clipboard list" />
