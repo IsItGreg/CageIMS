@@ -520,7 +520,7 @@ class Inventory extends Component {
                         Name:
                         {this.state.nameError && (
                           <span className="error-text modal-label-error-text">
-                            Error: Field cannot be empty.
+                            Error: Field is empty.
                           </span>
                         )}
                       </label>
@@ -541,12 +541,12 @@ class Inventory extends Component {
                           Item ID:
                           {(this.state.iidError && (
                             <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
+                              Error: Field is empty.
                             </span>
                           )) ||
                             (this.state.isItemIdUnavailable && (
                               <span className="error-text modal-label-error-text">
-                                Error: Item ID is Taken or Incorrect
+                                Error: Item ID is Taken
                               </span>
                             ))}
                           {}
@@ -571,7 +571,7 @@ class Inventory extends Component {
                           Serial ID:
                           {this.state.serialError && (
                             <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
+                              Error: Field is empty.
                             </span>
                           )}
                         </label>

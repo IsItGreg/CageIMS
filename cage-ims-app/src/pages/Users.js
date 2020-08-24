@@ -17,13 +17,24 @@ class Users extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
     this.state = {
       columnSet: [
-        { title: "Last Name", field: "lname", defaultSort: "asc" },
-        { title: "First Name", field: "fname" },
+        {
+          title: "Last Name",
+          field: "lname",
+          defaultSort: "asc",
+          headerStyle: headerStyleGrey,
+        },
+        { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
         {
           title: "Courses",
           field: "courses",
+          headerStyle: headerStyleGrey,
           render: (rowData) => {
             return rowData.courses.length > 0
               ? rowData.courses.reduce((result, item) => (
@@ -347,7 +358,7 @@ class Users extends Component {
                             First Name:
                             {this.state.firstNameError && (
                               <span className="error-text modal-label-error-text">
-                                Error: Field cannot be empty.
+                                Error: Field is empty.
                               </span>
                             )}
                           </label>
@@ -367,7 +378,7 @@ class Users extends Component {
                             Last Name:
                             {this.state.lastNameError && (
                               <span className="error-text modal-label-error-text">
-                                Error: Field cannot be empty.
+                                Error: Field is empty.
                               </span>
                             )}
                           </label>
@@ -404,7 +415,7 @@ class Users extends Component {
                           UML ID:
                           {this.state.idError && (
                             <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
+                              Error: Field is empty.
                             </span>
                           )}
                         </label>
@@ -425,7 +436,7 @@ class Users extends Component {
                             Email:
                             {this.state.emailError && (
                               <span className="error-text modal-label-error-text">
-                                Error: Field cannot be empty.
+                                Error: Field is empty.
                               </span>
                             )}
                           </label>
