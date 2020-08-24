@@ -11,12 +11,17 @@ import {
 import { Col, Row, Modal } from "react-bootstrap";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
+import TextField from "@material-ui/core/TextField";
+import XLSX from "xlsx";
 import Table from "../common/Table";
 
 class Users extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    this.handleImportSpreadsheetClick = this.handleImportSpreadsheetClick.bind(
+      this
+    );
     this.state = {
       columnSet: [
         { title: "Last Name", field: "lname", defaultSort: "asc" },
@@ -46,6 +51,10 @@ class Users extends Component {
       editable: true,
       isChangesMadeToModal: false,
 
+      showImportExcelModal: false,
+      importedExcelData: [],
+      importEmailErrors: {},
+
       selectedUserId: null,
       selectedUser: {
         fname: "",
@@ -64,6 +73,17 @@ class Users extends Component {
   close = () =>
     this.setState({
       selectedUserId: null,
+      selectedUser: {
+        fname: "",
+        lname: "",
+        courses: [],
+        uid: "",
+        email: "",
+        phone: "",
+        notes: "",
+        transactions: [],
+        creationDate: "",
+      },
       firstNameError: false,
       lastNameError: false,
       idError: false,
@@ -72,6 +92,9 @@ class Users extends Component {
       submitName: "Close",
       submitIcon: null,
       isChangesMadeToModal: false,
+      showImportExcelModal: false,
+      importedExcelData: [],
+      importEmailErrors: {},
     });
 
   handleChange = (e, userProp) => {
@@ -131,6 +154,73 @@ class Users extends Component {
     });
   };
 
+  handleImportSpreadsheetClick = () => {
+    this.refs.fileUploader.click();
+  };
+
+  handleClearAllCoursesClick = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to clear every user's courses? This process is irreversible."
+      )
+    ) {
+      let data = Object.assign({}, this.props.data);
+      data.users.forEach((user) => (user.courses = []));
+      this.props.onUpdateData(data);
+    }
+  };
+
+  onChangeFile(event) {
+    const fileObj = event.target.files[0];
+    const reader = new FileReader();
+    const rABS = !!reader.readAsBinaryString;
+
+    reader.onload = (e) => {
+      const wb = XLSX.read(e.target.result, {
+        type: rABS ? "binary" : "array",
+        bookVBA: true,
+      });
+      const data = XLSX.utils
+        .sheet_to_json(wb.Sheets[wb.SheetNames[0]])
+        .map((user) => ({
+          fname: user["Preferred Name"].split(/[\s, ]+/)[1],
+          lname: user["Preferred Name"].split(/[\s, ]+/)[0],
+          courses: [],
+          uid:
+            "0".repeat(8 - user["ID"].toString().length) +
+            user["ID"].toString(),
+          email:
+            user["Preferred Name"].split(/[\s, ]+/)[1] +
+            "_" +
+            user["Preferred Name"].split(/[\s, ]+/)[0],
+          creationDate: new Date().getTime(),
+        }))
+        .map((nuser) => {
+          const existingUser = this.props.data.users.find(
+            (user) => user.uid === nuser.uid
+          );
+          if (existingUser === undefined) return nuser;
+          this.setState({
+            ["importEmailValid" +
+            existingUser.uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+              existingUser.email
+            ),
+          });
+          return existingUser;
+        });
+
+      //TODO: check ids aren't duplicate
+
+      this.setState({ importedExcelData: data, showImportExcelModal: true });
+    };
+
+    if (rABS) {
+      reader.readAsBinaryString(fileObj);
+    } else {
+      reader.readAsArrayBuffer(fileObj);
+    }
+  }
+
   checkErrorUpdateDataSet = () => {
     if (
       !this.state.firstNameError &&
@@ -161,6 +251,38 @@ class Users extends Component {
         this.checkErrorUpdateDataSet
       );
     } else {
+      this.close();
+    }
+  };
+
+  handleSaveImportStudents = () => {
+    if (!this.state.isChangesMadeToModal) {
+      this.close();
+    }
+
+    if (
+      this.state.importedExcelData.every(
+        (user) => this.state["importEmailValid" + user.uid]
+      )
+    ) {
+      let newUsers = Array.from(this.state.importedExcelData);
+      newUsers.forEach(
+        (user) =>
+          (user.courses = user.courses.concat(this.state.selectedUser.courses))
+      );
+      let users = [
+        ...newUsers,
+        ...this.props.data.users.filter(
+          (user) =>
+            this.state.importedExcelData.find(
+              (nuser) => nuser.uid === user.uid
+            ) === undefined
+        ),
+      ];
+
+      let data = Object.assign({}, this.props.data);
+      data.users = users;
+      this.props.onUpdateData(data);
       this.close();
     }
   };
@@ -212,6 +334,20 @@ class Users extends Component {
       " " +
       daynnite
     );
+  };
+
+  updateImportEmail = (e, uid) => {
+    const val = e.target.value;
+    this.setState((prevState) => {
+      let importedExcelData = Array.from(prevState.importedExcelData);
+      importedExcelData.find((user) => user.uid === uid).email = val;
+      return {
+        ["importEmailValid" +
+        uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val),
+        isChangesMadeToModal: true,
+        importedExcelData,
+      };
+    });
   };
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
@@ -304,6 +440,30 @@ class Users extends Component {
       .sort()
       .map((item) => ({ text: item, value: item }));
 
+    const importColumns = [
+      { title: "Last Name", field: "lname", defaultSort: "asc" },
+      { title: "First Name", field: "fname" },
+      { title: "Student ID", field: "uid" },
+      {
+        title: "Email",
+        field: "email",
+        render: (rowData) => (
+          <TextField
+            defaultValue={rowData.email}
+            error={!this.state["importEmailValid" + rowData.uid]}
+            helperText={
+              !this.state["importEmailValid" + rowData.uid]
+                ? "Enter a valid email."
+                : ""
+            }
+            onChange={(e) => {
+              this.updateImportEmail(e, rowData.uid);
+            }}
+          />
+        ),
+      },
+    ];
+
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
@@ -312,6 +472,18 @@ class Users extends Component {
             onClick={this.handleAddUserClick}
           >
             Create New User
+          </Button>
+          <Button basic onClick={this.handleImportSpreadsheetClick}>
+            Import from Excel
+          </Button>
+          <input
+            type="file"
+            ref="fileUploader"
+            style={{ display: "none" }}
+            onChange={this.onChangeFile.bind(this)}
+          />
+          <Button basic onClick={this.handleClearAllCoursesClick}>
+            Clear All Courses
           </Button>
           <Divider clearing />
         </div>
@@ -327,6 +499,57 @@ class Users extends Component {
             />
             <Modal
               centered
+              size={"xl"}
+              show={this.state.showImportExcelModal}
+              onHide={this.close}
+            >
+              <Modal.Header closeButton bsPrefix="modal-header">
+                <Modal.Title>Import from Excel file</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Row>
+                  <Col>
+                    <Table
+                      data={this.state.importedExcelData}
+                      columns={importColumns}
+                    />
+                    <Form>
+                      <Form.Field>
+                        <label>Courses:</label>
+                        <Dropdown
+                          placeholder="Courses"
+                          name="courses"
+                          fluid
+                          multiple
+                          search
+                          selection
+                          allowAdditions
+                          options={courseOptions}
+                          value={selectedUser.courses}
+                          onChange={this.handleDropdownChange}
+                        />
+                      </Form.Field>
+                    </Form>
+                  </Col>
+                  {table}
+                </Row>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  id="add-icon-handler"
+                  variant="primary"
+                  onClick={this.handleSaveImportStudents}
+                >
+                  {this.state.isChangesMadeToModal ? (
+                    <Icon name="save"></Icon>
+                  ) : null}
+                  {this.state.isChangesMadeToModal ? "Save" : "Cancel"}
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            <Modal
+              centered
+              size={selectedUserId >= 0 ? "xl" : "lg"}
               dialogClassName="modal-30w"
               show={selectedUserId != null}
               onHide={this.close}
