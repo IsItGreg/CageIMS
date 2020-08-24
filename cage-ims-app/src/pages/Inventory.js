@@ -348,7 +348,7 @@ class Inventory extends Component {
     if (this.state.selectedItem != null && this.state.selectedItemId >= 0) {
       formTablePanes = [
         {
-          menuItem: "Due Items",
+          menuItem: "Active",
           render: () => (
             <Table
               title={this.state.selectedItem.name}
@@ -375,7 +375,7 @@ class Inventory extends Component {
           ),
         },
         {
-          menuItem: "Completed Transactions",
+          menuItem: "Completed",
           render: () => (
             <Table
               title={this.state.selectedItem.name}
