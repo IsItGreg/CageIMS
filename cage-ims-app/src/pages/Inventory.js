@@ -83,7 +83,8 @@ class Inventory extends Component {
           title: "Expected Return Date",
           field: "expected",
           headerStyle: headerStyleGrey,
-          render: (rowData) => this.formatDate(rowData.expected),
+          render: (rowData) =>
+            rowData.expected ? this.formatDate(rowData.expected) : "Available",
           customFilterAndSearch: (term, rowData) =>
             this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
               -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
@@ -142,31 +143,32 @@ class Inventory extends Component {
     });
   };
 
-  handleUserSelectClick = (e, rowData) => {
-    this.setState({
-      selectedItemId: rowData.tableData.id,
-      selectedItem: this.props.data.items[rowData.tableData.id],
+  handleItemSelectClick = (e, rowData) => {
+    let selectedItemId = rowData.iid;
+    let selectedItem = Object.assign(
+      {},
+      this.props.data.items.find((item) => item.iid === selectedItemId)
+    );
+    let transactions = Array.from(
+      this.props.data.transactions.filter(
+        (transaction) => transaction.iid === selectedItem.iid
+      )
+    );
+    transactions.forEach((transaction) => {
+      transaction.backgroundColor =
+        !transaction.checkedInDate &&
+        new Date(transaction.dueDate).getTime() < new Date().getTime()
+          ? "mistyrose"
+          : "";
     });
-    this.setState((prevState) => {
-      let selectedItem = Object.assign({}, prevState.selectedItem);
-      let transactions = Array.from(
-        this.props.data.transactions.filter(
-          (name) => name.iid === selectedItem.iid
-        )
-      );
-      transactions.forEach((transaction) => {
-        transaction.backgroundColor =
-          !transaction.checkedInDate &&
-          new Date(transaction.dueDate).getTime() < new Date().getTime()
-            ? "mistyrose"
-            : "";
-      });
-      selectedItem["transactions"] = transactions;
-      return { selectedItem };
+    selectedItem["transactions"] = transactions;
+    this.setState({
+      selectedItemId,
+      selectedItem,
     });
   };
 
-  handleAddUserClick = () => {
+  handleItemAddClick = () => {
     this.setState({
       selectedItemId: -1,
       selectedItem: {
@@ -186,7 +188,7 @@ class Inventory extends Component {
     });
   };
 
-  handleUserEditClick = () => {
+  handleItemEditClick = () => {
     this.setState({
       editable: !this.state.editable,
     });
@@ -412,7 +414,7 @@ class Inventory extends Component {
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
             onRowClick={(event, rowData) =>
-              this.handleUserSelectClick(event, rowData)
+              this.handleItemSelectClick(event, rowData)
             }
           />
         ),
@@ -429,7 +431,7 @@ class Inventory extends Component {
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
             onRowClick={(event, rowData) =>
-              this.handleUserSelectClick(event, rowData)
+              this.handleItemSelectClick(event, rowData)
             }
           />
         ),
@@ -446,7 +448,7 @@ class Inventory extends Component {
             columns={this.state.columnSet}
             title={<h2>Inventory</h2>}
             onRowClick={(event, rowData) =>
-              this.handleUserSelectClick(event, rowData)
+              this.handleItemSelectClick(event, rowData)
             }
           />
         ),
@@ -493,7 +495,7 @@ class Inventory extends Component {
         <div className="top-bar">
           <Button
             style={{ backgroundColor: "#46C88C", color: "white" }}
-            onClick={this.handleAddUserClick}
+            onClick={this.handleItemAddClick}
           >
             Create New Item
           </Button>
@@ -668,7 +670,7 @@ class Inventory extends Component {
                           ></Form.Input>
                         </Form.Field>
                       ) : null}
-                      {!(this.state.selectedItem.expected === "") ? (
+                      {this.state.selectedItem.expected && (
                         <Form.Field>
                           <label>Expected Return Date:</label>
                           <Form.Input
@@ -680,7 +682,7 @@ class Inventory extends Component {
                             readOnly
                           ></Form.Input>
                         </Form.Field>
-                      ) : null}
+                      )}
                     </Form.Group>
                   </Form>
                 )}
@@ -698,7 +700,7 @@ class Inventory extends Component {
                     className="btn btn-primary mr-auto"
                     toggle
                     active={!this.state.editable}
-                    onClick={this.handleUserEditClick}
+                    onClick={this.handleItemEditClick}
                   >
                     <Icon name="pencil" />
                     Edit
