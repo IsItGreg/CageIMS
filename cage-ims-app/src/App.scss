@@ -45,7 +45,7 @@
 }
 
 .header {
-  background-color: #12558f;
+  background-color: #23568f;
   color: white;
   z-index: 11;
   text-decoration-line: none;
@@ -67,12 +67,21 @@
 }
 
 .sidebar {
-  background-color: #93aab8;
-  color: white;
+  background-color: white;
+  color: black;
   z-index: 10;
   height: 100%;
   h4 {
     padding: 10px;
+  }
+  .nav-pills .nav-link.active,
+  .nav-pills .show > .nav-link {
+    background-color: #e2e2e2;
+  }
+  .nav-item {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 10px;
   }
 }
 
@@ -156,4 +165,11 @@
 
 .inventory-tabs {
   background-color: #467591;
+}
+
+.dropdown-menu .divider {
+  height: 1px;
+  margin: 9px 0;
+  overflow: hidden;
+  background-color: #e5e5e5;
 }
