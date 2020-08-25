@@ -21,6 +21,16 @@ class App extends Component {
       data: {
         users: [
           {
+            fname: "User",
+            lname: "AWhoExists",
+            uid: "11111111",
+            email: "existing@email.com",
+            phone: "123-456-7891",
+            notes: "Optional notes for Seamus",
+            creationDate: new Date().getTime(),
+            courses: ["PreviousCourse"],
+          },
+          {
             fname: "Seamus",
             lname: "Rioux",
             uid: "54321",

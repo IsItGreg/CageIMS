@@ -1,21 +1,45 @@
 import React, { Component } from "react";
-import { Divider, Button, Form, Dropdown, Tab, Icon } from "semantic-ui-react";
+import {
+  Divider,
+  Button,
+  Form,
+  Dropdown,
+  Tab,
+  Icon,
+  Menu,
+} from "semantic-ui-react";
 import { Col, Row, Modal } from "react-bootstrap";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
+import TextField from "@material-ui/core/TextField";
+import XLSX from "xlsx";
 import Table from "../common/Table";
 
 class Users extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
+    this.handleImportSpreadsheetClick = this.handleImportSpreadsheetClick.bind(
+      this
+    );
     this.state = {
       columnSet: [
-        { title: "Last Name", field: "lname", defaultSort: "asc" },
-        { title: "First Name", field: "fname" },
+        {
+          title: "Last Name",
+          field: "lname",
+          defaultSort: "asc",
+          headerStyle: headerStyleGrey,
+        },
+        { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
         {
           title: "Courses",
           field: "courses",
+          headerStyle: headerStyleGrey,
           render: (rowData) => {
             return rowData.courses.length > 0
               ? rowData.courses.reduce((result, item) => (
@@ -29,14 +53,18 @@ class Users extends Component {
           },
         },
       ],
-      open: false,
 
+      activeItem: "user",
       firstNameError: false,
       lastNameError: false,
       idError: false,
       emailError: false,
       editable: true,
       isChangesMadeToModal: false,
+
+      showImportExcelModal: false,
+      importedExcelData: [],
+      importEmailErrors: {},
 
       selectedUserId: null,
       selectedUser: {
@@ -56,6 +84,17 @@ class Users extends Component {
   close = () =>
     this.setState({
       selectedUserId: null,
+      selectedUser: {
+        fname: "",
+        lname: "",
+        courses: [],
+        uid: "",
+        email: "",
+        phone: "",
+        notes: "",
+        transactions: [],
+        creationDate: "",
+      },
       firstNameError: false,
       lastNameError: false,
       idError: false,
@@ -64,6 +103,9 @@ class Users extends Component {
       submitName: "Close",
       submitIcon: null,
       isChangesMadeToModal: false,
+      showImportExcelModal: false,
+      importedExcelData: [],
+      importEmailErrors: {},
     });
 
   handleChange = (e, userProp) => {
@@ -76,9 +118,10 @@ class Users extends Component {
   };
 
   handleUserEditClick = () => {
-    this.setState({
-      editable: !this.state.editable,
-    });
+    !this.state.isChangesMadeToModal &&
+      this.setState({
+        editable: !this.state.editable,
+      });
   };
 
   handleUserSelectClick = (e, rowData) => {
@@ -123,6 +166,73 @@ class Users extends Component {
     });
   };
 
+  handleImportSpreadsheetClick = () => {
+    this.refs.fileUploader.click();
+  };
+
+  handleClearAllCoursesClick = () => {
+    if (
+      window.confirm(
+        "Are you sure you want to clear every user's courses? This process is irreversible."
+      )
+    ) {
+      let data = Object.assign({}, this.props.data);
+      data.users.forEach((user) => (user.courses = []));
+      this.props.onUpdateData(data);
+    }
+  };
+
+  onChangeFile(event) {
+    const fileObj = event.target.files[0];
+    const reader = new FileReader();
+    const rABS = !!reader.readAsBinaryString;
+
+    reader.onload = (e) => {
+      const wb = XLSX.read(e.target.result, {
+        type: rABS ? "binary" : "array",
+        bookVBA: true,
+      });
+      const data = XLSX.utils
+        .sheet_to_json(wb.Sheets[wb.SheetNames[0]])
+        .map((user) => ({
+          fname: user["Preferred Name"].split(/[\s, ]+/)[1],
+          lname: user["Preferred Name"].split(/[\s, ]+/)[0],
+          courses: [],
+          uid:
+            "0".repeat(8 - user["ID"].toString().length) +
+            user["ID"].toString(),
+          email:
+            user["Preferred Name"].split(/[\s, ]+/)[1] +
+            "_" +
+            user["Preferred Name"].split(/[\s, ]+/)[0],
+          creationDate: new Date().getTime(),
+        }))
+        .map((nuser) => {
+          const existingUser = this.props.data.users.find(
+            (user) => user.uid === nuser.uid
+          );
+          if (existingUser === undefined) return nuser;
+          this.setState({
+            ["importEmailValid" +
+            existingUser.uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+              existingUser.email
+            ),
+          });
+          return existingUser;
+        });
+
+      //TODO: check ids aren't duplicate
+
+      this.setState({ importedExcelData: data, showImportExcelModal: true });
+    };
+
+    if (rABS) {
+      reader.readAsBinaryString(fileObj);
+    } else {
+      reader.readAsArrayBuffer(fileObj);
+    }
+  }
+
   checkErrorUpdateDataSet = () => {
     if (
       !this.state.firstNameError &&
@@ -142,15 +252,51 @@ class Users extends Component {
   };
 
   handleSubmitClick = () => {
-    this.setState(
-      {
-        firstNameError: this.state.selectedUser.fname === "",
-        lastNameError: this.state.selectedUser.lname === "",
-        idError: this.state.selectedUser.uid === "",
-        emailError: this.state.selectedUser.email === "",
-      },
-      this.checkErrorUpdateDataSet
-    );
+    if (this.state.isChangesMadeToModal) {
+      this.setState(
+        {
+          firstNameError: this.state.selectedUser.fname === "",
+          lastNameError: this.state.selectedUser.lname === "",
+          idError: this.state.selectedUser.uid === "",
+          emailError: this.state.selectedUser.email === "",
+        },
+        this.checkErrorUpdateDataSet
+      );
+    } else {
+      this.close();
+    }
+  };
+
+  handleSaveImportStudents = () => {
+    if (!this.state.isChangesMadeToModal) {
+      this.close();
+    }
+
+    if (
+      this.state.importedExcelData.every(
+        (user) => this.state["importEmailValid" + user.uid]
+      )
+    ) {
+      let newUsers = Array.from(this.state.importedExcelData);
+      newUsers.forEach(
+        (user) =>
+          (user.courses = user.courses.concat(this.state.selectedUser.courses))
+      );
+      let users = [
+        ...newUsers,
+        ...this.props.data.users.filter(
+          (user) =>
+            this.state.importedExcelData.find(
+              (nuser) => nuser.uid === user.uid
+            ) === undefined
+        ),
+      ];
+
+      let data = Object.assign({}, this.props.data);
+      data.users = users;
+      this.props.onUpdateData(data);
+      this.close();
+    }
   };
 
   handleDropdownChange = (e, { value }) => {
@@ -202,84 +348,91 @@ class Users extends Component {
     );
   };
 
+  updateImportEmail = (e, uid) => {
+    const val = e.target.value;
+    this.setState((prevState) => {
+      let importedExcelData = Array.from(prevState.importedExcelData);
+      importedExcelData.find((user) => user.uid === uid).email = val;
+      return {
+        ["importEmailValid" +
+        uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val),
+        isChangesMadeToModal: true,
+        importedExcelData,
+      };
+    });
+  };
+
+  handleItemClick = (e, { name }) => this.setState({ activeItem: name });
+
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
-    let table;
-    if (this.state.selectedUserId != null) {
-      if (this.state.selectedUserId >= 0) {
-        const panes = [
-          {
-            menuItem: "Due Items",
-            render: () => (
-              <Table
-                title={
-                  this.state.selectedUser.fname +
-                  " " +
-                  this.state.selectedUser.lname
-                }
-                columns={[
-                  { title: "Item ID", field: "iid" },
-                  { title: "Transaction ID", field: "tid" },
-                  {
-                    title: "Checked Out Date",
-                    field: "checkedOutDate",
-                    render: (rowData) =>
-                      this.formatDate(rowData.checkedOutDate),
-                  },
-                  {
-                    title: "Due Date",
-                    field: "dueDate",
-                    render: (rowData) => this.formatDate(rowData.dueDate),
-                  },
-                ]}
-                data={Array.from(
-                  this.state.selectedUser.transactions.filter(
-                    (name) => name.checkedInDate === ""
-                  )
-                )}
-              ></Table>
-            ),
-          },
-          {
-            menuItem: "Completed Transactions",
-            render: () => (
-              <Table
-                title={
-                  this.state.selectedUser.fname +
-                  " " +
-                  this.state.selectedUser.lname
-                }
-                columns={[
-                  { title: "Item ID", field: "iid" },
-                  { title: "Transaction ID", field: "tid" },
-                  {
-                    title: "Checked Out Date",
-                    field: "checkedOutDate",
-                    render: (rowData) =>
-                      this.formatDate(rowData.checkedOutDate),
-                  },
-                  {
-                    title: "Checked In Date",
-                    field: "checkedInDate",
-                    render: (rowData) => this.formatDate(rowData.checkedInDate),
-                  },
-                ]}
-                data={Array.from(
-                  this.state.selectedUser.transactions.filter(
-                    (name) => !(name.checkedInDate === "")
-                  )
-                )}
-              ></Table>
-            ),
-          },
-        ];
-        table = (
-          <Col>
-            <Tab panes={panes} className="stretch-h flex-col" />
-          </Col>
-        );
-      }
+    let formTablePanes = [];
+    if (this.state.selectedUserId != null && this.state.selectedUserId >= 0) {
+      formTablePanes = [
+        {
+          menuItem: "Due Items",
+          render: () => (
+            <Table
+              title={
+                this.state.selectedUser.fname +
+                " " +
+                this.state.selectedUser.lname
+              }
+              columns={[
+                { title: "Item ID", field: "iid" },
+                { title: "Transaction ID", field: "tid" },
+                {
+                  title: "Checked Out Date",
+                  field: "checkedOutDate",
+                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                },
+                {
+                  title: "Due Date",
+                  field: "dueDate",
+                  render: (rowData) => this.formatDate(rowData.dueDate),
+                },
+              ]}
+              data={Array.from(
+                this.state.selectedUser.transactions.filter(
+                  (name) => name.checkedInDate === ""
+                )
+              )}
+            ></Table>
+          ),
+        },
+        {
+          menuItem: "Completed Transactions",
+          render: () => (
+            <Table
+              title={
+                this.state.selectedUser.fname +
+                " " +
+                this.state.selectedUser.lname
+              }
+              columns={[
+                { title: "Item ID", field: "iid" },
+                { title: "Transaction ID", field: "tid" },
+                {
+                  title: "Checked Out Date",
+                  field: "checkedOutDate",
+                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                },
+                {
+                  title: "Checked In Date",
+                  field: "checkedInDate",
+                  render: (rowData) => this.formatDate(rowData.checkedInDate),
+                },
+              ]}
+              data={Array.from(
+                this.state.selectedUser.transactions.filter(
+                  (name) => !(name.checkedInDate === "")
+                )
+              )}
+            ></Table>
+          ),
+        },
+      ];
     }
 
     const courseOptions = Array.from(
@@ -299,12 +452,72 @@ class Users extends Component {
       .sort()
       .map((item) => ({ text: item, value: item }));
 
+    const importColumns = [
+      { title: "Last Name", field: "lname", defaultSort: "asc" },
+      { title: "First Name", field: "fname" },
+      { title: "Student ID", field: "uid" },
+      {
+        title: "Email",
+        field: "email",
+        render: (rowData) => (
+          <TextField
+            defaultValue={rowData.email}
+            error={!this.state["importEmailValid" + rowData.uid]}
+            helperText={
+              !this.state["importEmailValid" + rowData.uid]
+                ? "Enter a valid email."
+                : ""
+            }
+            onChange={(e) => {
+              this.updateImportEmail(e, rowData.uid);
+            }}
+          />
+        ),
+      },
+    ];
+
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button basic onClick={this.handleAddUserClick}>
-            Create New User
-          </Button>
+          <Row>
+            <Col>
+              <Button
+                className="float-down"
+                size="medium"
+                style={{ backgroundColor: "#46C88C", color: "white" }}
+                onClick={this.handleAddUserClick}
+              >
+                Create New User
+              </Button>
+            </Col>
+            <Col>
+              <h1>User List</h1>
+            </Col>
+            <Col>
+              <div className="float-down right-buttons">
+                <Button
+                  basic
+                  size="medium"
+                  onClick={this.handleImportSpreadsheetClick}
+                >
+                  Import from Excel
+                </Button>
+                <input
+                  type="file"
+                  ref="fileUploader"
+                  style={{ display: "none" }}
+                  onChange={this.onChangeFile.bind(this)}
+                />
+                <Button
+                  basic
+                  size="medium"
+                  onClick={this.handleClearAllCoursesClick}
+                >
+                  Clear All Courses
+                </Button>
+              </div>
+            </Col>
+          </Row>
           <Divider clearing />
         </div>
         <div className="page-content stretch-h">
@@ -319,10 +532,54 @@ class Users extends Component {
             />
             <Modal
               centered
-              size={selectedUserId >= 0 ? "xl" : "lg"}
-              show={selectedUserId != null}
+              size={"xl"}
+              show={this.state.showImportExcelModal}
               onHide={this.close}
             >
+              <Modal.Header closeButton bsPrefix="modal-header">
+                <Modal.Title>Import from Excel file</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Row>
+                  <Col>
+                    <Table
+                      data={this.state.importedExcelData}
+                      columns={importColumns}
+                    />
+                    <Form>
+                      <Form.Field>
+                        <label>Courses:</label>
+                        <Dropdown
+                          placeholder="Courses"
+                          name="courses"
+                          fluid
+                          multiple
+                          search
+                          selection
+                          allowAdditions
+                          options={courseOptions}
+                          value={selectedUser.courses}
+                          onChange={this.handleDropdownChange}
+                        />
+                      </Form.Field>
+                    </Form>
+                  </Col>
+                </Row>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  id="add-icon-handler"
+                  variant="primary"
+                  onClick={this.handleSaveImportStudents}
+                >
+                  {this.state.isChangesMadeToModal ? (
+                    <Icon name="save"></Icon>
+                  ) : null}
+                  {this.state.isChangesMadeToModal ? "Save" : "Cancel"}
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            <Modal centered show={selectedUserId != null} onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>User</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
@@ -330,49 +587,51 @@ class Users extends Component {
                 </IconButton>
               </Modal.Header>
               <Modal.Body>
-                <Row>
-                  <Col>
+                {this.state.activeItem === "user" &&
+                  this.state.selectedUser !== null && (
                     <Form>
-                      <Form.Field>
-                        <label>
-                          First Name:
-                          {this.state.firstNameError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
-                        <Form.Input
-                          error={this.state.firstNameError}
-                          name="fname"
-                          placeholder="First Name"
-                          defaultValue={selectedUser.fname}
-                          onChange={(e) => {
-                            this.handleChange(e, "fname");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>
-                          Last Name:
-                          {this.state.lastNameError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
-                        <Form.Input
-                          error={this.state.lastNameError}
-                          name="lname"
-                          placeholder="Last Name"
-                          defaultValue={selectedUser.lname}
-                          onChange={(e) => {
-                            this.handleChange(e, "lname");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
-                      </Form.Field>
+                      <Form.Group widths={2}>
+                        <Form.Field>
+                          <label>
+                            First Name:
+                            {this.state.firstNameError && (
+                              <span className="error-text modal-label-error-text">
+                                Error: Field is empty.
+                              </span>
+                            )}
+                          </label>
+                          <Form.Input
+                            error={this.state.firstNameError}
+                            name="fname"
+                            placeholder="First Name"
+                            defaultValue={selectedUser.fname}
+                            onChange={(e) => {
+                              this.handleChange(e, "fname");
+                            }}
+                            readOnly={this.state.editable}
+                          ></Form.Input>
+                        </Form.Field>
+                        <Form.Field>
+                          <label>
+                            Last Name:
+                            {this.state.lastNameError && (
+                              <span className="error-text modal-label-error-text">
+                                Error: Field is empty.
+                              </span>
+                            )}
+                          </label>
+                          <Form.Input
+                            error={this.state.lastNameError}
+                            name="lname"
+                            placeholder="Last Name"
+                            defaultValue={selectedUser.lname}
+                            onChange={(e) => {
+                              this.handleChange(e, "lname");
+                            }}
+                            readOnly={this.state.editable}
+                          ></Form.Input>
+                        </Form.Field>
+                      </Form.Group>
                       <Form.Field>
                         <label>Courses:</label>
                         <Dropdown
@@ -394,7 +653,7 @@ class Users extends Component {
                           UML ID:
                           {this.state.idError && (
                             <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
+                              Error: Field is empty.
                             </span>
                           )}
                         </label>
@@ -409,38 +668,40 @@ class Users extends Component {
                           readOnly={this.state.editable}
                         ></Form.Input>
                       </Form.Field>
-                      <Form.Field>
-                        <label>
-                          Email:
-                          {this.state.emailError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be empty.
-                            </span>
-                          )}
-                        </label>
-                        <Form.Input
-                          name="email"
-                          error={this.state.emailError}
-                          placeholder="Email"
-                          defaultValue={selectedUser.email}
-                          onChange={(e) => {
-                            this.handleChange(e, "email");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>Phone Number:</label>
-                        <Form.Input
-                          name="phone"
-                          placeholder="Phone Number"
-                          defaultValue={selectedUser.phone}
-                          onChange={(e) => {
-                            this.handleChange(e, "phone");
-                          }}
-                          readOnly={this.state.editable}
-                        ></Form.Input>
-                      </Form.Field>
+                      <Form.Group widths={2}>
+                        <Form.Field>
+                          <label>
+                            Email:
+                            {this.state.emailError && (
+                              <span className="error-text modal-label-error-text">
+                                Error: Field is empty.
+                              </span>
+                            )}
+                          </label>
+                          <Form.Input
+                            name="email"
+                            error={this.state.emailError}
+                            placeholder="Email"
+                            defaultValue={selectedUser.email}
+                            onChange={(e) => {
+                              this.handleChange(e, "email");
+                            }}
+                            readOnly={this.state.editable}
+                          ></Form.Input>
+                        </Form.Field>
+                        <Form.Field>
+                          <label>Phone Number:</label>
+                          <Form.Input
+                            name="phone"
+                            placeholder="Phone Number"
+                            defaultValue={selectedUser.phone}
+                            onChange={(e) => {
+                              this.handleChange(e, "phone");
+                            }}
+                            readOnly={this.state.editable}
+                          ></Form.Input>
+                        </Form.Field>
+                      </Form.Group>
                       <Form.Field>
                         <label>Notes:</label>
                         <Form.Input
@@ -467,9 +728,14 @@ class Users extends Component {
                         </Form.Field>
                       ) : null}
                     </Form>
-                  </Col>
-                  {table}
-                </Row>
+                  )}
+                {this.state.activeItem === "table" &&
+                  this.state.selectedUserId >= 0 && (
+                    <Tab
+                      panes={formTablePanes}
+                      className="stretch-h flex-col"
+                    />
+                  )}
               </Modal.Body>
               <Modal.Footer>
                 {this.state.selectedUserId >= 0 ? (
@@ -483,6 +749,26 @@ class Users extends Component {
                     Edit
                   </Button>
                 ) : null}
+                {this.state.selectedUserId >= 0 && (
+                  <Menu compact className="mr-auto">
+                    <Menu.Item
+                      name="user"
+                      active={this.state.activeItem === "user"}
+                      onClick={this.handleItemClick}
+                    >
+                      <Icon name="clipboard list" />
+                      User Form
+                    </Menu.Item>
+                    <Menu.Item
+                      name="table"
+                      active={this.state.activeItem === "table"}
+                      onClick={this.handleItemClick}
+                    >
+                      <Icon name="book" />
+                      Transactions
+                    </Menu.Item>
+                  </Menu>
+                )}
                 <Button
                   id="add-icon-handler"
                   variant="primary"
