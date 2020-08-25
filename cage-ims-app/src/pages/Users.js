@@ -543,7 +543,6 @@ class Users extends Component {
                       </Form.Field>
                     </Form>
                   </Col>
-                  {/* {table} */}
                 </Row>
               </Modal.Body>
               <Modal.Footer>
