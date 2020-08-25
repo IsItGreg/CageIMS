@@ -90,7 +90,7 @@ class Search extends React.Component {
     const isError = this.state.error;
     return (
       <div className="checkinout-search">
-        <h1>Check In/Out</h1>
+        <h1>Check In / Out</h1>
         <Input
           error={this.state.error}
           onChange={this.handleChange}
@@ -100,13 +100,20 @@ class Search extends React.Component {
           icon="users"
           iconPosition="left"
           placeholder="Search by exact ID..."
+          className="drop-shadow"
         />
         {isError && (
           <div className="error-text">
             <p>Error: ID is invalid.</p>
           </div>
         )}
-        <Button size="big" animated onClick={this.handleSearchButtonClick}>
+        <Button
+          size="big"
+          positive
+          basic
+          animated
+          onClick={this.handleSearchButtonClick}
+        >
           <Button.Content visible>Search</Button.Content>
           <Button.Content hidden>
             <Icon name="search" />

@@ -178,12 +178,21 @@ class Transactions extends Component {
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button
-            style={{ backgroundColor: "#46C88C", color: "white" }}
-            href="#/"
-          >
-            Create New Transaction
-          </Button>
+          <Row>
+            <Col>
+              <Button
+                className="float-down"
+                style={{ backgroundColor: "#46C88C", color: "white" }}
+                href="#/"
+              >
+                Create New Transaction
+              </Button>
+            </Col>
+            <Col>
+              <h1>Transaction History</h1>
+            </Col>
+            <Col />
+          </Row>
           <Divider clearing />
         </div>
         <div className="page-content stretch-h">

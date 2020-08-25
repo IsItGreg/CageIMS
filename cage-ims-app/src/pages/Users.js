@@ -479,24 +479,45 @@ class Users extends Component {
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button
-            style={{ backgroundColor: "#46C88C", color: "white" }}
-            onClick={this.handleAddUserClick}
-          >
-            Create New User
-          </Button>
-          <Button basic onClick={this.handleImportSpreadsheetClick}>
-            Import from Excel
-          </Button>
-          <input
-            type="file"
-            ref="fileUploader"
-            style={{ display: "none" }}
-            onChange={this.onChangeFile.bind(this)}
-          />
-          <Button basic onClick={this.handleClearAllCoursesClick}>
-            Clear All Courses
-          </Button>
+          <Row>
+            <Col>
+              <Button
+                className="float-down"
+                size="medium"
+                style={{ backgroundColor: "#46C88C", color: "white" }}
+                onClick={this.handleAddUserClick}
+              >
+                Create New User
+              </Button>
+            </Col>
+            <Col>
+              <h1>User List</h1>
+            </Col>
+            <Col>
+              <div className="float-down right-buttons">
+                <Button
+                  basic
+                  size="medium"
+                  onClick={this.handleImportSpreadsheetClick}
+                >
+                  Import from Excel
+                </Button>
+                <input
+                  type="file"
+                  ref="fileUploader"
+                  style={{ display: "none" }}
+                  onChange={this.onChangeFile.bind(this)}
+                />
+                <Button
+                  basic
+                  size="medium"
+                  onClick={this.handleClearAllCoursesClick}
+                >
+                  Clear All Courses
+                </Button>
+              </div>
+            </Col>
+          </Row>
           <Divider clearing />
         </div>
         <div className="page-content stretch-h">
