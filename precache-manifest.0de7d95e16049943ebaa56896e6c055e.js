@@ -1,11 +1,11 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "948553973116ce29298173c77959dfd8",
+    "revision": "9a629ef2f37f4899507194748cc1f912",
     "url": "/CageIMS/index.html"
   },
   {
-    "revision": "71a5c0683477dae3dccd",
-    "url": "/CageIMS/static/css/main.c2efdc0a.chunk.css"
+    "revision": "a1d09d6b9aaefd14d894",
+    "url": "/CageIMS/static/css/main.c02bb914.chunk.css"
   },
   {
     "revision": "9e3fb0cfacdc91d28098",
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/CageIMS/static/js/2.b71b063d.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "71a5c0683477dae3dccd",
-    "url": "/CageIMS/static/js/main.83dbd3ca.chunk.js"
+    "revision": "a1d09d6b9aaefd14d894",
+    "url": "/CageIMS/static/js/main.2542465e.chunk.js"
   },
   {
     "revision": "b8201cdc5d687550d5b7",
