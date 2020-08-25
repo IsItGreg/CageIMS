@@ -55,7 +55,7 @@ class Sidebar extends Component {
               active={this.props.location.pathname === "/staff"}
             >
               <h5>
-                <Icon name="id card" />
+                <Icon name="briefcase" />
                 Staff
               </h5>
             </Nav.Link>

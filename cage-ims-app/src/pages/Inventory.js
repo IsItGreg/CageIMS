@@ -8,7 +8,7 @@ import {
   Tab,
   Menu,
 } from "semantic-ui-react";
-import { Col, Modal } from "react-bootstrap";
+import { Col, Modal, Row } from "react-bootstrap";
 import Table from "../common/Table";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -494,12 +494,21 @@ class Inventory extends Component {
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
-          <Button
-            style={{ backgroundColor: "#46C88C", color: "white" }}
-            onClick={this.handleItemAddClick}
-          >
-            Create New Item
-          </Button>
+          <Row>
+            <Col>
+              <Button
+                className="float-down"
+                style={{ backgroundColor: "#46C88C", color: "white" }}
+                onClick={this.handleItemAddClick}
+              >
+                Create New Item
+              </Button>
+            </Col>
+            <Col>
+              <h1>Inventory</h1>
+            </Col>
+            <Col />
+          </Row>
           <Divider clearing />
         </div>
         <div className="page-content stretch-h">
