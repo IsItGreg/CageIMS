@@ -118,9 +118,10 @@ class Users extends Component {
   };
 
   handleUserEditClick = () => {
-    this.setState({
-      editable: !this.state.editable,
-    });
+    !this.state.isChangesMadeToModal &&
+      this.setState({
+        editable: !this.state.editable,
+      });
   };
 
   handleUserSelectClick = (e, rowData) => {
@@ -578,13 +579,7 @@ class Users extends Component {
                 </Button>
               </Modal.Footer>
             </Modal>
-            <Modal
-              centered
-              size={selectedUserId >= 0 ? "xl" : "lg"}
-              dialogClassName="modal-30w"
-              show={selectedUserId != null}
-              onHide={this.close}
-            >
+            <Modal centered show={selectedUserId != null} onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>User</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
@@ -592,7 +587,7 @@ class Users extends Component {
                 </IconButton>
               </Modal.Header>
               <Modal.Body>
-                {this.state.activeItem == "user" &&
+                {this.state.activeItem === "user" &&
                   this.state.selectedUser !== null && (
                     <Form>
                       <Form.Group widths={2}>

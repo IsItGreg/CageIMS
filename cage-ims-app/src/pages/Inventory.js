@@ -145,10 +145,10 @@ class Inventory extends Component {
   };
 
   handleItemSelectClick = (e, rowData) => {
-    let selectedItemId = rowData.iid;
+    let selectedItemId = rowData.tableData.id;
     let selectedItem = Object.assign(
       {},
-      this.props.data.items.find((item) => item.iid === selectedItemId)
+      this.props.data.items.find((item) => item.iid === rowData.iid)
     );
     let transactions = Array.from(
       this.props.data.transactions.filter(
@@ -190,9 +190,10 @@ class Inventory extends Component {
   };
 
   handleItemEditClick = () => {
-    this.setState({
-      editable: !this.state.editable,
-    });
+    !this.state.isChangesMadeToModal &&
+      this.setState({
+        editable: !this.state.editable,
+      });
   };
 
   checkErrorUpdateDataSet = () => {
@@ -215,19 +216,19 @@ class Inventory extends Component {
   };
 
   handleSubmitClick = () => {
-    if (!this.state.isChangesMadeToModal) {
+    if (this.state.isChangesMadeToModal) {
+      this.setState(
+        {
+          nameError: this.state.selectedItem.name === "",
+          categoryError: this.state.selectedItem.category === "",
+          iidError: this.state.selectedItem.iid === "",
+          serialError: this.state.selectedItem.serial === "",
+        },
+        this.checkErrorUpdateDataSet
+      );
+    } else {
       this.close();
-      return;
     }
-    this.setState(
-      {
-        nameError: this.state.selectedItem.name === "",
-        categoryError: this.state.selectedItem.category === "",
-        iidError: this.state.selectedItem.iid === "",
-        serialError: this.state.selectedItem.serial === "",
-      },
-      this.checkErrorUpdateDataSet
-    );
   };
 
   formatDate = (dateString) => {
@@ -512,7 +513,7 @@ class Inventory extends Component {
           <Divider clearing />
         </div>
         <div className="page-content stretch-h">
-          <Col className="stretch-h flex-col">
+          <Col className="stretch-h flex-shrink flex-col">
             <Tab panes={inventoryTablePanes} className="stretch-h flex-col" />
             <Modal centered show={selectedItemId != null} onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
