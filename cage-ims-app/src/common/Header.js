@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Row, Col, Nav } from "react-bootstrap";
 import { Dropdown, Icon } from "semantic-ui-react";
-
+import { ReactComponent as Logo } from "./cagelogo.svg";
+import { SvgIcon } from "@material-ui/core";
 // const sampleUser = { firstName: "User", lastName: "Name" };
 
 const trigger = (
@@ -64,7 +65,15 @@ class Header extends Component {
         <Col>
           <Nav.Link href="#/">
             <h2>
-              <Icon name="camera" />
+              <img
+                src={require("./cagelogo.svg")}
+                className="header-icon"
+                alt="yep"
+                height="45"
+                width="45"
+              ></img>
+              {/* <img src ={require("./cagelogo.svg")} alt="Header"></img> */}
+              {/* <Icon name="camera" /> */}
               CageIMS
             </h2>
           </Nav.Link>

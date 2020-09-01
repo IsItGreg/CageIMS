@@ -1,3 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="72" height="72" viewBox="0 0 72 72">
-  <image x="9" y="3" width="54" height="66" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAABCCAYAAAAc9iUKAAABHUlEQVRoge2b0Q2CMBRFH4YB3EBGYRMZwQ3ETWCTjuAIuIEbYJr0gw8xXtoCV+9J+kPS0hP6XkubFuM4GkhlZg1aKZLOzAakiXLB+7zYdQ2bCQ4VO+Tu0VZIjI2fFVuSPOboQ/aKwWfb897EhpC9YqhTdUYxxobE2ChDwCJBW8089220kf5z/WjAPjq/CG43WPvl5qYYY0NibHxaUhUkLm+3ADQU2ZAYGxJjQ2IT6jB3rFngLQN9MTYkxkbKfcUHeiIC8EQrpBTrEux5JEMxxobE2JAYGxJjQ2JsSIwN/bZ8AXrqiHAxs/tWYqdQcnBE21SMsSExNpYkD8dw2qmhyIbE2JAYG385j8GXXvaEhiIbEmPDJ4/Y2w37w8y9AFGqOdcNrW4cAAAAAElFTkSuQmCC"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 24.3.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 72 72" style="enable-background:new 0 0 72 72;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FFFFFF;}
+</style>
+<g>
+	<path class="st0" d="M51.71,13.33V0h-2.19v0H26.4h-6.11h0v6.11h0v7.23H6.67V72h58.67V13.33H51.71z M26.4,6.11h19.21v7.23H26.4V6.11
+		z M59.44,66.1H12.56V19.23h46.87V66.1z"/>
+	<polygon class="st0" points="51.71,34.47 51.71,28.37 26.4,28.37 20.29,28.37 20.29,34.47 20.29,50.9 20.29,55.09 20.29,57.01 
+		51.71,57.01 51.71,50.9 26.4,50.9 26.4,34.47 	"/>
+</g>
 </svg>
