@@ -146,6 +146,38 @@ class App extends Component {
             notes: "Example of transaction notes",
           },
         ],
+        staff: [
+          {
+            fname: "User",
+            lname: "AWhoExists",
+            sid: "11111112",
+            email: "existing@email.com",
+            phone: "123-456-7891",
+            notes: "Optional notes for Seamus",
+            creationDate: new Date().getTime(),
+            courses: ["PreviousCourse"],
+          },
+          {
+            fname: "Seamus",
+            lname: "Rioux",
+            sid: "54321",
+            email: "srioux@email.com",
+            phone: "123-456-7891",
+            notes: "Optional notes for Seamus",
+            creationDate: new Date().getTime(),
+            courses: ["Photography I"],
+          },
+          {
+            fname: "Greg",
+            lname: "Smelkov",
+            sid: "12345",
+            email: "greg@email.com",
+            phone: "123-456-7891",
+            notes: "Optional notes for Greg",
+            creationDate: new Date().getTime(),
+            courses: ["Photography I", "Photography II"],
+          },
+        ],
       },
     };
   }
@@ -173,12 +205,6 @@ class App extends Component {
                       onUpdateData={this.handleDataUpdate}
                     />
                   </Route>
-                  {/* <Route path="/checkinout">
-                    <CheckInOut
-                      data={this.state.data}
-                      onUpdateData={this.handleDataUpdate}
-                    /> */}
-
                   <Route path="/users">
                     <Users
                       data={this.state.data}
@@ -192,7 +218,10 @@ class App extends Component {
                     />
                   </Route>
                   <Route path="/staff">
-                    <Staff onUpdateData={this.handleDataUpdate} />
+                    <Staff
+                      data={this.state.data}
+                      onUpdateData={this.handleDataUpdate}
+                    />
                   </Route>
                   <Route path="/transactions">
                     <Transactions
