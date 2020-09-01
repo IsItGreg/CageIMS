@@ -426,7 +426,7 @@ class Inventory extends Component {
           <Table
             data={this.getList(this.props.data.items)}
             columns={this.state.columnSet}
-            title={<h2>Inventory</h2>}
+            title={<h2>All</h2>}
             onRowClick={(event, rowData) =>
               this.handleItemSelectClick(event, rowData)
             }
@@ -443,7 +443,7 @@ class Inventory extends Component {
               )
             )}
             columns={this.state.columnSet}
-            title={<h2>Inventory</h2>}
+            title={<h2>Available</h2>}
             onRowClick={(event, rowData) =>
               this.handleItemSelectClick(event, rowData)
             }
@@ -460,7 +460,7 @@ class Inventory extends Component {
               )
             )}
             columns={this.state.columnSet}
-            title={<h2>Inventory</h2>}
+            title={<h2>Unavailable</h2>}
             onRowClick={(event, rowData) =>
               this.handleItemSelectClick(event, rowData)
             }
@@ -468,6 +468,28 @@ class Inventory extends Component {
         ),
       },
     ];
+
+    const tempItems = this.props.data.items;
+    const categories = [
+      ...new Set(tempItems.map((item) => item.category)),
+    ].sort();
+
+    categories.forEach((category) => {
+      inventoryTablePanes.push({
+        menuItem: category,
+        render: () => (
+          <Table
+            data={tempItems.filter((item) => item.category === category)}
+            itemType={"item"}
+            columns={this.state.columnSet}
+            title={<h3>{category}</h3>}
+            onRowClick={(event, rowData) =>
+              this.handleItemSelectClick(event, rowData)
+            }
+          />
+        ),
+      });
+    });
 
     const courseOptions = Array.from(
       new Set(
