@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { HashRouter as Router, Route, Switch } from "react-router-dom";
-
 import Header from "./common/Header";
 import Sidebar from "./common/Sidebar";
+import Login from "./pages/Login";
 import { Container, Row, Col } from "react-bootstrap";
 import "./App.scss";
 import CheckInOut from "./pages/CheckInOut";
@@ -17,7 +17,10 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.handleDataUpdate = this.handleDataUpdate.bind(this);
+    //this.handleLoginUpdate = this.handleLoginUpdate.bind(this);
     this.state = {
+      loggedIn: true,
+      visible: true,
       data: {
         users: [
           {
@@ -159,51 +162,50 @@ class App extends Component {
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Router>
-          <Container fluid className="no-gutters flex-col stretch-hw">
-            <Header />
-            <Row className="flex-grow no-gutters">
-              <Col md="auto" className="no-gutters">
-                <Sidebar />
-              </Col>
-              <Col className="no-gutters">
-                <Switch>
-                  <Route exact path="/">
-                    <CheckInOut
-                      data={this.state.data}
-                      onUpdateData={this.handleDataUpdate}
-                    />
-                  </Route>
-                  {/* <Route path="/checkinout">
-                    <CheckInOut
-                      data={this.state.data}
-                      onUpdateData={this.handleDataUpdate}
-                    /> */}
-
-                  <Route path="/users">
-                    <Users
-                      data={this.state.data}
-                      onUpdateData={this.handleDataUpdate}
-                    />
-                  </Route>
-                  <Route path="/inventory">
-                    <Inventory
-                      data={this.state.data}
-                      onUpdateData={this.handleDataUpdate}
-                    />
-                  </Route>
-                  <Route path="/staff">
-                    <Staff onUpdateData={this.handleDataUpdate} />
-                  </Route>
-                  <Route path="/transactions">
-                    <Transactions
-                      data={this.state.data}
-                      onUpdateData={this.handleDataUpdate}
-                    />
-                  </Route>
-                </Switch>
-              </Col>
-            </Row>
-          </Container>
+          <Switch>
+            <Route exact path="/login">
+              <Login />
+            </Route>
+            <Container fluid className="no-gutters flex-col stretch-hw">
+              <Header />
+              <Row className="flex-grow no-gutters">
+                <Col md="auto" className="no-gutters">
+                  <Sidebar />
+                </Col>
+                <Col className="no-gutters">
+                  <Switch>
+                    <Route exact path="/">
+                      <CheckInOut
+                        data={this.state.data}
+                        onUpdateData={this.handleDataUpdate}
+                      />
+                    </Route>
+                    <Route path="/users">
+                      <Users
+                        data={this.state.data}
+                        onUpdateData={this.handleDataUpdate}
+                      />
+                    </Route>
+                    <Route path="/inventory">
+                      <Inventory
+                        data={this.state.data}
+                        onUpdateData={this.handleDataUpdate}
+                      />
+                    </Route>
+                    <Route path="/staff">
+                      <Staff onUpdateData={this.handleDataUpdate} />
+                    </Route>
+                    <Route path="/transactions">
+                      <Transactions
+                        data={this.state.data}
+                        onUpdateData={this.handleDataUpdate}
+                      />
+                    </Route>
+                  </Switch>
+                </Col>
+              </Row>
+            </Container>
+          </Switch>
         </Router>
       </MuiPickersUtilsProvider>
     );

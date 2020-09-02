@@ -34,25 +34,31 @@ class Header extends Component {
   }
 
   componentDidMount() {
-    setInterval(() => {
-      this.setState({
-        curTime: new Date()
-          .toLocaleString(
-            [],
-            ("en-US",
-            {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            })
-          )
-          .split(",")
-          .join("\t"),
-      });
-    }, 1000);
+    this.setState({
+      clockIntervalId: setInterval(() => {
+        this.setState({
+          curTime: new Date()
+            .toLocaleString(
+              [],
+              ("en-US",
+              {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true,
+              })
+            )
+            .split(",")
+            .join("\t"),
+        });
+      }, 1000),
+    });
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.clockIntervalId);
   }
 
   render() {
@@ -87,7 +93,7 @@ class Header extends Component {
                 icon="sign-out"
                 text="Sign Out"
                 as={Link}
-                to="/logout"
+                to="/login"
               />
             </Dropdown.Menu>
           </Dropdown>

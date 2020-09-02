@@ -329,3 +329,59 @@
   -moz-box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.15);
   box-shadow: 3px 3px 15px 0px rgba(0, 0, 0, 0.15);
 }
+
+.login-page-left {
+  background: rgba(34, 99, 171, 1);
+  background: -moz-linear-gradient(
+    top,
+    rgba(34, 99, 171, 1) 0%,
+    rgba(21, 77, 142, 1) 100%
+  );
+  background: -webkit-gradient(
+    left top,
+    left bottom,
+    color-stop(0%, rgba(34, 99, 171, 1)),
+    color-stop(100%, rgba(21, 77, 142, 1))
+  );
+  background: -webkit-linear-gradient(
+    top,
+    rgba(34, 99, 171, 1) 0%,
+    rgba(21, 77, 142, 1) 100%
+  );
+  background: -o-linear-gradient(
+    top,
+    rgba(34, 99, 171, 1) 0%,
+    rgba(21, 77, 142, 1) 100%
+  );
+  background: -ms-linear-gradient(
+    top,
+    rgba(34, 99, 171, 1) 0%,
+    rgba(21, 77, 142, 1) 100%
+  );
+  background: linear-gradient(
+    to bottom,
+    rgba(34, 99, 171, 1) 0%,
+    rgba(21, 77, 142, 1) 100%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2263ab', endColorstr='#154d8e', GradientType=0 );
+  color: white;
+
+  .vertical-center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+}
+
+.login-page-right {
+  background-color: white;
+  color: black;
+  .button-right {
+    position: absolute;
+    right: 0px;
+    width: 300px;
+  }
+}
