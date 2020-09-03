@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Col, Row } from "react-bootstrap";
 import { Button, Form } from "semantic-ui-react";
+import axios from "axios";
 
 export default class Login extends Component {
   constructor(props) {
@@ -54,6 +55,13 @@ export default class Login extends Component {
     clearInterval(this.state.clockIntervalId);
   }
 
+  submitLogin() {
+    axios
+      .get("/api/users/login")
+      .then((user) => this.props.onUpdateActiveUser(user))
+      .catch((err) => console.log(err));
+  }
+
   render() {
     return (
       <Row className="stretch-h">
@@ -64,11 +72,15 @@ export default class Login extends Component {
         </Col>
         <Col className="login-page-right">
           <div>
-            <Form>
+            <Form onSubmit={submitLogin}>
               <h1>Login</h1>
               <Form.Field>
                 <label>Email</label>
-                <Form.Input placeholder="Email" className="drop-shadow" />
+                <Form.Input
+                  onChange={this.setState({ email: e.target.value })}
+                  placeholder="Email"
+                  className="drop-shadow"
+                />
               </Form.Field>
               <Form.Field>
                 <label>Password</label>
@@ -77,6 +89,7 @@ export default class Login extends Component {
               <Form.Field>
                 <Button basic>Forgot Password</Button>
               </Form.Field>
+              <Form.Button content="Submit" />
               <Button
                 style={{ backgroundColor: "#46C88C", color: "white" }}
                 href="#/"

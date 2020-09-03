@@ -17,6 +17,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.handleDataUpdate = this.handleDataUpdate.bind(this);
+    this.handleActiveUserUpdate = this.handleActiveUserUpdate.bind(this);
     //this.handleLoginUpdate = this.handleLoginUpdate.bind(this);
     this.state = {
       loggedIn: true,
@@ -150,6 +151,7 @@ class App extends Component {
           },
         ],
       },
+      activeUser: {},
     };
   }
 
@@ -158,13 +160,18 @@ class App extends Component {
     // console.log("Data Updated", data);
   }
 
+  handleActiveUserUpdate(activeUser) {
+    console.log(activeUser);
+    this.setState({ activeUser });
+  }
+
   render() {
     return (
       <MuiPickersUtilsProvider utils={DateFnsUtils}>
         <Router>
           <Switch>
             <Route exact path="/login">
-              <Login />
+              <Login onUpdateActiveUser={this.handleActiveUserUpdate} />
             </Route>
             <Container fluid className="no-gutters flex-col stretch-hw">
               <Header />
