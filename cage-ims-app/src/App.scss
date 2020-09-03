@@ -373,15 +373,43 @@
     left: 50%;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
+    .line {
+      width: 265px;
+      border-bottom: 2px solid white;
+      position: relative;
+      text-align: center;
+    }
+    h2 {
+      font-size: 30px;
+      font-weight: bold;
+      position: relative;
+      text-align: center;
+    }
+    h1 {
+      font-size: 55px;
+      font-weight: bold;
+      position: relative;
+      text-align: center;
+    }
   }
 }
 
 .login-page-right {
   background-color: white;
   color: black;
+
+  .vertical-center-right {
+    padding-top: 40%;
+    padding-right: 15%;
+    padding-left: 15%;
+    h1 {
+      font-weight: bold;
+      text-align: center;
+      padding-bottom: 4%;
+    }
+  }
   .button-right {
     position: absolute;
     right: 0px;
-    width: 300px;
   }
 }

@@ -7,16 +7,23 @@ export default class Login extends Component {
     super(props);
     //this.handleLogin = this.handleLogin.bind(this);
     this.state = {
-      visble: true,
+      curDay: new Date()
+        .toLocaleString(
+          [],
+          ("en-US",
+          {
+            month: "short",
+            day: "numeric",
+          })
+        )
+        .split(",")
+        .join("\t"),
       curTime: new Date()
         .toLocaleString(
           [],
           ("en-US",
           {
-            weekday: "short",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
+            hour: "numeric",
             minute: "2-digit",
             hour12: true,
           })
@@ -30,15 +37,23 @@ export default class Login extends Component {
     this.setState({
       clockIntervalId: setInterval(() => {
         this.setState({
+          curDay: new Date()
+            .toLocaleString(
+              [],
+              ("en-US",
+              {
+                month: "short",
+                day: "numeric",
+              })
+            )
+            .split(",")
+            .join("\t"),
           curTime: new Date()
             .toLocaleString(
               [],
               ("en-US",
               {
-                weekday: "short",
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
+                hour: "numeric",
                 minute: "2-digit",
                 hour12: true,
               })
@@ -59,30 +74,35 @@ export default class Login extends Component {
       <Row className="stretch-h">
         <Col className="login-page-left ">
           <div className="vertical-center">
+            <h2>Today, {this.state.curDay}</h2>
+            <div className="line" />
             <h1>{this.state.curTime}</h1>
           </div>
         </Col>
         <Col className="login-page-right">
-          <div>
+          <div className="vertical-center-right">
             <Form>
-              <h1>Login</h1>
+              <h1>Log in</h1>
               <Form.Field>
-                <label>Email</label>
-                <Form.Input placeholder="Email" className="drop-shadow" />
+                <label>Username</label>
+                <Form.Input placeholder="Username" className="drop-shadow" />
               </Form.Field>
               <Form.Field>
                 <label>Password</label>
-                <Form.Input placeholder="Email" className="drop-shadow" />
+                <Form.Input placeholder="Password" className="drop-shadow" />
               </Form.Field>
-              <Form.Field>
-                <Button basic>Forgot Password</Button>
-              </Form.Field>
-              <Button
-                style={{ backgroundColor: "#46C88C", color: "white" }}
-                href="#/"
-              >
-                Login
-              </Button>
+              <div>
+                <Button className="button-right" size="medium" basic>
+                  Forgot Password
+                </Button>
+                <Button
+                  style={{ backgroundColor: "#46C88C", color: "white" }}
+                  href="#/"
+                  size="medium"
+                >
+                  Login
+                </Button>
+              </div>
             </Form>
           </div>
         </Col>
