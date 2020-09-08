@@ -65,15 +65,12 @@ class Header extends Component {
         <Col>
           <Nav.Link href="#/">
             <h2>
-              <img
-                src={require("./cagelogo.svg")}
-                className="header-icon"
-                alt="yep"
-                height="45"
-                width="45"
-              ></img>
-              {/* <img src ={require("./cagelogo.svg")} alt="Header"></img> */}
-              {/* <Icon name="camera" /> */}
+              <SvgIcon
+                component={Logo}
+                fontSize="small"
+                viewBox="0 0 90 85"
+                style={{ width: "45px", height: "45px" }}
+              />
               CageIMS
             </h2>
           </Nav.Link>
