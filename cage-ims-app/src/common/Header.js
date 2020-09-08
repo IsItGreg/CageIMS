@@ -68,8 +68,8 @@ class Header extends Component {
               <SvgIcon
                 component={Logo}
                 fontSize="small"
-                viewBox="0 0 90 85"
-                style={{ width: "45px", height: "45px" }}
+                viewBox="0 0 70 80"
+                style={{ width: "55px", height: "45px" }}
               />
               CageIMS
             </h2>
