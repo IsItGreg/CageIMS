@@ -57,7 +57,7 @@ export default class Login extends Component {
 
   submitLogin() {
     axios
-      .get("/api/users/login")
+      .get("/api/Users/login")
       .then((user) => this.props.onUpdateActiveUser(user))
       .catch((err) => console.log(err));
   }
