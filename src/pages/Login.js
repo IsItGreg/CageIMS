@@ -55,12 +55,12 @@ export default class Login extends Component {
     clearInterval(this.state.clockIntervalId);
   }
 
-  submitLogin() {
-    axios
-      .get("/api/Users/login")
-      .then((user) => this.props.onUpdateActiveUser(user))
-      .catch((err) => console.log(err));
-  }
+  // submitLogin() {
+  //   axios
+  //     .get("/api/users/login")
+  //     .then((user) => this.props.onUpdateActiveUser(user))
+  //     .catch((err) => console.log(err));
+  // }
 
   render() {
     return (
