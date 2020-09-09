@@ -498,6 +498,7 @@ class Users extends Component {
                 <Button
                   basic
                   size="medium"
+                  color="orange"
                   onClick={this.handleImportSpreadsheetClick}
                 >
                   Import from Excel
@@ -510,6 +511,7 @@ class Users extends Component {
                 />
                 <Button
                   basic
+                  color="red"
                   size="medium"
                   onClick={this.handleClearAllCoursesClick}
                 >
