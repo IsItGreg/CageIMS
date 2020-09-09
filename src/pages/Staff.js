@@ -11,8 +11,6 @@ import {
 import { Col, Row, Modal } from "react-bootstrap";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
-import TextField from "@material-ui/core/TextField";
-import XLSX from "xlsx";
 import Table from "../common/Table";
 
 class Users extends Component {
@@ -143,7 +141,7 @@ class Users extends Component {
       )
     ) {
       let data = Object.assign({}, this.props.data);
-      data.users.forEach((user) => (user.courses = []));
+      data.staff.forEach((staff) => (staff.courses = []));
       this.props.onUpdateData(data);
     }
   };
@@ -159,7 +157,7 @@ class Users extends Component {
       if (this.state.selectedStaffId >= 0) {
         data.users[this.state.selectedStaffId] = this.state.selectedStaff;
       } else {
-        data.users.push(this.state.selectedStaff);
+        data.staff.push(this.state.selectedStaff);
       }
       this.props.onUpdateData(data);
       this.close();
@@ -178,38 +176,6 @@ class Users extends Component {
         this.checkErrorUpdateDataSet
       );
     } else {
-      this.close();
-    }
-  };
-
-  handleSaveImportStudents = () => {
-    if (!this.state.isChangesMadeToModal) {
-      this.close();
-    }
-
-    if (
-      this.state.importedExcelData.every(
-        (user) => this.state["importEmailValid" + user.uid]
-      )
-    ) {
-      let newUsers = Array.from(this.state.importedExcelData);
-      newUsers.forEach(
-        (user) =>
-          (user.courses = user.courses.concat(this.state.selectedStaff.courses))
-      );
-      let users = [
-        ...newUsers,
-        ...this.props.data.staff.filter(
-          (user) =>
-            this.state.importedExcelData.find(
-              (nuser) => nuser.uid === user.uid
-            ) === undefined
-        ),
-      ];
-
-      let data = Object.assign({}, this.props.data);
-      data.users = users;
-      this.props.onUpdateData(data);
       this.close();
     }
   };
@@ -382,7 +348,7 @@ class Users extends Component {
                 style={{ backgroundColor: "#46C88C", color: "white" }}
                 onClick={this.handleAddUserClick}
               >
-                Create New Staff
+                Create New Staff Member
               </Button>
             </Col>
             <Col>

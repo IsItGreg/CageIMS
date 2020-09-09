@@ -152,7 +152,7 @@ class App extends Component {
         ],
         staff: [
           {
-            fname: "User",
+            fname: "Staff",
             lname: "AWhoExists",
             sid: "11111112",
             email: "existing@email.com",
@@ -232,7 +232,10 @@ class App extends Component {
                       />
                     </Route>
                     <Route path="/staff">
-                      <Staff onUpdateData={this.handleDataUpdate} />
+                      <Staff
+                        data={this.state.data}
+                        onUpdateData={this.handleDataUpdate}
+                      />
                     </Route>
                     <Route path="/transactions">
                       <Transactions
