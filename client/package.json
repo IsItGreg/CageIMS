@@ -18,7 +18,6 @@
     "cors": "^2.8.5",
     "date-fns": "^2.15.0",
     "express": "^4.17.1",
-    "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "material-table": "^1.68.0",
     "material-ui": "^0.20.2",
@@ -60,11 +59,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "devDependencies": {
     "gh-pages": "^3.1.0"

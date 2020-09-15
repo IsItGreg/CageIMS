@@ -55,7 +55,7 @@ const PORT = process.env.PORT || 8080; // Step 1
 const routes = require('./routes/api');
 
 // Step 2
-const mongo_uri = "mongodb+srv://dbUser:dbUserPassword@cims-cluster.36vz8.azure.mongodb.net/test?retryWrites=true&w=majority";
+const mongo_uri = "mongodb+srv://dbUser:dbUserPassword@cims-cluster.36vz8.azure.mongodb.net/CageDB?retryWrites=true&w=majority";
 mongoose.connect(mongo_uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true

@@ -1,5 +1,5 @@
 {
-  "name": "cage-ims-app",
+  "name": "CageIMS",
   "version": "0.1.0",
   "dependencies": {
     "axios": "^0.20.0",
