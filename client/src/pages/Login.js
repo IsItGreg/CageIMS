@@ -55,12 +55,12 @@ export default class Login extends Component {
     clearInterval(this.state.clockIntervalId);
   }
 
-  // submitLogin() {
-  //   axios
-  //     .get("/api/users/login")
-  //     .then((user) => this.props.onUpdateActiveUser(user))
-  //     .catch((err) => console.log(err));
-  // }
+  submitLogin() {
+    axios
+      .get("/api/users/login")
+      .then((user) => this.props.onUpdateActiveUser(user))
+      .catch((err) => console.log(err));
+  }
 
   render() {
     return (
@@ -92,7 +92,7 @@ export default class Login extends Component {
               <Form.Button content="Submit" />
               <Button
                 style={{ backgroundColor: "#46C88C", color: "white" }}
-                href="#/"
+                // href="#/"
               >
                 Login
               </Button>
