@@ -80,7 +80,6 @@ if (process.env.NODE_ENV === 'production') {
 app.use(morgan('tiny'));
 app.use('/api', routes);
 
-
-
+app.use(express.static(path.join(__dirname, '/client/build')));
 
 app.listen(PORT, console.log(`Server is starting at ${PORT}`));
