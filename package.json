@@ -1,6 +1,6 @@
 {
-  "homepage": "https://protected-beyond-74373.herokuapp.com/client/build",
-  "name": "CageIMS",
+  "homepage": "https://protected-beyond-74373.herokuapp.com/",
+  "name": "cage-ims",
   "version": "0.1.0",
   "dependencies": {
     "axios": "^0.20.0",
