@@ -12,7 +12,7 @@ class Sidebar extends Component {
             <Nav.Link href="#/" active={this.props.location.pathname === "/"}>
               <h5>
                 <Icon name="handshake" />
-                Check In/Out
+                &nbsp; Check In/Out
               </h5>
             </Nav.Link>
           </Nav.Item>
@@ -23,7 +23,7 @@ class Sidebar extends Component {
             >
               <h5>
                 <Icon name="users" />
-                Users
+                &nbsp; Users
               </h5>
             </Nav.Link>
           </Nav.Item>
@@ -34,7 +34,7 @@ class Sidebar extends Component {
             >
               <h5>
                 <Icon name="camera" />
-                Inventory
+                &nbsp; Inventory
               </h5>
             </Nav.Link>
           </Nav.Item>
@@ -45,7 +45,7 @@ class Sidebar extends Component {
             >
               <h5>
                 <Icon name="book" />
-                History
+                &nbsp; History
               </h5>
             </Nav.Link>
           </Nav.Item>
@@ -56,7 +56,18 @@ class Sidebar extends Component {
             >
               <h5>
                 <Icon name="briefcase" />
-                Staff
+                &nbsp; Staff
+              </h5>
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link
+              href="#/courses"
+              active={this.props.location.pathname === "/courses"}
+            >
+              <h5>
+                <Icon name="computer" />
+                &nbsp; Courses
               </h5>
             </Nav.Link>
           </Nav.Item>

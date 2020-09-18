@@ -12,6 +12,7 @@ import Staff from "./pages/Staff";
 import Transactions from "./pages/Transactions";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
+import Courses from "./pages/Courses";
 
 class App extends Component {
   constructor(props) {
@@ -204,6 +205,12 @@ class App extends Component {
                     </Route>
                     <Route path="/transactions">
                       <Transactions
+                        data={this.state.data}
+                        onUpdateData={this.handleDataUpdate}
+                      />
+                    </Route>
+                    <Route path="/courses">
+                      <Courses
                         data={this.state.data}
                         onUpdateData={this.handleDataUpdate}
                       />
