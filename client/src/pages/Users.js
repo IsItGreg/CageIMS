@@ -19,41 +19,10 @@ class Users extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    const headerStyleGrey = {
-      backgroundColor: "#E2E2E2",
-      color: "black",
-      fontSize: "24",
-    };
     this.handleImportSpreadsheetClick = this.handleImportSpreadsheetClick.bind(
       this
     );
     this.state = {
-      columnSet: [
-        {
-          title: "Last Name",
-          field: "lname",
-          defaultSort: "asc",
-          headerStyle: headerStyleGrey,
-        },
-        { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
-        {
-          title: "Courses",
-          field: "courses",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => {
-            return rowData.courses.length > 0
-              ? rowData.courses.reduce((result, item) => (
-                  <>
-                    {result}
-                    {", "}
-                    {item}
-                  </>
-                ))
-              : "";
-          },
-        },
-      ],
-
       activeItem: "user",
       firstNameError: false,
       lastNameError: false,
@@ -139,7 +108,7 @@ class Users extends Component {
       transactions.forEach((transaction) => {
         transaction.backgroundColor =
           !transaction.checkedInDate &&
-          new Date(transaction.dueDate).getTime() < new Date().getTime()
+            new Date(transaction.dueDate).getTime() < new Date().getTime()
             ? "mistyrose"
             : "";
       });
@@ -155,7 +124,7 @@ class Users extends Component {
         fname: "",
         lname: "",
         courses: [],
-        uid: "",
+        uid:  "",
         email: "",
         phone: "",
         notes: "",
@@ -214,9 +183,9 @@ class Users extends Component {
           if (existingUser === undefined) return nuser;
           this.setState({
             ["importEmailValid" +
-            existingUser.uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-              existingUser.email
-            ),
+              existingUser.uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+                existingUser.email
+              ),
           });
           return existingUser;
         });
@@ -355,7 +324,7 @@ class Users extends Component {
       importedExcelData.find((user) => user.uid === uid).email = val;
       return {
         ["importEmailValid" +
-        uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val),
+          uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val),
         isChangesMadeToModal: true,
         importedExcelData,
       };
@@ -364,10 +333,57 @@ class Users extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
+  generateFourDigitUserId = () =>{
+    let idArray = Array.from(this.props.data.users.map(user => parseInt(user["uid"])));
+    console.log(idArray);
+    let val = 0;
+    do{
+      val = Math.floor(1000 + Math.random() * 9000);
+    } while(idArray.includes(val));
+    this.setState((prevState) => {
+      let selectedUser = Object.assign({}, prevState.selectedUser);
+      selectedUser["uid"] = val;
+      return { selectedUser:selectedUser, isChangesMadeToModal: true };
+    },console.log(this.state.selectedUser)
+    );
+    
+  }
+
   render() {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
     let formTablePanes = [];
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
+    const columnSet = [
+      {
+        title: "Last Name",
+        field: "lname",
+        defaultSort: "asc",
+        headerStyle: headerStyleGrey,
+      },
+      { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
+      {
+        title: "Courses",
+        field: "courses",
+        headerStyle: headerStyleGrey,
+        render: (rowData) => {
+          return rowData.courses.length > 0
+            ? rowData.courses.reduce((result, item) => (
+              <>
+                {result}
+                {", "}
+                {item}
+              </>
+            ))
+            : "";
+        },
+      },
+    ];
+
     if (this.state.selectedUserId != null && this.state.selectedUserId >= 0) {
       formTablePanes = [
         {
@@ -524,7 +540,7 @@ class Users extends Component {
           <Col className="stretch-h flex-col">
             <Table
               data={Array.from(this.props.data.users)}
-              columns={this.state.columnSet}
+              columns={columnSet}
               title={<h2>Users</h2>}
               onRowClick={(event, rowData) =>
                 this.handleUserSelectClick(event, rowData)
@@ -648,6 +664,7 @@ class Users extends Component {
                           disabled={this.state.editable}
                         />
                       </Form.Field>
+                      <Form.Group widths={2}>
                       <Form.Field>
                         <label>
                           UML ID:
@@ -662,12 +679,16 @@ class Users extends Component {
                           error={this.state.idError}
                           placeholder="UML ID"
                           defaultValue={selectedUser.uid}
-                          onChange={(e) => {
-                            this.handleChange(e, "uid");
-                          }}
-                          readOnly={this.state.editable}
+                          readOnly
                         ></Form.Input>
                       </Form.Field>
+                      <Form.Field>
+                        <label>
+                          &nbsp;
+                        </label>
+                        <Form.Button color='blue' disabled = {this.state.editable} onClick = {this.generateFourDigitUserId}>Genrate New User ID</Form.Button>
+                      </Form.Field>
+                      </Form.Group>
                       <Form.Group widths={2}>
                         <Form.Field>
                           <label>
