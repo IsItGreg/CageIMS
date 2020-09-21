@@ -151,7 +151,7 @@ class App extends Component {
           },
         ],
       },
-      activeUser: {},
+      activeUser: null,
     };
   }
 
@@ -174,7 +174,7 @@ class App extends Component {
               <Login onUpdateActiveUser={this.handleActiveUserUpdate} />
             </Route>
             <Container fluid className="no-gutters flex-col stretch-hw">
-              <Header />
+              <Header activeUser={this.state.activeUser}/>
               <Row className="flex-grow no-gutters">
                 <Col md="auto" className="no-gutters">
                   <Sidebar />

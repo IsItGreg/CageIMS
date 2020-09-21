@@ -6,8 +6,8 @@ const User = require('../models/User');
 // const BlogPost = require('../models/blogPost');
 
 // User Routes
-router.get('/users', (req, res) => {
-    User.find({ })
+router.post('/users/find', (req, res) => {
+    User.findOne({ email: req.body.email })
         .then((data) => {
             console.log('Data: ', data);
             res.json(data);

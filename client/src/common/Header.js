@@ -5,12 +5,6 @@ import { Dropdown, Icon } from "semantic-ui-react";
 
 // const sampleUser = { firstName: "User", lastName: "Name" };
 
-const trigger = (
-  <h3>
-    User Name <Icon name="chevron down" />
-  </h3>
-);
-
 class Header extends Component {
   constructor(props) {
     super(props);
@@ -34,6 +28,7 @@ class Header extends Component {
   }
 
   componentDidMount() {
+    console.log(this.props);
     this.setState({
       clockIntervalId: setInterval(() => {
         this.setState({
@@ -62,6 +57,14 @@ class Header extends Component {
   }
 
   render() {
+    const activeUser = this.props.activeUser ?? {name:{first:"User", last:"Name"}};
+    
+    const trigger = (
+      <h3>
+         {activeUser.name.first} {activeUser.name.last} <Icon name="chevron down" />
+      </h3>
+    );
+
     return (
       <Row
         className="header align-items-center"
