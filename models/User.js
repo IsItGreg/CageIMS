@@ -8,6 +8,7 @@ let userSchema = new Schema({
         last: String
     },
     email: String,
+    password: String,
     umlId: String,
     transactions: [{type: Schema.Types.ObjectId, ref: 'Transaction'}],
     activeTransactions: [{type: Schema.Types.ObjectId, ref: 'Transaction'}]

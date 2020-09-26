@@ -8,6 +8,7 @@ export default class Login extends Component {
     super(props);
     this.state = {
       email: "",
+      password: "",
       visble: true,
       curTime: new Date()
         .toLocaleString(
@@ -56,14 +57,16 @@ export default class Login extends Component {
   }
 
   submitLogin() {
-    axios
-      .post("/api/users/find", { email: this.state.email })
-      .then(res => {
-        if (res) {
-          this.props.onUpdateActiveUser(res.data);
-          window.location.href = '/#/';
-        }
-      })
+    console.log(this.state.email)
+    console.log(this.state.password)
+    // axios
+    //   .post("/api/users/find", { email: this.state.email })
+    //   .then(res => {
+    //     if (res) {
+    //       this.props.onUpdateActiveUser(res.data);
+    //       window.location.href = '/#/';
+    //     }
+    //   })
   }
 
   render() {
@@ -76,30 +79,32 @@ export default class Login extends Component {
         </Col>
         <Col className="login-page-right">
           <div>
-            <Form onSubmit={() => {this.submitLogin()}}>
+            <Form onSubmit={() => { this.submitLogin() }}>
               <h1>Login</h1>
               <Form.Field>
                 <label>Email</label>
                 <Form.Input
-                  onChange={(e) => {this.setState({ email: e.target.value })}}
+                  onChange={(e) => { this.setState({ email: e.target.value }) }}
                   placeholder="Email"
                   className="drop-shadow"
                 />
               </Form.Field>
               <Form.Field>
                 <label>Password</label>
-                <Form.Input placeholder="Email" className="drop-shadow" />
+                <Form.Input
+                  type='password'
+                  onChange={(e) => { this.setState({ password: e.target.value }) }}
+                  placeholder="Password"
+                  className="drop-shadow"
+                />
               </Form.Field>
               <Form.Field>
                 <Button basic>Forgot Password</Button>
               </Form.Field>
-              <Form.Button content="Submit" />
-              <Button
+              <Form.Button
                 style={{ backgroundColor: "#46C88C", color: "white" }}
-                // href="#/"
-              >
-                Login
-              </Button>
+                content="Log In"
+              />
             </Form>
           </div>
         </Col>
