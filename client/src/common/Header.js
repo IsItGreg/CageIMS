@@ -2,6 +2,9 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { Row, Col, Nav } from "react-bootstrap";
 import { Dropdown, Icon } from "semantic-ui-react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { logoutUser } from "../actions/authActions";
 
 // const sampleUser = { firstName: "User", lastName: "Name" };
 
@@ -56,12 +59,17 @@ class Header extends Component {
     clearInterval(this.state.clockIntervalId);
   }
 
+  onLogoutClick = e => {
+    e.preventDefault();
+    this.props.logoutUser();
+  };
+
   render() {
-    const activeUser = this.props.activeUser ?? {name:{first:"User", last:"Name"}};
+    const { user } = this.props.auth;
     
     const trigger = (
       <h3>
-         {activeUser.name.first} {activeUser.name.last} <Icon name="chevron down" />
+         {user.name.first} {user.name.last} <Icon name="chevron down" />
       </h3>
     );
 
@@ -95,8 +103,9 @@ class Header extends Component {
               <Dropdown.Item
                 icon="sign-out"
                 text="Sign Out"
-                as={Link}
-                to="/login"
+                // as={Link}
+                // to="/login"
+                onClick={this.onLogoutClick}
               />
             </Dropdown.Menu>
           </Dropdown>
@@ -106,4 +115,16 @@ class Header extends Component {
   }
 }
 
-export default Header;
+Header.propTypes = {
+  logoutUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(
+  mapStateToProps,
+  { logoutUser }
+)(Header);
