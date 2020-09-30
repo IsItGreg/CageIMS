@@ -14,6 +14,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import TextField from "@material-ui/core/TextField";
 import XLSX from "xlsx";
 import Table from "../common/Table";
+import * as FileSaver from 'file-saver';
 
 class Users extends Component {
   constructor(props) {
@@ -30,8 +31,10 @@ class Users extends Component {
       emailError: false,
       editable: true,
       isChangesMadeToModal: false,
+      exportModalDropdownSelection:"",
 
       showImportExcelModal: false,
+      showExportExcelModal: false,
       importedExcelData: [],
       importEmailErrors: {},
 
@@ -72,6 +75,7 @@ class Users extends Component {
       submitName: "Close",
       submitIcon: null,
       isChangesMadeToModal: false,
+      showExportExcelModal: false,
       showImportExcelModal: false,
       importedExcelData: [],
       importEmailErrors: {},
@@ -336,18 +340,48 @@ class Users extends Component {
   generateFourDigitUserId = () =>{
     let idArray = Array.from(this.props.data.users.map(user => parseInt(user["uid"])));
     console.log(idArray);
-    let val = 0;
+    let val = "";
     do{
-      val = Math.floor(1000 + Math.random() * 9000);
+      val = Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() ;
     } while(idArray.includes(val));
     this.setState((prevState) => {
       let selectedUser = Object.assign({}, prevState.selectedUser);
       selectedUser["uid"] = val;
-      return { selectedUser:selectedUser, isChangesMadeToModal: true };
-    },console.log(this.state.selectedUser)
-    );
-    
+      return { selectedUser:selectedUser, isChangesMadeToModal: true};
+    },console.log(this.state.selectedUser));
   }
+
+  handleExportSpreadsheetClick = () =>{
+    this.setState({showExportExcelModal:true,})
+  }
+
+  handleDropdownChangeForExportFile = (e, { value }) => {
+    this.setState({exportModalDropdownSelection:value});
+  }
+
+  handleExportFile = () =>{
+    let arr =[]
+    console.log(this.state.exportModalDropdownSelection);
+    
+    arr = this.props.data.users.map(a => {
+      let newObject = {};
+      newObject["Name"] = a["lname"] + ", " + a["fname"]
+      newObject["ID Code"] = a["uid"]
+      return newObject ;
+    });
+   
+    console.log(arr);
+    console.log(this.props.data.users);
+
+    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const fileExtension = '.xlsx';
+    const ws = XLSX.utils.json_to_sheet(arr);
+    const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const data = new Blob([excelBuffer], {type: fileType});
+    FileSaver.saveAs(data, "StudenList" + fileExtension);
+  }
+
 
   render() {
     const selectedUserId = this.state.selectedUserId;
@@ -358,31 +392,6 @@ class Users extends Component {
       color: "black",
       fontSize: "24",
     };
-    const columnSet = [
-      {
-        title: "Last Name",
-        field: "lname",
-        defaultSort: "asc",
-        headerStyle: headerStyleGrey,
-      },
-      { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
-      {
-        title: "Courses",
-        field: "courses",
-        headerStyle: headerStyleGrey,
-        render: (rowData) => {
-          return rowData.courses.length > 0
-            ? rowData.courses.reduce((result, item) => (
-              <>
-                {result}
-                {", "}
-                {item}
-              </>
-            ))
-            : "";
-        },
-      },
-    ];
 
     if (this.state.selectedUserId != null && this.state.selectedUserId >= 0) {
       formTablePanes = [
@@ -468,6 +477,25 @@ class Users extends Component {
       .sort()
       .map((item) => ({ text: item, value: item }));
 
+    const courseOptionsExport = Array.from(
+      new Set(
+        [].concat.apply(
+          [],
+          [
+            this.state.selectedUser,
+            ...this.props.data.items,
+            ...this.props.data.users,
+          ]
+            .filter((item) => item.courses)
+            .map((item) => item.courses)
+        )
+      )
+    )
+      .sort()
+      .map((item) => ({ text: item, value: item }));
+
+    courseOptionsExport.push({ text: "All", value: "All" })
+
     const importColumns = [
       { title: "Last Name", field: "lname", defaultSort: "asc" },
       { title: "First Name", field: "fname" },
@@ -491,48 +519,101 @@ class Users extends Component {
         ),
       },
     ];
+    console.log(courseOptions)
+    const columnSet = [
+      {
+        title: "Last Name",
+        field: "lname",
+        defaultSort: "asc",
+        headerStyle: headerStyleGrey,
+        filtering: false, 
+      },
+      { title: "First Name", field: "fname", headerStyle: headerStyleGrey, filtering: false  },
+      {
+        title: "Courses",
+        field: "courses",
+        headerStyle: headerStyleGrey,
+        filterComponent: (props) => <Dropdown
+          placeholder="Filter Courses"
+          name="courses"
+          fluid
+          selection
+          options={courseOptions}
+          onChange={(e, { value }) => {
+            props.onFilterChanged(props.columnDef.tableData.id, value);
+            console.log(props)
+            console.log(value);
+          }}
+        />,
+        render: (rowData) => {
+          return rowData.courses.length > 0
+            ? rowData.courses.reduce((result, item) => (
+              <>
+                {result}
+                {", "}
+                {item}
+              </>
+            ))
+            : "";
+        },
+      },
+    ];
 
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
           <Row>
-            <Col>
               <Button
                 className="float-down"
-                size="medium"
+                size="small"
+                floated ="left"
                 style={{ backgroundColor: "#46C88C", color: "white" }}
                 onClick={this.handleAddUserClick}
               >
                 Create New User
               </Button>
-            </Col>
             <Col>
               <h1>User List</h1>
             </Col>
-            <Col>
-              <div className="float-down right-buttons">
-                <Button
-                  basic
-                  size="medium"
-                  onClick={this.handleImportSpreadsheetClick}
-                >
-                  Import from Excel
-                </Button>
-                <input
-                  type="file"
-                  ref="fileUploader"
-                  style={{ display: "none" }}
-                  onChange={this.onChangeFile.bind(this)}
-                />
-                <Button
-                  basic
-                  size="medium"
-                  onClick={this.handleClearAllCoursesClick}
-                >
-                  Clear All Courses
-                </Button>
-              </div>
-            </Col>
+            <div className="float-down right-buttons">
+              <Dropdown selection fluid text='Options'>
+                <Dropdown.Menu>
+                    <Dropdown.Item text = "Import From Excel"></Dropdown.Item>
+                    <Dropdown.Item text = "Export User List"></Dropdown.Item>
+                    <Dropdown.Item text = "Clear All Courses"></Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+            {/* <div className="float-down right-buttons">
+              <Button
+                basic
+                floated = "right"
+                size="small"
+                onClick={this.handleExportSpreadsheetClick}
+              >
+                Export User List
+              </Button>
+              <Button
+                basic
+                size="small"
+                onClick={this.handleImportSpreadsheetClick}
+              >
+                Import from Excel
+              </Button>
+              <input
+                type="file"
+                ref="fileUploader"
+                style={{ display: "none" }}
+                onChange={this.onChangeFile.bind(this)}
+              />
+              <Button
+                basic
+                size="small"
+                onClick={this.handleClearAllCoursesClick}
+              >
+                Clear All Courses
+              </Button>
+            </div> */}
           </Row>
           <Divider clearing />
         </div>
@@ -542,6 +623,9 @@ class Users extends Component {
               data={Array.from(this.props.data.users)}
               columns={columnSet}
               title={<h2>Users</h2>}
+              options={{
+                filtering: true,
+              }}
               onRowClick={(event, rowData) =>
                 this.handleUserSelectClick(event, rowData)
               }
@@ -592,6 +676,46 @@ class Users extends Component {
                     <Icon name="save"></Icon>
                   ) : null}
                   {this.state.isChangesMadeToModal ? "Save" : "Cancel"}
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            <Modal
+              centered
+              show={this.state.showExportExcelModal}
+              onHide={this.close}
+            >
+              <Modal.Header bsPrefix="modal-header">
+                <Modal.Title>Export Users List to Excel file</Modal.Title>
+                <IconButton onClick={this.close} size="small" color="inherit">
+                  <ClearIcon />
+                </IconButton>
+              </Modal.Header>
+              <Modal.Body>
+                <p>Would you like to export an excel spreadsheet of the users?</p>
+                <Form>
+                  <Form.Field>
+                    <label>Select Course:</label>
+                    <Dropdown
+                      placeholder="Courses"
+                      name="courses"
+                      fluid
+                      search
+                      selection
+                      options={courseOptionsExport}
+                      value={this.state.exportModalDropdownSelection}
+                      onChange={this.handleDropdownChangeForExportFile}
+                    />
+                  </Form.Field>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  id="add-icon-handler"
+                  variant="primary"
+                  onClick={this.handleExportFile}
+                >
+                <Icon name="save"></Icon>
+                Save
                 </Button>
               </Modal.Footer>
             </Modal>
@@ -664,7 +788,7 @@ class Users extends Component {
                           disabled={this.state.editable}
                         />
                       </Form.Field>
-                      <Form.Group widths={2}>
+                      <Form.Group unstackable widths={"2"}>
                       <Form.Field>
                         <label>
                           UML ID:
@@ -674,13 +798,13 @@ class Users extends Component {
                             </span>
                           )}
                         </label>
-                        <Form.Input
+                        <input
                           name="id"
                           error={this.state.idError}
                           placeholder="UML ID"
-                          defaultValue={selectedUser.uid}
+                          value={this.state.selectedUser.uid}
                           readOnly
-                        ></Form.Input>
+                        ></input>
                       </Form.Field>
                       <Form.Field>
                         <label>
