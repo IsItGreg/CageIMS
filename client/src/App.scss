@@ -83,6 +83,7 @@
   text-decoration-line: none;
   h2,
   a {
+    vertical-align: bottom;
     color: white;
   }
   h3 {
@@ -95,6 +96,9 @@
   }
   .header-dropdown {
     float: right;
+  }
+  .header-icon {
+    padding-right: 5px;
   }
 }
 
