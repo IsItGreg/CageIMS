@@ -67,7 +67,7 @@ class Header extends Component {
     
     const trigger = (
       <h3>
-         {user.name.first} {user.name.last} <Icon name="chevron down" />
+         {user.fname} {user.lname} <Icon name="chevron down" />
       </h3>
     );
 
