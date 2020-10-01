@@ -1,16 +1,11 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import { Row, Col, Nav } from "react-bootstrap";
 import { Dropdown, Icon } from "semantic-ui-react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { logoutUser } from "../actions/authActions";
 import { ReactComponent as Logo } from "./cagelogo.svg";
 import { SvgIcon } from "@material-ui/core";
-// const sampleUser = { firstName: "User", lastName: "Name" };
-
-const trigger = (
-  <h3>
-    User Name <Icon name="chevron down" />
-  </h3>
-);
 
 class Header extends Component {
   constructor(props) {
@@ -62,7 +57,20 @@ class Header extends Component {
     clearInterval(this.state.clockIntervalId);
   }
 
+  onLogoutClick = e => {
+    e.preventDefault();
+    this.props.logoutUser();
+  };
+
   render() {
+    const { user } = this.props.auth;
+    
+    const trigger = (
+      <h3>
+         {user.name.first} {user.name.last} <Icon name="chevron down" />
+      </h3>
+    );
+
     return (
       <Row
         className="header align-items-center"
@@ -98,8 +106,7 @@ class Header extends Component {
               <Dropdown.Item
                 icon="sign-out"
                 text="Sign Out"
-                as={Link}
-                to="/login"
+                onClick={this.onLogoutClick}
               />
             </Dropdown.Menu>
           </Dropdown>
@@ -109,4 +116,16 @@ class Header extends Component {
   }
 }
 
-export default Header;
+Header.propTypes = {
+  logoutUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(
+  mapStateToProps,
+  { logoutUser }
+)(Header);
