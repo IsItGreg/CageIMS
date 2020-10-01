@@ -44,7 +44,6 @@ router.post('/users', (req, res) => {
 })
 
 router.put('/users/:id', (req, res) => {
-    console.log(req);
     User.findByIdAndUpdate(req.params.id, req.body, { new: true })
         .then(user => {
             if (!user)

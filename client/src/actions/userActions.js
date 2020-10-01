@@ -7,6 +7,7 @@ export const REQUEST_USERS = 'REQUEST_USERS'
 export const RECEIVE_USERS = 'RECEIVE_USERS'
 export const GET_ERRORS = 'GET_ERRORS'
 export const UPDATE_USER = 'UPDATE_USER'
+export const CREATE_USER = 'CREATE_USER'
 
 function getErrors(payload) {
     return {
@@ -69,6 +70,22 @@ export function putUser(json) {
         return axios
             .put("/api/users/" + json._id, json)
             .then(res => dispatch(updateUsers(res)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
+function createUser(res) {
+    return {
+        type: CREATE_USER,
+        createdAt: Date.now()
+    }
+}
+
+export function postUser(json) {
+    return dispatch => {
+        return axios
+            .post("/api/users", json)
+            .then(res => dispatch(createUser(res)))
             .catch(err => dispatch(getErrors(err)));
     }
 }

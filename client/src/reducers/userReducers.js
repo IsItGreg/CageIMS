@@ -2,7 +2,8 @@ import {
     RECEIVE_USERS,
     REQUEST_USERS,
     USER_LOADING,
-    UPDATE_USER
+    UPDATE_USER,
+    CREATE_USER
 } from "../actions/userActions";
 const isEmpty = require("is-empty");
 
@@ -26,7 +27,7 @@ export default function (
                 lastUpdated: action.receivedAt
             })
         case UPDATE_USER:
-            return state
+        case CREATE_USER:
         default:
             return state
     }

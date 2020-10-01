@@ -170,10 +170,7 @@ class Page extends Component {
                                 />
                             </Route>
                             <Route path="/users">
-                                <Users
-                                    data={this.state.data}
-                                    onUpdateData={this.handleDataUpdate}
-                                />
+                                <Users />
                             </Route>
                             <Route path="/inventory">
                                 <Inventory

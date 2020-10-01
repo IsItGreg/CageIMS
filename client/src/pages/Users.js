@@ -17,7 +17,7 @@ import Table from "../common/Table";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getUsersIfNeeded, putUser } from "../actions/userActions"
+import { getUsersIfNeeded, putUser, postUser } from "../actions/userActions"
 
 class Users extends Component {
   constructor(props) {
@@ -175,7 +175,7 @@ class Users extends Component {
 
   onChangeFile(event) {
     // TODO: Set up API for adding users from sheet
-    
+
     // const fileObj = event.target.files[0];
     // const reader = new FileReader();
     // const rABS = !!reader.readAsBinaryString;
@@ -245,7 +245,12 @@ class Users extends Component {
       // }
       // this.props.onUpdateData(data);
       const { dispatch } = this.props;
-      dispatch(putUser(this.state.selectedUser));
+      if (this.state.selectedUserId < 0) {
+        dispatch(postUser(this.state.selectedUser));
+      }
+      else {
+        dispatch(putUser(this.state.selectedUser));
+      }
       dispatch(getUsersIfNeeded());
 
       this.close();
@@ -270,7 +275,7 @@ class Users extends Component {
 
   handleSaveImportStudents = () => {
     // TODO: fix this for API
-    
+
     // if (!this.state.isChangesMadeToModal) {
     //   this.close();
     // }
@@ -454,8 +459,8 @@ class Users extends Component {
           [],
           [
             this.state.selectedUser,
-            ...this.props.data.items,
-            ...this.props.data.users,
+            // ...this.props.data.items,
+            ...this.props.users,
           ]
             .filter((item) => item.courses)
             .map((item) => item.courses)
@@ -612,7 +617,7 @@ class Users extends Component {
                   onClick={this.handleSaveImportStudents}
                 >
                   {this.state.isChangesMadeToModal ? (
-                    <Icon name="save"/>
+                    <Icon name="save" />
                   ) : null}
                   {this.state.isChangesMadeToModal ? "Save" : "Cancel"}
                 </Button>
@@ -816,7 +821,7 @@ class Users extends Component {
                   {this.state.isChangesMadeToModal ? (
                     <Icon name="save"></Icon>
                   ) : null}
-                  {this.state.isChangesMadeToModal ? "Save" : "Close"}
+                  {this.state.isChangesMadeToModal ? this.state.selectedUserId < 0 ? "Create" : "Save" : "Close"}
                 </Button>
               </Modal.Footer>
             </Modal>
@@ -830,6 +835,7 @@ class Users extends Component {
 Users.propTypes = {
   getUsersIfNeeded: PropTypes.func.isRequired,
   putUser: PropTypes.func.isRequired,
+  postUser: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,
   isGetting: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
