@@ -1,12 +1,9 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import { Row, Col, Nav } from "react-bootstrap";
 import { Dropdown, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser } from "../actions/authActions";
-
-// const sampleUser = { firstName: "User", lastName: "Name" };
 
 class Header extends Component {
   constructor(props) {
@@ -31,7 +28,6 @@ class Header extends Component {
   }
 
   componentDidMount() {
-    console.log(this.props);
     this.setState({
       clockIntervalId: setInterval(() => {
         this.setState({
@@ -103,8 +99,6 @@ class Header extends Component {
               <Dropdown.Item
                 icon="sign-out"
                 text="Sign Out"
-                // as={Link}
-                // to="/login"
                 onClick={this.onLogoutClick}
               />
             </Dropdown.Menu>

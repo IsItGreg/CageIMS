@@ -10,6 +10,17 @@ const validateLoginInput = require("../validation/login");
 const User = require('../models/User');
 
 // User Routes
+router.get('/users', (req, res) => {
+    User.find({})
+        .then((data) => {
+            console.log('Data: ', data);
+            res.json(data);
+        })
+        .catch((error) => {
+            console.log('error: ', error);
+        });
+});
+
 router.post('/users/find', (req, res) => {
     User.findOne({ email: req.body.email })
         .then((data) => {
@@ -30,6 +41,20 @@ router.post('/users', (req, res) => {
         }
         return res.json({ msg: "User saved" });
     })
+})
+
+router.put('/users/:id', (req, res) => {
+    console.log(req);
+    User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        .then(user => {
+            if (!user)
+                return res.status(404).send({ message: "User not found with id " + req.params.id });
+            res.send(user)
+        }).catch(err => {
+            if (err.kind === 'ObjectId')
+                return res.status(404).send({ message: "User not found with id " + req.params.id });
+            return res.status(500).send({ message: "Error updating user with id " + req.params.id });
+        })
 })
 
 // @route POST api/users/register

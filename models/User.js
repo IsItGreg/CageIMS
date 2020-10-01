@@ -2,14 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let userSchema = new Schema({
-    name:  
-    {
-        first: String,
-        last: String
-    },
+    fname: String,
+    lname: String,
     email: String,
     password: String,
-    umlId: String,
+    userCode: String,
     transactions: [{type: Schema.Types.ObjectId, ref: 'Transaction'}],
     activeTransactions: [{type: Schema.Types.ObjectId, ref: 'Transaction'}]
 });
