@@ -4,6 +4,8 @@ import { Dropdown, Icon } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser } from "../actions/authActions";
+import { ReactComponent as Logo } from "./cagelogo.svg";
+import { SvgIcon } from "@material-ui/core";
 
 class Header extends Component {
   constructor(props) {
@@ -77,7 +79,12 @@ class Header extends Component {
         <Col>
           <Nav.Link href="#/">
             <h2>
-              <Icon name="camera" />
+              <SvgIcon
+                component={Logo}
+                fontSize="small"
+                viewBox="0 0 80 80"
+                style={{ width: "55px", height: "45px" }}
+              />
               CageIMS
             </h2>
           </Nav.Link>
