@@ -575,45 +575,42 @@ class Users extends Component {
             <Col>
               <h1>User List</h1>
             </Col>
-            <div className="float-down right-buttons">
-              <Dropdown selection fluid text='Options'>
-                <Dropdown.Menu>
-                    <Dropdown.Item text = "Import From Excel"></Dropdown.Item>
-                    <Dropdown.Item text = "Export User List"></Dropdown.Item>
-                    <Dropdown.Item text = "Clear All Courses"></Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-            {/* <div className="float-down right-buttons">
-              <Button
-                basic
-                floated = "right"
-                size="small"
-                onClick={this.handleExportSpreadsheetClick}
-              >
-                Export User List
-              </Button>
-              <Button
-                basic
-                size="small"
-                onClick={this.handleImportSpreadsheetClick}
-              >
-                Import from Excel
-              </Button>
-              <input
-                type="file"
-                ref="fileUploader"
-                style={{ display: "none" }}
-                onChange={this.onChangeFile.bind(this)}
-              />
-              <Button
-                basic
-                size="small"
-                onClick={this.handleClearAllCoursesClick}
-              >
-                Clear All Courses
-              </Button>
-            </div> */}
+            <Col>
+              <div className="float-down right-buttons">
+                <Button
+                  basic
+                  floated = "right"
+                  size ="tiny"
+                  color="orange"
+                  onClick={this.handleImportSpreadsheetClick}
+                >
+                  Import from Excel
+                </Button>
+                <Button
+                  basic
+                  floated = "right"
+                  size ="tiny"
+                  onClick={this.handleExportSpreadsheetClick}
+                >
+                  Export User List
+                </Button>
+                <input
+                  type="file"
+                  ref="fileUploader"
+                  style={{ display: "none" }}
+                  onChange={this.onChangeFile.bind(this)}
+                />
+                <Button
+                  basic
+                  floated = "right"
+                  color="red"
+                  size ="tiny"
+                  onClick={this.handleClearAllCoursesClick}
+                >
+                  Clear All Courses
+                </Button>
+              </div>
+            </Col>
           </Row>
           <Divider clearing />
         </div>
