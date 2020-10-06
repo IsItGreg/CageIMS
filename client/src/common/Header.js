@@ -64,7 +64,6 @@ class Header extends Component {
 
   render() {
     const { user } = this.props.auth;
-    
     const trigger = (
       <h3>
          {user.fname} {user.lname} <Icon name="chevron down" />
