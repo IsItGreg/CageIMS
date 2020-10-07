@@ -17,81 +17,7 @@ class Inventory extends Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
-    const headerStyleGrey = {
-      backgroundColor: "#E2E2E2",
-      color: "black",
-      fontSize: "24",
-    };
     this.state = {
-      columnSet: [
-        {
-          title: "Item Name",
-          field: "name",
-          headerStyle: headerStyleGrey,
-        },
-        {
-          title: "Brand",
-          field: "brand",
-          headerStyle: headerStyleGrey,
-        },
-        {
-          title: "Category",
-          field: "category",
-          headerStyle: headerStyleGrey,
-        },
-        {
-          title: "Item ID",
-          field: "iid",
-          defaultSort: "asc",
-          headerStyle: headerStyleGrey,
-        },
-        {
-          title: "Serial",
-          field: "serial",
-          headerStyle: headerStyleGrey,
-        },
-        {
-          title: "Notes",
-          field: "notes",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => {
-            return rowData.notes ? (
-              <Icon
-                size="large"
-                name="check circle"
-                className="notes-icon"
-              ></Icon>
-            ) : null;
-          },
-        },
-        {
-          title: "Courses",
-          field: "courses",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => {
-            return rowData.courses.length > 0
-              ? rowData.courses.reduce((result, item) => (
-                  <>
-                    {result}
-                    {", "}
-                    {item}
-                  </>
-                ))
-              : "";
-          },
-        },
-        {
-          title: "Expected Return Date",
-          field: "expected",
-          headerStyle: headerStyleGrey,
-          render: (rowData) =>
-            rowData.expected ? this.formatDate(rowData.expected) : "Available",
-          customFilterAndSearch: (term, rowData) =>
-            this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
-              -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
-        },
-      ],
-
       activeItem: "item",
       open: false,
 
@@ -351,6 +277,80 @@ class Inventory extends Component {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
     let formTablePanes = [];
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
+    const columnSet = [
+      {
+        title: "Item Name",
+        field: "name",
+        headerStyle: headerStyleGrey,
+      },
+      {
+        title: "Brand",
+        field: "brand",
+        headerStyle: headerStyleGrey,
+      },
+      {
+        title: "Category",
+        field: "category",
+        headerStyle: headerStyleGrey,
+      },
+      {
+        title: "Item ID",
+        field: "iid",
+        defaultSort: "asc",
+        headerStyle: headerStyleGrey,
+      },
+      {
+        title: "Serial",
+        field: "serial",
+        headerStyle: headerStyleGrey,
+      },
+      {
+        title: "Notes",
+        field: "notes",
+        headerStyle: headerStyleGrey,
+        render: (rowData) => {
+          return rowData.notes ? (
+            <Icon
+              size="large"
+              name="check circle"
+              className="notes-icon"
+            ></Icon>
+          ) : null;
+        },
+      },
+      {
+        title: "Courses",
+        field: "courses",
+        headerStyle: headerStyleGrey,
+        render: (rowData) => {
+          return rowData.courses.length > 0
+            ? rowData.courses.reduce((result, item) => (
+                <>
+                  {result}
+                  {", "}
+                  {item}
+                </>
+              ))
+            : "";
+        },
+      },
+      {
+        title: "Expected Return Date",
+        field: "expected",
+        headerStyle: headerStyleGrey,
+        render: (rowData) =>
+          rowData.expected ? this.formatDate(rowData.expected) : "Available",
+        customFilterAndSearch: (term, rowData) =>
+          this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
+            -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
+      },
+    ];
+
 
     let items = Array.from(this.props.data.items);
     items.forEach((items) => {
@@ -425,7 +425,7 @@ class Inventory extends Component {
         render: () => (
           <Table
             data={this.getList(this.props.data.items)}
-            columns={this.state.columnSet}
+            columns={columnSet}
             title={<h2>All</h2>}
             onRowClick={(event, rowData) =>
               this.handleItemSelectClick(event, rowData)
@@ -442,7 +442,7 @@ class Inventory extends Component {
                 (name) => name.backgroundColor !== "mistyrose"
               )
             )}
-            columns={this.state.columnSet}
+            columns={columnSet}
             title={<h2>Available</h2>}
             onRowClick={(event, rowData) =>
               this.handleItemSelectClick(event, rowData)
@@ -459,7 +459,7 @@ class Inventory extends Component {
                 (name) => name.backgroundColor === "mistyrose"
               )
             )}
-            columns={this.state.columnSet}
+            columns={columnSet}
             title={<h2>Unavailable</h2>}
             onRowClick={(event, rowData) =>
               this.handleItemSelectClick(event, rowData)
@@ -481,7 +481,7 @@ class Inventory extends Component {
           <Table
             data={tempItems.filter((item) => item.category === category)}
             itemType={"item"}
-            columns={this.state.columnSet}
+            columns={columnSet}
             title={<h3>{category}</h3>}
             onRowClick={(event, rowData) =>
               this.handleItemSelectClick(event, rowData)
@@ -593,7 +593,6 @@ class Inventory extends Component {
                                 Error: Item ID is Taken
                               </span>
                             ))}
-                          {}
                         </label>
                         <Form.Input
                           name="iid"
@@ -623,7 +622,7 @@ class Inventory extends Component {
                           name="serial"
                           error={this.state.serialError}
                           placeholder="Serial"
-                          defaultValue={selectedItem.serial}
+                          defaultValue={this.state.selectedItem.serial}
                           onChange={(e) => {
                             this.handleChange(e, "serial");
                           }}

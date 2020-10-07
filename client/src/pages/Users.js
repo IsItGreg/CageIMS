@@ -14,6 +14,7 @@ import ClearIcon from "@material-ui/icons/Clear";
 import TextField from "@material-ui/core/TextField";
 import XLSX from "xlsx";
 import Table from "../common/Table";
+import * as FileSaver from 'file-saver';
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -34,8 +35,10 @@ class Users extends Component {
       emailError: false,
       editable: true,
       isChangesMadeToModal: false,
+      exportModalDropdownSelection:"",
 
       showImportExcelModal: false,
+      showExportExcelModal: false,
       importedExcelData: [],
       importEmailErrors: {},
 
@@ -93,6 +96,7 @@ class Users extends Component {
       submitName: "Close",
       submitIcon: null,
       isChangesMadeToModal: false,
+      showExportExcelModal: false,
       showImportExcelModal: false,
       importedExcelData: [],
       importEmailErrors: {},
@@ -373,6 +377,49 @@ class Users extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
+  generateFourDigitUserId = () =>{
+    let idArray = Array.from(this.props.users.map(user => parseInt(user["userCode"])));
+    console.log(idArray);
+    let val = "";
+    do{
+      val = Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() ;
+    } while(idArray.includes(val));
+    this.setState((prevState) => {
+      let selectedUser = Object.assign({}, prevState.selectedUser);
+      selectedUser["userCode"] = val;
+      return { selectedUser, isChangesMadeToModal: true};
+    },console.log(this.state.selectedUser));
+  }
+
+  handleExportSpreadsheetClick = () =>{
+    this.setState({showExportExcelModal:true,})
+  }
+
+  handleDropdownChangeForExportFile = (e, { value }) => {
+    this.setState({exportModalDropdownSelection:value});
+  }
+
+  handleExportFile = () =>{
+    let arr =[]
+    console.log(this.state.exportModalDropdownSelection);
+    
+    arr = this.props.users.map(a => {
+      let newObject = {};
+      newObject["Name"] = a["lname"] + ", " + a["fname"]
+      newObject["ID Code"] = a["userCode"]
+      return newObject ;
+    });
+
+    const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+    const fileExtension = '.xlsx';
+    const ws = XLSX.utils.json_to_sheet(arr);
+    const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    const data = new Blob([excelBuffer], {type: fileType});
+    FileSaver.saveAs(data, "StudenList" + fileExtension);
+  }
+
+
   render() {
     const { users } = this.props;
     // console.log(this.props);
@@ -380,6 +427,12 @@ class Users extends Component {
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
     let formTablePanes = [];
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
+
     if (this.state.selectedUserId != null && this.state.selectedUserId >= 0) {
       formTablePanes = [
         {
@@ -447,12 +500,6 @@ class Users extends Component {
       ];
     }
 
-    const headerStyleGrey = {
-      backgroundColor: "#E2E2E2",
-      color: "black",
-      fontSize: "24",
-    };
-
     const courseOptions = Array.from(
       new Set(
         [].concat.apply(
@@ -469,6 +516,8 @@ class Users extends Component {
     )
       .sort()
       .map((item) => ({ text: item, value: item }));
+
+    const courseOptionsExport = [{ text: "All", value: "All" }, ...Array.from(courseOptions)];
 
     const importColumns = [
       { title: "Last Name", field: "last", defaultSort: "asc" },
@@ -493,21 +542,38 @@ class Users extends Component {
         ),
       },
     ];
-
+    console.log(courseOptions)
     const columnSet = [
       {
         title: "Last Name",
         field: "lname",
         defaultSort: "asc",
         headerStyle: headerStyleGrey,
+        filtering: false, 
       },
-      { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
+      { title: "First Name", field: "fname", headerStyle: headerStyleGrey, filtering: false  },
       {
         title: "Courses",
         field: "courses",
         headerStyle: headerStyleGrey,
+        filterComponent: (props) => <Dropdown
+          placeholder="Filter Courses"
+          name="courses"
+          fluid
+          selection
+          options={courseOptionsExport}
+          onChange={(e, { value }) => {
+            if(value!="All"){
+              props.onFilterChanged(props.columnDef.tableData.id, value);
+              console.log(props)
+              console.log(value);
+            }else{
+              props.onFilterChanged(props.columnDef.tableData.id);
+            }
+          }}
+        />,
         render: (rowData) => {
-          return rowData.courses?.length > 0
+          return rowData.courses.length > 0
             ? rowData.courses.reduce((result, item) => (
               <>
                 {result}
@@ -518,22 +584,21 @@ class Users extends Component {
             : "";
         },
       },
-    ]
+    ];
 
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
           <Row>
-            <Col>
               <Button
                 className="float-down"
-                size="medium"
+                size="small"
+                floated ="left"
                 style={{ backgroundColor: "#46C88C", color: "white" }}
                 onClick={this.handleAddUserClick}
               >
                 Create New User
               </Button>
-            </Col>
             <Col>
               <h1>User List</h1>
             </Col>
@@ -541,11 +606,20 @@ class Users extends Component {
               <div className="float-down right-buttons">
                 <Button
                   basic
-                  size="medium"
+                  floated = "right"
+                  size ="tiny"
                   color="orange"
                   onClick={this.handleImportSpreadsheetClick}
                 >
                   Import from Excel
+                </Button>
+                <Button
+                  basic
+                  floated = "right"
+                  size ="tiny"
+                  onClick={this.handleExportSpreadsheetClick}
+                >
+                  Export User List
                 </Button>
                 <input
                   type="file"
@@ -555,8 +629,9 @@ class Users extends Component {
                 />
                 <Button
                   basic
+                  floated = "right"
                   color="red"
-                  size="medium"
+                  size ="tiny"
                   onClick={this.handleClearAllCoursesClick}
                 >
                   Clear All Courses
@@ -572,6 +647,9 @@ class Users extends Component {
               data={Array.from(users)}
               columns={columnSet}
               title={<h2>Users</h2>}
+              options={{
+                filtering: true,
+              }}
               onRowClick={(event, rowData) =>
                 this.handleUserSelectClick(event, rowData)
               }
@@ -622,6 +700,46 @@ class Users extends Component {
                     <Icon name="save" />
                   ) : null}
                   {this.state.isChangesMadeToModal ? "Save" : "Cancel"}
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            <Modal
+              centered
+              show={this.state.showExportExcelModal}
+              onHide={this.close}
+            >
+              <Modal.Header bsPrefix="modal-header">
+                <Modal.Title>Export Users List to Excel file</Modal.Title>
+                <IconButton onClick={this.close} size="small" color="inherit">
+                  <ClearIcon />
+                </IconButton>
+              </Modal.Header>
+              <Modal.Body>
+                <p>Would you like to export an excel spreadsheet of the users?</p>
+                <Form>
+                  <Form.Field>
+                    <label>Select Course:</label>
+                    <Dropdown
+                      placeholder="Courses"
+                      name="courses"
+                      fluid
+                      search
+                      selection
+                      options={courseOptionsExport}
+                      value={this.state.exportModalDropdownSelection}
+                      onChange={this.handleDropdownChangeForExportFile}
+                    />
+                  </Form.Field>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  id="add-icon-handler"
+                  variant="primary"
+                  onClick={this.handleExportFile}
+                >
+                <Icon name="save"></Icon>
+                Save
                 </Button>
               </Modal.Footer>
             </Modal>
@@ -694,6 +812,7 @@ class Users extends Component {
                           disabled={this.state.editable}
                         />
                       </Form.Field>
+                      <Form.Group unstackable widths={"2"}>
                       <Form.Field>
                         <label>
                           User Code:
@@ -707,13 +826,17 @@ class Users extends Component {
                           name="userCode"
                           error={this.state.idError}
                           placeholder="User Code"
-                          defaultValue={selectedUser.userCode}
-                          onChange={(e) => {
-                            this.handleChange(e, "userCode");
-                          }}
-                          readOnly={this.state.editable}
+                          value={this.state.selectedUser.userCode}
+                          readOnly
                         ></Form.Input>
                       </Form.Field>
+                      <Form.Field>
+                        <label>
+                          &nbsp;
+                        </label>
+                        <Form.Button color='blue' disabled = {this.state.editable} onClick = {this.generateFourDigitUserId}>Genrate New User ID</Form.Button>
+                      </Form.Field>
+                      </Form.Group>
                       <Form.Group widths={2}>
                         <Form.Field>
                           <label>
