@@ -56,6 +56,15 @@ router.put('/users/:id', (req, res) => {
         })
 })
 
+router.delete('/users/:id', (req, res) => {
+    User.findByIdAndDelete(req.params.id)
+        .catch(err => {
+            if (err.kind === 'ObjectId')
+                return res.status(404).send({ message: "User not found with id " + req.params.id });
+            return res.status(500).send({ message: "Error updating user with id " + req.params.id });
+        })
+})
+
 // @route POST api/users/register
 // @desc Register user
 // @access Public

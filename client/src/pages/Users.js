@@ -176,56 +176,53 @@ class Users extends Component {
   onChangeFile(event) {
     // TODO: Set up API for adding users from sheet
 
-    // const fileObj = event.target.files[0];
-    // const reader = new FileReader();
-    // const rABS = !!reader.readAsBinaryString;
+    const fileObj = event.target.files[0];
+    const reader = new FileReader();
+    const rABS = !!reader.readAsBinaryString;
 
-    // reader.onload = (e) => {
-    //   const wb = XLSX.read(e.target.result, {
-    //     type: rABS ? "binary" : "array",
-    //     bookVBA: true,
-    //   });
-    //   const data = XLSX.utils
-    //     .sheet_to_json(wb.Sheets[wb.SheetNames[0]])
-    //     .map((user) => ({
-    //       name: {
-    //         first: user["Preferred Name"].split(/[\s, ]+/)[1],
-    //         last: user["Preferred Name"].split(/[\s, ]+/)[0],
-    //       },
-    //       courses: [],
-    //       userCode:
-    //         "0".repeat(8 - user["ID"].toString().length) +
-    //         user["ID"].toString(),
-    //       email:
-    //         user["Preferred Name"].split(/[\s, ]+/)[1] +
-    //         "_" +
-    //         user["Preferred Name"].split(/[\s, ]+/)[0],
-    //       creationDate: new Date().getTime(),
-    //     }))
-    //     .map((nuser) => {
-    //       const existingUser = this.props.data.users.find(
-    //         (user) => user.userCode === nuser.userCode
-    //       );
-    //       if (existingUser === undefined) return nuser;
-    //       this.setState({
-    //         ["importEmailValid" +
-    //           existingUser.uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-    //             existingUser.email
-    //           ),
-    //       });
-    //       return existingUser;
-    //     });
+    reader.onload = (e) => {
+      const wb = XLSX.read(e.target.result, {
+        type: rABS ? "binary" : "array",
+        bookVBA: true,
+      });
+      const data = XLSX.utils
+        .sheet_to_json(wb.Sheets[wb.SheetNames[0]])
+        .map((user) => ({
+          fname: user["Preferred Name"].split(/[\s, ]+/)[1],
+          lname: user["Preferred Name"].split(/[\s, ]+/)[0],
+          courses: [],
+          userCode:
+            "0".repeat(8 - user["ID"].toString().length) +
+            user["ID"].toString(), // TODO: Replace with 4 digit code
+          email:
+            user["Preferred Name"].split(/[\s, ]+/)[1] +
+            "_" +
+            user["Preferred Name"].split(/[\s, ]+/)[0],
+        }))
+        .map((nuser) => {
+          const existingUser = this.props.users.find(
+            (user) => user.email === nuser.email
+          );
+          if (existingUser === undefined) return nuser;
+          this.setState({
+            ["importEmailValid" +
+              existingUser.uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+                existingUser.email
+              ),
+          });
+          return existingUser;
+        });
 
-    //   //TODO: check ids aren't duplicate
+      //TODO: check ids aren't duplicate
+      console.log(data);
+      this.setState({ importedExcelData: data, showImportExcelModal: true });
+    };
 
-    //   this.setState({ importedExcelData: data, showImportExcelModal: true });
-    // };
-
-    // if (rABS) {
-    //   reader.readAsBinaryString(fileObj);
-    // } else {
-    //   reader.readAsArrayBuffer(fileObj);
-    // }
+    if (rABS) {
+      reader.readAsBinaryString(fileObj);
+    } else {
+      reader.readAsArrayBuffer(fileObj);
+    }
   }
 
   checkErrorUpdateDataSet = () => {

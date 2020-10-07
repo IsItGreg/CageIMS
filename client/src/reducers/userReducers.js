@@ -1,9 +1,9 @@
 import {
     RECEIVE_USERS,
     REQUEST_USERS,
-    USER_LOADING,
     UPDATE_USER,
-    CREATE_USER
+    CREATE_USER,
+    DELETE_USER
 } from "../actions/userActions";
 const isEmpty = require("is-empty");
 
@@ -28,6 +28,7 @@ export default function (
             })
         case UPDATE_USER:
         case CREATE_USER:
+        case DELETE_USER:
         default:
             return state
     }
