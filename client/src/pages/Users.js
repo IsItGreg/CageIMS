@@ -378,7 +378,7 @@ class Users extends Component {
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   generateFourDigitUserId = () =>{
-    let idArray = Array.from(this.props.data.users.map(user => parseInt(user["uid"])));
+    let idArray = Array.from(this.props.users.map(user => parseInt(user["userCode"])));
     console.log(idArray);
     let val = "";
     do{
@@ -386,8 +386,8 @@ class Users extends Component {
     } while(idArray.includes(val));
     this.setState((prevState) => {
       let selectedUser = Object.assign({}, prevState.selectedUser);
-      selectedUser["uid"] = val;
-      return { selectedUser:selectedUser, isChangesMadeToModal: true};
+      selectedUser["userCode"] = val;
+      return { selectedUser, isChangesMadeToModal: true};
     },console.log(this.state.selectedUser));
   }
 
@@ -403,15 +403,12 @@ class Users extends Component {
     let arr =[]
     console.log(this.state.exportModalDropdownSelection);
     
-    arr = this.props.data.users.map(a => {
+    arr = this.props.users.map(a => {
       let newObject = {};
       newObject["Name"] = a["lname"] + ", " + a["fname"]
-      newObject["ID Code"] = a["uid"]
+      newObject["ID Code"] = a["userCode"]
       return newObject ;
     });
-   
-    console.log(arr);
-    console.log(this.props.data.users);
 
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
     const fileExtension = '.xlsx';
@@ -503,12 +500,6 @@ class Users extends Component {
       ];
     }
 
-    const headerStyleGrey = {
-      backgroundColor: "#E2E2E2",
-      color: "black",
-      fontSize: "24",
-    };
-
     const courseOptions = Array.from(
       new Set(
         [].concat.apply(
@@ -526,24 +517,7 @@ class Users extends Component {
       .sort()
       .map((item) => ({ text: item, value: item }));
 
-    const courseOptionsExport = Array.from(
-      new Set(
-        [].concat.apply(
-          [],
-          [
-            this.state.selectedUser,
-            ...this.props.data.items,
-            ...this.props.data.users,
-          ]
-            .filter((item) => item.courses)
-            .map((item) => item.courses)
-        )
-      )
-    )
-      .sort()
-      .map((item) => ({ text: item, value: item }));
-
-    courseOptionsExport.push({ text: "All", value: "All" })
+    const courseOptionsExport = [{ text: "All", value: "All" }, ...Array.from(courseOptions)];
 
     const importColumns = [
       { title: "Last Name", field: "last", defaultSort: "asc" },
@@ -587,11 +561,15 @@ class Users extends Component {
           name="courses"
           fluid
           selection
-          options={courseOptions}
+          options={courseOptionsExport}
           onChange={(e, { value }) => {
-            props.onFilterChanged(props.columnDef.tableData.id, value);
-            console.log(props)
-            console.log(value);
+            if(value!="All"){
+              props.onFilterChanged(props.columnDef.tableData.id, value);
+              console.log(props)
+              console.log(value);
+            }else{
+              props.onFilterChanged(props.columnDef.tableData.id);
+            }
           }}
         />,
         render: (rowData) => {
@@ -607,32 +585,6 @@ class Users extends Component {
         },
       },
     ];
-
-    const columnSet = [
-      {
-        title: "Last Name",
-        field: "lname",
-        defaultSort: "asc",
-        headerStyle: headerStyleGrey,
-      },
-      { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
-      {
-        title: "Courses",
-        field: "courses",
-        headerStyle: headerStyleGrey,
-        render: (rowData) => {
-          return rowData.courses?.length > 0
-            ? rowData.courses.reduce((result, item) => (
-              <>
-                {result}
-                {", "}
-                {item}
-              </>
-            ))
-            : "";
-        },
-      },
-    ]
 
     return (
       <Col className="stretch-h flex-col">
@@ -874,7 +826,7 @@ class Users extends Component {
                           name="userCode"
                           error={this.state.idError}
                           placeholder="User Code"
-                          value={this.state.selectedUser.uid}
+                          value={this.state.selectedUser.userCode}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
