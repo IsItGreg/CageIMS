@@ -6,6 +6,7 @@
     "axios": "^0.20.0",
     "concurrently": "^5.3.0",
     "express": "^4.17.1",
+    "file-saver": "^2.0.2",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "mongoose": "^5.10.2",
