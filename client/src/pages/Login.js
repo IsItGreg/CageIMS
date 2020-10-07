@@ -1,13 +1,18 @@
 import React, { Component } from "react";
 import { Col, Row } from "react-bootstrap";
 import { Button, Form } from "semantic-ui-react";
-import axios from "axios";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { loginUser } from "../actions/authActions";
+import classnames from "classnames";
 
-export default class Login extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
-    //this.handleLogin = this.handleLogin.bind(this);
     this.state = {
+      errors: {},
+      email: "",
+      password: "",
       visble: true,
       curTime: new Date()
         .toLocaleString(
@@ -28,6 +33,9 @@ export default class Login extends Component {
   }
 
   componentDidMount() {
+    if (this.props.auth.isAuthenticated) {
+      window.location.href = "/#/";
+    }
     this.setState({
       clockIntervalId: setInterval(() => {
         this.setState({
@@ -55,14 +63,35 @@ export default class Login extends Component {
     clearInterval(this.state.clockIntervalId);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      window.location.href = '/#/'; // push user to dashboard when they login
+    }
+    if (nextProps.errors) {
+      this.setState({
+        errors: nextProps.errors
+      });
+    }
+  }
+
   submitLogin() {
-    axios
-      .get("/api/users/")
-      .then((user) => this.props.onUpdateActiveUser(user))
-      .catch((err) => console.log(err));
+    const userData = {
+      email: this.state.email,
+      password: this.state.password
+    };
+    this.props.loginUser(userData);
+    // axios
+    //   .post("/api/users/find", { email: this.state.email })
+    //   .then(res => {
+    //     if (res) {
+    //       this.props.onUpdateActiveUser(res.data);
+    //       window.location.href = '/#/';
+    //     }
+    //   })
   }
 
   render() {
+    const errors = this.state.errors;
     return (
       <Row className="stretch-h">
         <Col className="login-page-left ">
@@ -72,30 +101,38 @@ export default class Login extends Component {
         </Col>
         <Col className="login-page-right">
           <div>
-            <Form onSubmit={this.submitLogin}>
+            <Form onSubmit={() => { this.submitLogin() }}>
               <h1>Login</h1>
               <Form.Field>
                 <label>Email</label>
+                <span>{errors.email}{errors.emailnotfound}</span>
                 <Form.Input
-                  onChange={(e) => {this.setState({ email: e.target.value })}}
+                  onChange={(e) => { this.setState({ email: e.target.value }) }}
                   placeholder="Email"
-                  className="drop-shadow"
+                  className={classnames("", {
+                    invalid: errors.email || errors.emailnotfound
+                  })}
                 />
               </Form.Field>
               <Form.Field>
                 <label>Password</label>
-                <Form.Input placeholder="Email" className="drop-shadow" />
+                <span>{errors.password}{errors.passwordincorrect}</span>
+                <Form.Input
+                  type='password'
+                  onChange={(e) => { this.setState({ password: e.target.value }) }}
+                  placeholder="Password"
+                  className={classnames("", {
+                    invalid: errors.password || errors.passwordincorrect
+                  })}
+                />
               </Form.Field>
               <Form.Field>
                 <Button basic>Forgot Password</Button>
               </Form.Field>
-              <Form.Button content="Submit" />
-              <Button
+              <Form.Button
                 style={{ backgroundColor: "#46C88C", color: "white" }}
-                // href="#/"
-              >
-                Login
-              </Button>
+                content="Log In"
+              />
             </Form>
           </div>
         </Col>
@@ -103,3 +140,17 @@ export default class Login extends Component {
     );
   }
 }
+
+Login.propTypes = {
+  loginUser: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired
+};
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors
+});
+export default connect(
+  mapStateToProps,
+  { loginUser }
+)(Login);

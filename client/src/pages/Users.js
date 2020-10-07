@@ -16,6 +16,10 @@ import XLSX from "xlsx";
 import Table from "../common/Table";
 import * as FileSaver from 'file-saver';
 
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { getUsersIfNeeded, putUser, postUser } from "../actions/userActions"
+
 class Users extends Component {
   constructor(props) {
     super(props);
@@ -43,7 +47,7 @@ class Users extends Component {
         fname: "",
         lname: "",
         courses: [],
-        uid: "",
+        userCode: "",
         email: "",
         phone: "",
         notes: "",
@@ -53,6 +57,23 @@ class Users extends Component {
     };
   }
 
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(getUsersIfNeeded());
+  }
+
+  // componentDidUpdate(prevState) {
+  //   console.log(this.state);
+  //   console.log(prevState);
+  // }
+  // componentDidUpdate(prevState) {
+  //   if (this.state.users !== prevState.users) {
+  //     console.log("Updating?");
+  //     const { dispatch } = this.props;
+  //     dispatch(getUsersIfNeeded());
+  //   }
+  // }
+
   close = () =>
     this.setState({
       selectedUserId: null,
@@ -60,7 +81,7 @@ class Users extends Component {
         fname: "",
         lname: "",
         courses: [],
-        uid: "",
+        userCode: "",
         email: "",
         phone: "",
         notes: "",
@@ -98,27 +119,28 @@ class Users extends Component {
   };
 
   handleUserSelectClick = (e, rowData) => {
+    console.log(rowData);
     this.setState({
       selectedUserId: rowData.tableData.id,
-      selectedUser: this.props.data.users[rowData.tableData.id],
+      selectedUser: rowData,
     });
-    this.setState((prevState) => {
-      let selectedUser = Object.assign({}, prevState.selectedUser);
-      let transactions = Array.from(
-        this.props.data.transactions.filter(
-          (name) => name.uid === selectedUser.uid
-        )
-      );
-      transactions.forEach((transaction) => {
-        transaction.backgroundColor =
-          !transaction.checkedInDate &&
-            new Date(transaction.dueDate).getTime() < new Date().getTime()
-            ? "mistyrose"
-            : "";
-      });
-      selectedUser["transactions"] = transactions;
-      return { selectedUser };
-    });
+    // this.setState((prevState) => {
+    //   let selectedUser = Object.assign({}, prevState.selectedUser);
+    //   let transactions = Array.from(
+    //     this.props.data.transactions.filter(
+    //       (name) => name.uid === selectedUser.uid
+    //     )
+    //   );
+    //   transactions.forEach((transaction) => {
+    //     transaction.backgroundColor =
+    //       !transaction.checkedInDate &&
+    //       new Date(transaction.dueDate).getTime() < new Date().getTime()
+    //         ? "mistyrose"
+    //         : "";
+    //   });
+    //   selectedUser["transactions"] = transactions;
+    //   return { selectedUser };
+    // });
   };
 
   handleAddUserClick = () => {
@@ -128,7 +150,7 @@ class Users extends Component {
         fname: "",
         lname: "",
         courses: [],
-        uid:  "",
+        userCode: "",
         email: "",
         phone: "",
         notes: "",
@@ -156,54 +178,58 @@ class Users extends Component {
   };
 
   onChangeFile(event) {
-    const fileObj = event.target.files[0];
-    const reader = new FileReader();
-    const rABS = !!reader.readAsBinaryString;
+    // TODO: Set up API for adding users from sheet
 
-    reader.onload = (e) => {
-      const wb = XLSX.read(e.target.result, {
-        type: rABS ? "binary" : "array",
-        bookVBA: true,
-      });
-      const data = XLSX.utils
-        .sheet_to_json(wb.Sheets[wb.SheetNames[0]])
-        .map((user) => ({
-          fname: user["Preferred Name"].split(/[\s, ]+/)[1],
-          lname: user["Preferred Name"].split(/[\s, ]+/)[0],
-          courses: [],
-          uid:
-            "0".repeat(8 - user["ID"].toString().length) +
-            user["ID"].toString(),
-          email:
-            user["Preferred Name"].split(/[\s, ]+/)[1] +
-            "_" +
-            user["Preferred Name"].split(/[\s, ]+/)[0],
-          creationDate: new Date().getTime(),
-        }))
-        .map((nuser) => {
-          const existingUser = this.props.data.users.find(
-            (user) => user.uid === nuser.uid
-          );
-          if (existingUser === undefined) return nuser;
-          this.setState({
-            ["importEmailValid" +
-              existingUser.uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                existingUser.email
-              ),
-          });
-          return existingUser;
-        });
+    // const fileObj = event.target.files[0];
+    // const reader = new FileReader();
+    // const rABS = !!reader.readAsBinaryString;
 
-      //TODO: check ids aren't duplicate
+    // reader.onload = (e) => {
+    //   const wb = XLSX.read(e.target.result, {
+    //     type: rABS ? "binary" : "array",
+    //     bookVBA: true,
+    //   });
+    //   const data = XLSX.utils
+    //     .sheet_to_json(wb.Sheets[wb.SheetNames[0]])
+    //     .map((user) => ({
+    //       name: {
+    //         first: user["Preferred Name"].split(/[\s, ]+/)[1],
+    //         last: user["Preferred Name"].split(/[\s, ]+/)[0],
+    //       },
+    //       courses: [],
+    //       userCode:
+    //         "0".repeat(8 - user["ID"].toString().length) +
+    //         user["ID"].toString(),
+    //       email:
+    //         user["Preferred Name"].split(/[\s, ]+/)[1] +
+    //         "_" +
+    //         user["Preferred Name"].split(/[\s, ]+/)[0],
+    //       creationDate: new Date().getTime(),
+    //     }))
+    //     .map((nuser) => {
+    //       const existingUser = this.props.data.users.find(
+    //         (user) => user.userCode === nuser.userCode
+    //       );
+    //       if (existingUser === undefined) return nuser;
+    //       this.setState({
+    //         ["importEmailValid" +
+    //           existingUser.uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+    //             existingUser.email
+    //           ),
+    //       });
+    //       return existingUser;
+    //     });
 
-      this.setState({ importedExcelData: data, showImportExcelModal: true });
-    };
+    //   //TODO: check ids aren't duplicate
 
-    if (rABS) {
-      reader.readAsBinaryString(fileObj);
-    } else {
-      reader.readAsArrayBuffer(fileObj);
-    }
+    //   this.setState({ importedExcelData: data, showImportExcelModal: true });
+    // };
+
+    // if (rABS) {
+    //   reader.readAsBinaryString(fileObj);
+    // } else {
+    //   reader.readAsArrayBuffer(fileObj);
+    // }
   }
 
   checkErrorUpdateDataSet = () => {
@@ -213,13 +239,24 @@ class Users extends Component {
       !this.state.idError &&
       !this.state.emailError
     ) {
-      let data = Object.assign({}, this.props.data);
-      if (this.state.selectedUserId >= 0) {
-        data.users[this.state.selectedUserId] = this.state.selectedUser;
-      } else {
-        data.users.push(this.state.selectedUser);
+      // TODO: Update user API
+
+      // let data = Object.assign({}, this.props.data);
+      // if (this.state.selectedUserId >= 0) {
+      //   data.users[this.state.selectedUserId] = this.state.selectedUser;
+      // } else {
+      //   data.users.push(this.state.selectedUser);
+      // }
+      // this.props.onUpdateData(data);
+      const { dispatch } = this.props;
+      if (this.state.selectedUserId < 0) {
+        dispatch(postUser(this.state.selectedUser));
       }
-      this.props.onUpdateData(data);
+      else {
+        dispatch(putUser(this.state.selectedUser));
+      }
+      dispatch(getUsersIfNeeded());
+
       this.close();
     }
   };
@@ -230,7 +267,7 @@ class Users extends Component {
         {
           firstNameError: this.state.selectedUser.fname === "",
           lastNameError: this.state.selectedUser.lname === "",
-          idError: this.state.selectedUser.uid === "",
+          idError: this.state.selectedUser.userCode === "",
           emailError: this.state.selectedUser.email === "",
         },
         this.checkErrorUpdateDataSet
@@ -241,35 +278,37 @@ class Users extends Component {
   };
 
   handleSaveImportStudents = () => {
-    if (!this.state.isChangesMadeToModal) {
-      this.close();
-    }
+    // TODO: fix this for API
 
-    if (
-      this.state.importedExcelData.every(
-        (user) => this.state["importEmailValid" + user.uid]
-      )
-    ) {
-      let newUsers = Array.from(this.state.importedExcelData);
-      newUsers.forEach(
-        (user) =>
-          (user.courses = user.courses.concat(this.state.selectedUser.courses))
-      );
-      let users = [
-        ...newUsers,
-        ...this.props.data.users.filter(
-          (user) =>
-            this.state.importedExcelData.find(
-              (nuser) => nuser.uid === user.uid
-            ) === undefined
-        ),
-      ];
+    // if (!this.state.isChangesMadeToModal) {
+    //   this.close();
+    // }
 
-      let data = Object.assign({}, this.props.data);
-      data.users = users;
-      this.props.onUpdateData(data);
-      this.close();
-    }
+    // if (
+    //   this.state.importedExcelData.every(
+    //     (user) => this.state["importEmailValid" + user.uid]
+    //   )
+    // ) {
+    //   let newUsers = Array.from(this.state.importedExcelData);
+    //   newUsers.forEach(
+    //     (user) =>
+    //       (user.courses = user.courses.concat(this.state.selectedUser.courses))
+    //   );
+    //   let users = [
+    //     ...newUsers,
+    //     ...this.props.data.users.filter(
+    //       (user) =>
+    //         this.state.importedExcelData.find(
+    //           (nuser) => nuser.uid === user.uid
+    //         ) === undefined
+    //     ),
+    //   ];
+
+    //   let data = Object.assign({}, this.props.data);
+    //   data.users = users;
+    //   this.props.onUpdateData(data);
+    //   this.close();
+    // }
   };
 
   handleDropdownChange = (e, { value }) => {
@@ -322,6 +361,7 @@ class Users extends Component {
   };
 
   updateImportEmail = (e, uid) => {
+    // TODO: Fix this
     const val = e.target.value;
     this.setState((prevState) => {
       let importedExcelData = Array.from(prevState.importedExcelData);
@@ -384,6 +424,9 @@ class Users extends Component {
 
 
   render() {
+    const { users } = this.props;
+    // console.log(this.props);
+    // console.log(users);
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
     let formTablePanes = [];
@@ -423,7 +466,7 @@ class Users extends Component {
                   (name) => name.checkedInDate === ""
                 )
               )}
-            ></Table>
+            />
           ),
         },
         {
@@ -454,11 +497,17 @@ class Users extends Component {
                   (name) => !(name.checkedInDate === "")
                 )
               )}
-            ></Table>
+            />
           ),
         },
       ];
     }
+
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
 
     const courseOptions = Array.from(
       new Set(
@@ -466,8 +515,8 @@ class Users extends Component {
           [],
           [
             this.state.selectedUser,
-            ...this.props.data.items,
-            ...this.props.data.users,
+            // ...this.props.data.items,
+            ...this.props.users,
           ]
             .filter((item) => item.courses)
             .map((item) => item.courses)
@@ -497,8 +546,8 @@ class Users extends Component {
     courseOptionsExport.push({ text: "All", value: "All" })
 
     const importColumns = [
-      { title: "Last Name", field: "lname", defaultSort: "asc" },
-      { title: "First Name", field: "fname" },
+      { title: "Last Name", field: "last", defaultSort: "asc" },
+      { title: "First Name", field: "first" },
       { title: "Student ID", field: "uid" },
       {
         title: "Email",
@@ -559,6 +608,32 @@ class Users extends Component {
       },
     ];
 
+    const columnSet = [
+      {
+        title: "Last Name",
+        field: "lname",
+        defaultSort: "asc",
+        headerStyle: headerStyleGrey,
+      },
+      { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
+      {
+        title: "Courses",
+        field: "courses",
+        headerStyle: headerStyleGrey,
+        render: (rowData) => {
+          return rowData.courses?.length > 0
+            ? rowData.courses.reduce((result, item) => (
+              <>
+                {result}
+                {", "}
+                {item}
+              </>
+            ))
+            : "";
+        },
+      },
+    ]
+
     return (
       <Col className="stretch-h flex-col">
         <div className="top-bar">
@@ -617,7 +692,7 @@ class Users extends Component {
         <div className="page-content stretch-h">
           <Col className="stretch-h flex-col">
             <Table
-              data={Array.from(this.props.data.users)}
+              data={Array.from(users)}
               columns={columnSet}
               title={<h2>Users</h2>}
               options={{
@@ -670,7 +745,7 @@ class Users extends Component {
                   onClick={this.handleSaveImportStudents}
                 >
                   {this.state.isChangesMadeToModal ? (
-                    <Icon name="save"></Icon>
+                    <Icon name="save" />
                   ) : null}
                   {this.state.isChangesMadeToModal ? "Save" : "Cancel"}
                 </Button>
@@ -739,7 +814,7 @@ class Users extends Component {
                           </label>
                           <Form.Input
                             error={this.state.firstNameError}
-                            name="fname"
+                            name="firstName"
                             placeholder="First Name"
                             defaultValue={selectedUser.fname}
                             onChange={(e) => {
@@ -759,7 +834,7 @@ class Users extends Component {
                           </label>
                           <Form.Input
                             error={this.state.lastNameError}
-                            name="lname"
+                            name="name.last"
                             placeholder="Last Name"
                             defaultValue={selectedUser.lname}
                             onChange={(e) => {
@@ -788,20 +863,20 @@ class Users extends Component {
                       <Form.Group unstackable widths={"2"}>
                       <Form.Field>
                         <label>
-                          UML ID:
+                          User Code:
                           {this.state.idError && (
                             <span className="error-text modal-label-error-text">
                               Error: Field is empty.
                             </span>
                           )}
                         </label>
-                        <input
-                          name="id"
+                        <Form.Input
+                          name="userCode"
                           error={this.state.idError}
-                          placeholder="UML ID"
+                          placeholder="User Code"
                           value={this.state.selectedUser.uid}
                           readOnly
-                        ></input>
+                        ></Form.Input>
                       </Form.Field>
                       <Form.Field>
                         <label>
@@ -919,7 +994,7 @@ class Users extends Component {
                   {this.state.isChangesMadeToModal ? (
                     <Icon name="save"></Icon>
                   ) : null}
-                  {this.state.isChangesMadeToModal ? "Save" : "Close"}
+                  {this.state.isChangesMadeToModal ? this.state.selectedUserId < 0 ? "Create" : "Save" : "Close"}
                 </Button>
               </Modal.Footer>
             </Modal>
@@ -930,4 +1005,18 @@ class Users extends Component {
   }
 }
 
-export default Users;
+Users.propTypes = {
+  getUsersIfNeeded: PropTypes.func.isRequired,
+  putUser: PropTypes.func.isRequired,
+  postUser: PropTypes.func.isRequired,
+  users: PropTypes.array.isRequired,
+  isGetting: PropTypes.bool.isRequired,
+  lastUpdated: PropTypes.number,
+  dispatch: PropTypes.func.isRequired
+};
+function mapStateToProps(state) {
+  const { user } = state;
+  const { isGetting, lastUpdated, users } = user;
+  return { users, isGetting, lastUpdated };
+}
+export default connect(mapStateToProps)(Users);
