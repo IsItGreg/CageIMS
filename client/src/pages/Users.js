@@ -35,7 +35,7 @@ class Users extends Component {
       emailError: false,
       editable: true,
       isChangesMadeToModal: false,
-      exportModalDropdownSelection:"",
+      exportModalDropdownSelection: "",
 
       showImportExcelModal: false,
       showExportExcelModal: false,
@@ -74,7 +74,7 @@ class Users extends Component {
   //   }
   // }
 
-  close = () =>
+  close = () => {
     this.setState({
       selectedUserId: null,
       selectedUser: {
@@ -101,6 +101,9 @@ class Users extends Component {
       importedExcelData: [],
       importEmailErrors: {},
     });
+    const { dispatch } = this.props;
+    dispatch(getUsersIfNeeded());
+  }
 
   handleChange = (e, userProp) => {
     const val = e.target.value;
@@ -178,8 +181,6 @@ class Users extends Component {
   };
 
   onChangeFile(event) {
-    // TODO: Set up API for adding users from sheet
-
     const fileObj = event.target.files[0];
     const reader = new FileReader();
     const rABS = !!reader.readAsBinaryString;
@@ -189,20 +190,23 @@ class Users extends Component {
         type: rABS ? "binary" : "array",
         bookVBA: true,
       });
+      let usedUserCodes = [];
       const data = XLSX.utils
         .sheet_to_json(wb.Sheets[wb.SheetNames[0]])
-        .map((user) => ({
-          fname: user["Preferred Name"].split(/[\s, ]+/)[1],
-          lname: user["Preferred Name"].split(/[\s, ]+/)[0],
-          courses: [],
-          userCode:
-            "0".repeat(8 - user["ID"].toString().length) +
-            user["ID"].toString(), // TODO: Replace with 4 digit code
-          email:
-            user["Preferred Name"].split(/[\s, ]+/)[1] +
-            "_" +
-            user["Preferred Name"].split(/[\s, ]+/)[0],
-        }))
+        .map((user) => {
+          let userCode = this.generateNewUserCode(usedUserCodes);
+          usedUserCodes.push(parseInt(userCode));
+          return {
+            fname: user["Preferred Name"].split(/[\s, ]+/)[1],
+            lname: user["Preferred Name"].split(/[\s, ]+/)[0],
+            courses: [],
+            userCode: userCode,
+            email:
+              user["Preferred Name"].split(/[\s, ]+/)[1] +
+              "_" +
+              user["Preferred Name"].split(/[\s, ]+/)[0],
+          }
+        })
         .map((nuser) => {
           const existingUser = this.props.users.find(
             (user) => user.email === nuser.email
@@ -210,14 +214,13 @@ class Users extends Component {
           if (existingUser === undefined) return nuser;
           this.setState({
             ["importEmailValid" +
-              existingUser.uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+              existingUser.userCode]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
                 existingUser.email
               ),
           });
           return existingUser;
         });
 
-      //TODO: check ids aren't duplicate
       console.log(data);
       this.setState({ importedExcelData: data, showImportExcelModal: true });
     };
@@ -236,15 +239,7 @@ class Users extends Component {
       !this.state.idError &&
       !this.state.emailError
     ) {
-      // TODO: Update user API
 
-      // let data = Object.assign({}, this.props.data);
-      // if (this.state.selectedUserId >= 0) {
-      //   data.users[this.state.selectedUserId] = this.state.selectedUser;
-      // } else {
-      //   data.users.push(this.state.selectedUser);
-      // }
-      // this.props.onUpdateData(data);
       const { dispatch } = this.props;
       if (this.state.selectedUserId < 0) {
         dispatch(postUser(this.state.selectedUser));
@@ -252,7 +247,6 @@ class Users extends Component {
       else {
         dispatch(putUser(this.state.selectedUser));
       }
-      dispatch(getUsersIfNeeded());
 
       this.close();
     }
@@ -275,37 +269,35 @@ class Users extends Component {
   };
 
   handleSaveImportStudents = () => {
-    // TODO: fix this for API
+    const { dispatch } = this.props;
+    if (!this.state.isChangesMadeToModal) {
+      this.close();
+    }
 
-    // if (!this.state.isChangesMadeToModal) {
-    //   this.close();
-    // }
+    if (
+      this.state.importedExcelData.every(
+        (user) => this.state["importEmailValid" + user.userCode]
+      )
+    ) {
+      let newUsers = Array.from(this.state.importedExcelData);
 
-    // if (
-    //   this.state.importedExcelData.every(
-    //     (user) => this.state["importEmailValid" + user.uid]
-    //   )
-    // ) {
-    //   let newUsers = Array.from(this.state.importedExcelData);
-    //   newUsers.forEach(
-    //     (user) =>
-    //       (user.courses = user.courses.concat(this.state.selectedUser.courses))
-    //   );
-    //   let users = [
-    //     ...newUsers,
-    //     ...this.props.data.users.filter(
-    //       (user) =>
-    //         this.state.importedExcelData.find(
-    //           (nuser) => nuser.uid === user.uid
-    //         ) === undefined
-    //     ),
-    //   ];
+      newUsers.forEach(
+        (user) => {
+          let exists = this.props.users.find(u => u.email === user.email);
+          console.log(user);
+          console.log(exists);
+          if (!exists) {
+            user.courses = user.courses.concat(this.state.selectedUser.courses);
+            dispatch(postUser(user));
+          } else {
+            exists.courses = exists.courses.concat(this.state.selectedUser.courses)
+            dispatch(putUser({ ...user, ...exists }));
+          }
+        }
+      )
 
-    //   let data = Object.assign({}, this.props.data);
-    //   data.users = users;
-    //   this.props.onUpdateData(data);
-    //   this.close();
-    // }
+      this.close();
+    }
   };
 
   handleDropdownChange = (e, { value }) => {
@@ -357,15 +349,15 @@ class Users extends Component {
     );
   };
 
-  updateImportEmail = (e, uid) => {
+  updateImportEmail = (e, userCode) => {
     // TODO: Fix this
     const val = e.target.value;
     this.setState((prevState) => {
       let importedExcelData = Array.from(prevState.importedExcelData);
-      importedExcelData.find((user) => user.uid === uid).email = val;
+      importedExcelData.find((user) => user.userCode === userCode).email = val;
       return {
         ["importEmailValid" +
-          uid]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val),
+          userCode]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val),
         isChangesMadeToModal: true,
         importedExcelData,
       };
@@ -374,37 +366,40 @@ class Users extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
-  generateFourDigitUserId = () =>{
-    let idArray = Array.from(this.props.users.map(user => parseInt(user["userCode"])));
-    console.log(idArray);
+  generateNewUserCode = (avoidedCodes = []) => {
+    let idArray = [...Array.from(this.props.users.map(user => parseInt(user.userCode))), ...avoidedCodes];
     let val = "";
-    do{
-      val = Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() ;
-    } while(idArray.includes(val));
-    this.setState((prevState) => {
-      let selectedUser = Object.assign({}, prevState.selectedUser);
-      selectedUser["userCode"] = val;
-      return { selectedUser, isChangesMadeToModal: true};
-    },console.log(this.state.selectedUser));
+    do {
+      val = Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString() + Math.floor(0 + Math.random() * 9).toString();
+    } while (idArray.includes(val));
+    return val;
   }
 
-  handleExportSpreadsheetClick = () =>{
-    this.setState({showExportExcelModal:true,})
+  regenerateUserCode = () => {
+    this.setState((prevState) => {
+      let selectedUser = Object.assign({}, prevState.selectedUser);
+      selectedUser.userCode = this.generateNewUserCode();
+      return { selectedUser, isChangesMadeToModel: true };
+    })
+  }
+
+  handleExportSpreadsheetClick = () => {
+    this.setState({ showExportExcelModal: true, })
   }
 
   handleDropdownChangeForExportFile = (e, { value }) => {
-    this.setState({exportModalDropdownSelection:value});
+    this.setState({ exportModalDropdownSelection: value });
   }
 
-  handleExportFile = () =>{
-    let arr =[]
+  handleExportFile = () => {
+    let arr = []
     console.log(this.state.exportModalDropdownSelection);
-    
+
     arr = this.props.users.map(a => {
       let newObject = {};
-      newObject["Name"] = a["lname"] + ", " + a["fname"]
-      newObject["ID Code"] = a["userCode"]
-      return newObject ;
+      newObject["Name"] = a.lname + ", " + a.fname;
+      newObject["ID Code"] = a.userCode;
+      return newObject;
     });
 
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -412,7 +407,7 @@ class Users extends Component {
     const ws = XLSX.utils.json_to_sheet(arr);
     const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const data = new Blob([excelBuffer], {type: fileType});
+    const data = new Blob([excelBuffer], { type: fileType });
     FileSaver.saveAs(data, "StudenList" + fileExtension);
   }
 
@@ -517,38 +512,37 @@ class Users extends Component {
     const courseOptionsExport = [{ text: "All", value: "All" }, ...Array.from(courseOptions)];
 
     const importColumns = [
-      { title: "Last Name", field: "last", defaultSort: "asc" },
-      { title: "First Name", field: "first" },
-      { title: "Student ID", field: "uid" },
+      { title: "Last Name", field: "lname", defaultSort: "asc" },
+      { title: "First Name", field: "fname" },
+      { title: "User Code", field: "userCode" },
       {
         title: "Email",
         field: "email",
         render: (rowData) => (
           <TextField
             defaultValue={rowData.email}
-            error={!this.state["importEmailValid" + rowData.uid]}
+            error={!this.state["importEmailValid" + rowData.userCode]}
             helperText={
-              !this.state["importEmailValid" + rowData.uid]
+              !this.state["importEmailValid" + rowData.userCode]
                 ? "Enter a valid email."
                 : ""
             }
             onChange={(e) => {
-              this.updateImportEmail(e, rowData.uid);
+              this.updateImportEmail(e, rowData.userCode);
             }}
           />
         ),
       },
     ];
-    console.log(courseOptions)
     const columnSet = [
       {
         title: "Last Name",
         field: "lname",
         defaultSort: "asc",
         headerStyle: headerStyleGrey,
-        filtering: false, 
+        filtering: false,
       },
-      { title: "First Name", field: "fname", headerStyle: headerStyleGrey, filtering: false  },
+      { title: "First Name", field: "fname", headerStyle: headerStyleGrey, filtering: false },
       {
         title: "Courses",
         field: "courses",
@@ -560,11 +554,11 @@ class Users extends Component {
           selection
           options={courseOptionsExport}
           onChange={(e, { value }) => {
-            if(value!="All"){
+            if (value != "All") {
               props.onFilterChanged(props.columnDef.tableData.id, value);
               console.log(props)
               console.log(value);
-            }else{
+            } else {
               props.onFilterChanged(props.columnDef.tableData.id);
             }
           }}
@@ -587,14 +581,14 @@ class Users extends Component {
       <Col className="stretch-h flex-col">
         <div className="top-bar">
           <Row>
-              <Button
-                className="float-down"
-                size="small"
-                floated ="left"
-                style={{ backgroundColor: "#46C88C", color: "white" }}
-                onClick={this.handleAddUserClick}
-              >
-                Create New User
+            <Button
+              className="float-down"
+              size="small"
+              floated="left"
+              style={{ backgroundColor: "#46C88C", color: "white" }}
+              onClick={this.handleAddUserClick}
+            >
+              Create New User
               </Button>
             <Col>
               <h1>User List</h1>
@@ -603,8 +597,8 @@ class Users extends Component {
               <div className="float-down right-buttons">
                 <Button
                   basic
-                  floated = "right"
-                  size ="tiny"
+                  floated="right"
+                  size="tiny"
                   color="orange"
                   onClick={this.handleImportSpreadsheetClick}
                 >
@@ -612,8 +606,8 @@ class Users extends Component {
                 </Button>
                 <Button
                   basic
-                  floated = "right"
-                  size ="tiny"
+                  floated="right"
+                  size="tiny"
                   onClick={this.handleExportSpreadsheetClick}
                 >
                   Export User List
@@ -626,9 +620,9 @@ class Users extends Component {
                 />
                 <Button
                   basic
-                  floated = "right"
+                  floated="right"
                   color="red"
-                  size ="tiny"
+                  size="tiny"
                   onClick={this.handleClearAllCoursesClick}
                 >
                   Clear All Courses
@@ -735,7 +729,7 @@ class Users extends Component {
                   variant="primary"
                   onClick={this.handleExportFile}
                 >
-                <Icon name="save"></Icon>
+                  <Icon name="save"></Icon>
                 Save
                 </Button>
               </Modal.Footer>
@@ -810,29 +804,29 @@ class Users extends Component {
                         />
                       </Form.Field>
                       <Form.Group unstackable widths={"2"}>
-                      <Form.Field>
-                        <label>
-                          User Code:
+                        <Form.Field>
+                          <label>
+                            User Code:
                           {this.state.idError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field is empty.
-                            </span>
-                          )}
+                              <span className="error-text modal-label-error-text">
+                                Error: Field is empty.
+                              </span>
+                            )}
+                          </label>
+                          <Form.Input
+                            name="userCode"
+                            error={this.state.idError}
+                            placeholder="User Code"
+                            value={this.state.selectedUser.userCode}
+                            readOnly
+                          ></Form.Input>
+                        </Form.Field>
+                        <Form.Field>
+                          <label>
+                            &nbsp;
                         </label>
-                        <Form.Input
-                          name="userCode"
-                          error={this.state.idError}
-                          placeholder="User Code"
-                          value={this.state.selectedUser.userCode}
-                          readOnly
-                        ></Form.Input>
-                      </Form.Field>
-                      <Form.Field>
-                        <label>
-                          &nbsp;
-                        </label>
-                        <Form.Button color='blue' disabled = {this.state.editable} onClick = {this.generateFourDigitUserId}>Genrate New User ID</Form.Button>
-                      </Form.Field>
+                          <Form.Button color='blue' disabled={this.state.editable} onClick={this.regenerateUserCode}>Genrate New User ID</Form.Button>
+                        </Form.Field>
                       </Form.Group>
                       <Form.Group widths={2}>
                         <Form.Field>
