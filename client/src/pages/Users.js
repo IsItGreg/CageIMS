@@ -62,18 +62,6 @@ class Users extends Component {
     dispatch(getUsersIfNeeded());
   }
 
-  // componentDidUpdate(prevState) {
-  //   console.log(this.state);
-  //   console.log(prevState);
-  // }
-  // componentDidUpdate(prevState) {
-  //   if (this.state.users !== prevState.users) {
-  //     console.log("Updating?");
-  //     const { dispatch } = this.props;
-  //     dispatch(getUsersIfNeeded());
-  //   }
-  // }
-
   close = () => {
     this.setState({
       selectedUserId: null,
@@ -169,15 +157,18 @@ class Users extends Component {
   };
 
   handleClearAllCoursesClick = () => {
+    const { dispatch } = this.props;
     if (
       window.confirm(
         "Are you sure you want to clear every user's courses? This process is irreversible."
       )
     ) {
-      let data = Object.assign({}, this.props.data);
-      data.users.forEach((user) => (user.courses = []));
-      this.props.onUpdateData(data);
+      this.props.users.forEach(user => {
+        user.courses = [];
+        dispatch(putUser(user));
+      })
     }
+    dispatch(getUsersIfNeeded());
   };
 
   onChangeFile(event) {
