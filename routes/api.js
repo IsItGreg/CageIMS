@@ -13,7 +13,7 @@ const User = require('../models/User');
 router.get('/users', (req, res) => {
     User.find({})
         .then((data) => {
-            console.log('Data: ', data);
+            data.forEach(user => delete user.password);
             res.json(data);
         })
         .catch((error) => {
@@ -24,7 +24,6 @@ router.get('/users', (req, res) => {
 router.post('/users/find', (req, res) => {
     User.findOne({ email: req.body.email })
         .then((data) => {
-            console.log('Data: ', data);
             res.json(data);
         })
         .catch((error) => {
@@ -50,6 +49,15 @@ router.put('/users/:id', (req, res) => {
                 return res.status(404).send({ message: "User not found with id " + req.params.id });
             res.send(user)
         }).catch(err => {
+            if (err.kind === 'ObjectId')
+                return res.status(404).send({ message: "User not found with id " + req.params.id });
+            return res.status(500).send({ message: "Error updating user with id " + req.params.id });
+        })
+})
+
+router.delete('/users/:id', (req, res) => {
+    User.findByIdAndDelete(req.params.id)
+        .catch(err => {
             if (err.kind === 'ObjectId')
                 return res.status(404).send({ message: "User not found with id " + req.params.id });
             return res.status(500).send({ message: "Error updating user with id " + req.params.id });
@@ -116,7 +124,8 @@ router.post("/login", (req, res) => {
                 // Create JWT Payload
                 const payload = {
                     id: user.id,
-                    name: user.name
+                    fname: user.fname,
+                    lname: user.lname
                 };
                 // Sign token
                 jwt.sign(
