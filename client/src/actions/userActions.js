@@ -8,6 +8,7 @@ export const RECEIVE_USERS = 'RECEIVE_USERS'
 export const GET_ERRORS = 'GET_ERRORS'
 export const UPDATE_USER = 'UPDATE_USER'
 export const CREATE_USER = 'CREATE_USER'
+export const DELETE_USER = 'DELETE_USER'
 
 function getErrors(payload) {
     return {
@@ -86,6 +87,22 @@ export function postUser(json) {
         return axios
             .post("/api/users", json)
             .then(res => dispatch(createUser(res)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
+function deleteUser(res) {
+    return {
+        type: DELETE_USER,
+        deletedAt: Date.now()
+    }
+}
+
+export function delUser(json) {
+    return dispatch => {
+        return axios
+            .delete("/api/users/" + json._id, json)
+            .then(res => dispatch(deleteUser(res)))
             .catch(err => dispatch(getErrors(err)));
     }
 }
