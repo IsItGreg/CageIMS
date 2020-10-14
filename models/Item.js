@@ -11,6 +11,6 @@ let itemSchema = new Schema({
     activeTransactions: [{type: Schema.Types.ObjectId, ref: 'Transaction'}],
     courses: [String],
     notes: String,
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Item', itemSchema, "items");

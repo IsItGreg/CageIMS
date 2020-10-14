@@ -44,7 +44,6 @@ class Inventory extends Component {
         atid: "",
         courses: [],
         expected: "",
-        creationDate: "",
         transactions: [],
       },
     };
@@ -57,7 +56,7 @@ class Inventory extends Component {
   }
 
 
-  close = () =>
+  close = () => {
     this.setState({
       selectedItemId: null,
       nameError: false,
@@ -69,6 +68,10 @@ class Inventory extends Component {
       isChangesMadeToModal: false,
       isItemIdUnavailable: false,
     });
+    const { dispatch } = this.props;
+    dispatch(getItemsIfNeeded());
+  }
+
 
   handleChange = (e, itemProp) => {
     let val = e.target.value;
@@ -126,7 +129,6 @@ class Inventory extends Component {
         notes: "",
         atid: "",
         courses: [],
-        creationDate: new Date().getTime(),
         expected: "",
         transactions: [],
       },
@@ -150,15 +152,6 @@ class Inventory extends Component {
       !this.state.isItemIdUnavailable &&
       !this.state.iidError
     ) {
-      // TODO: Update user API
-
-      // let data = Object.assign({}, this.props.data);
-      // if (this.state.selectedUserId >= 0) {
-      //   data.users[this.state.selectedUserId] = this.state.selectedUser;
-      // } else {
-      //   data.users.push(this.state.selectedUser);
-      // }
-      // this.props.onUpdateData(data);
       const { dispatch } = this.props;
       if (this.state.selectedItemId < 0) {
         dispatch(postItem(this.state.selectedItem));
@@ -306,7 +299,6 @@ class Inventory extends Component {
 
   render() {
     const { items } = this.props;
-    console.log(items);
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
     let formTablePanes = [];
@@ -394,64 +386,64 @@ class Inventory extends Component {
     //   items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
     // });
 
-    // if (this.state.selectedItem != null && this.state.selectedItemId >= 0) {
-    //   formTablePanes = [
-    //     {
-    //       menuItem: "Active",
-    //       render: () => (
-    //         <Table
-    //           title={<h5>{this.state.selectedItem.name}</h5>}
-    //           columns={[
-    //             { title: "User ID", field: "uid" },
-    //             { title: "Transaction ID", field: "tid" },
-    //             {
-    //               title: "Checked Out Date",
-    //               field: "checkedOutDate",
-    //               render: (rowData) => this.formatDate(rowData.checkedOutDate),
-    //             },
-    //             {
-    //               title: "Due Date",
-    //               field: "dueDate",
-    //               render: (rowData) => this.formatDate(rowData.dueDate),
-    //             },
-    //           ]}
-    //           data={Array.from(
-    //             this.state.selectedItem.transactions.filter(
-    //               (name) => name.checkedInDate === ""
-    //             )
-    //           )}
-    //         ></Table>
-    //       ),
-    //     },
-    //     {
-    //       menuItem: "Completed",
-    //       render: () => (
-    //         <Table
-    //           title={<h5>{this.state.selectedItem.name}</h5>}
-    //           columns={[
-    //             { title: "User ID", field: "uid" },
-    //             { title: "Transaction ID", field: "tid" },
-    //             {
-    //               title: "Checked Out Date",
-    //               field: "checkedOutDate",
-    //               render: (rowData) => this.formatDate(rowData.checkedOutDate),
-    //             },
-    //             {
-    //               title: "Checked In Date",
-    //               field: "checkedInDate",
-    //               render: (rowData) => this.formatDate(rowData.checkedInDate),
-    //             },
-    //           ]}
-    //           data={Array.from(
-    //             this.state.selectedItem.transactions.filter(
-    //               (name) => !(name.checkedInDate === "")
-    //             )
-    //           )}
-    //         ></Table>
-    //       ),
-    //     },
-    //   ];
-    // }
+    if (this.state.selectedItem != null && this.state.selectedItemId >= 0) {
+      formTablePanes = [
+        {
+          menuItem: "Active",
+          render: () => (
+            <Table
+              title={<h5>{this.state.selectedItem.name}</h5>}
+              columns={[
+                { title: "User ID", field: "uid" },
+                { title: "Transaction ID", field: "tid" },
+                {
+                  title: "Checked Out Date",
+                  field: "checkedOutDate",
+                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                },
+                {
+                  title: "Due Date",
+                  field: "dueDate",
+                  render: (rowData) => this.formatDate(rowData.dueDate),
+                },
+              ]}
+            // data={Array.from(
+            //   this.state.selectedItem.transactions.filter(
+            //     (name) => name.checkedInDate === ""
+            //   )
+            // )}
+            ></Table>
+          ),
+        },
+        {
+          menuItem: "Completed",
+          render: () => (
+            <Table
+              title={<h5>{this.state.selectedItem.name}</h5>}
+              columns={[
+                { title: "User ID", field: "uid" },
+                { title: "Transaction ID", field: "tid" },
+                {
+                  title: "Checked Out Date",
+                  field: "checkedOutDate",
+                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                },
+                {
+                  title: "Checked In Date",
+                  field: "checkedInDate",
+                  render: (rowData) => this.formatDate(rowData.checkedInDate),
+                },
+              ]}
+            // data={Array.from(
+            //   this.state.selectedItem.transactions.filter(
+            //     (name) => !(name.checkedInDate === "")
+            //   )
+            // )}
+            ></Table>
+          ),
+        },
+      ];
+    }
     // const inventoryTablePanes = [
     //   {
     //     menuItem: "All",
@@ -501,9 +493,9 @@ class Inventory extends Component {
     //   },
     // ];
 
-    const tempItems = this.props.items;
+    //const tempItems = this.props.items;
     const categories = [
-      ...new Set(tempItems.map((item) => item.category)),
+      ...new Set(items.map((item) => item.category)),
     ].sort();
 
     // categories.forEach((category) => {
@@ -585,9 +577,6 @@ class Inventory extends Component {
               data={Array.from(items)}
               columns={columnSet}
               title={<h2>Items</h2>}
-              options={{
-                filtering: true,
-              }}
               onRowClick={(event, rowData) =>
                 this.handleItemSelectClick(event, rowData)
               }

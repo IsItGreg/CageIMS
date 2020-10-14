@@ -19,6 +19,7 @@ import * as FileSaver from 'file-saver';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getUsersIfNeeded, putUser, postUser } from "../actions/userActions"
+import { getItemsIfNeeded} from "../actions/itemActions"
 
 class Users extends Component {
   constructor(props) {
@@ -60,6 +61,7 @@ class Users extends Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(getUsersIfNeeded());
+    dispatch(getItemsIfNeeded());
   }
 
   close = () => {
@@ -405,8 +407,6 @@ class Users extends Component {
 
   render() {
     const { users } = this.props;
-    // console.log(this.props);
-    // console.log(users);
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
     let formTablePanes = [];
@@ -489,7 +489,7 @@ class Users extends Component {
           [],
           [
             this.state.selectedUser,
-            // ...this.props.data.items,
+            ...this.props.items,
             ...this.props.users,
           ]
             .filter((item) => item.courses)
@@ -941,16 +941,19 @@ class Users extends Component {
 
 Users.propTypes = {
   getUsersIfNeeded: PropTypes.func.isRequired,
+  getItemsIfNeeded: PropTypes.func.isRequired,
   putUser: PropTypes.func.isRequired,
   postUser: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,
+  items: PropTypes.array.isRequired,
   isGetting: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  const { user } = state;
+  const { user,item } = state;
+  const {items} = item;
   const { isGetting, lastUpdated, users } = user;
-  return { users, isGetting, lastUpdated };
+  return { users, isGetting, lastUpdated,items };
 }
 export default connect(mapStateToProps)(Users);
