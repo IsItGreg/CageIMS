@@ -13,6 +13,11 @@ import Table from "../common/Table";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
 
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { getItemsIfNeeded, putItem, postItem } from "../actions/itemActions"
+import { getUsersIfNeeded } from "../actions/userActions"
+
 class Inventory extends Component {
   constructor(props) {
     super(props);
@@ -39,13 +44,19 @@ class Inventory extends Component {
         atid: "",
         courses: [],
         expected: "",
-        creationDate: "",
         transactions: [],
       },
     };
   }
 
-  close = () =>
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(getItemsIfNeeded());
+    dispatch(getUsersIfNeeded());
+  }
+
+
+  close = () => {
     this.setState({
       selectedItemId: null,
       nameError: false,
@@ -57,43 +68,55 @@ class Inventory extends Component {
       isChangesMadeToModal: false,
       isItemIdUnavailable: false,
     });
+    const { dispatch } = this.props;
+    dispatch(getItemsIfNeeded());
+  }
 
-  handleChange = (e, userProp) => {
+
+  handleChange = (e, itemProp) => {
     let val = e.target.value;
-    if (userProp === "iid") {
+    if (itemProp === "iid") {
       val = this.handleItemIdVerify(val);
     }
     this.setState((prevState) => {
       let selectedItem = Object.assign({}, prevState.selectedItem);
-      selectedItem[userProp] = val;
+      selectedItem[itemProp] = val;
       return { selectedItem, isChangesMadeToModal: true };
     });
   };
 
   handleItemSelectClick = (e, rowData) => {
-    let selectedItemId = rowData.tableData.id;
-    let selectedItem = Object.assign(
-      {},
-      this.props.data.items.find((item) => item.iid === rowData.iid)
-    );
-    let transactions = Array.from(
-      this.props.data.transactions.filter(
-        (transaction) => transaction.iid === selectedItem.iid
-      )
-    );
-    transactions.forEach((transaction) => {
-      transaction.backgroundColor =
-        !transaction.checkedInDate &&
-        new Date(transaction.dueDate).getTime() < new Date().getTime()
-          ? "mistyrose"
-          : "";
-    });
-    selectedItem["transactions"] = transactions;
+    console.log(rowData);
     this.setState({
-      selectedItemId,
-      selectedItem,
+      selectedItemId: rowData.tableData.id,
+      selectedItem: rowData,
     });
   };
+
+  // handleItemSelectClick = (e, rowData) => {
+  //   let selectedItemId = rowData.tableData.id;
+  //   let selectedItem = Object.assign(
+  //     {},
+  //     this.props.data.items.find((item) => item.iid === rowData.iid)
+  //   );
+  //   let transactions = Array.from(
+  //     this.props.data.transactions.filter(
+  //       (transaction) => transaction.iid === selectedItem.iid
+  //     )
+  //   );
+  //   transactions.forEach((transaction) => {
+  //     transaction.backgroundColor =
+  //       !transaction.checkedInDate &&
+  //       new Date(transaction.dueDate).getTime() < new Date().getTime()
+  //         ? "mistyrose"
+  //         : "";
+  //   });
+  //   selectedItem["transactions"] = transactions;
+  //   this.setState({
+  //     selectedItemId,
+  //     selectedItem,
+  //   });
+  // };
 
   handleItemAddClick = () => {
     this.setState({
@@ -106,7 +129,6 @@ class Inventory extends Component {
         notes: "",
         atid: "",
         courses: [],
-        creationDate: new Date().getTime(),
         expected: "",
         transactions: [],
       },
@@ -130,13 +152,15 @@ class Inventory extends Component {
       !this.state.isItemIdUnavailable &&
       !this.state.iidError
     ) {
-      let data = Object.assign({}, this.props.data);
-      if (this.state.selectedItemId >= 0) {
-        data.items[this.state.selectedItemId] = this.state.selectedItem;
-      } else {
-        data.items.push(this.state.selectedItem);
+      const { dispatch } = this.props;
+      if (this.state.selectedItemId < 0) {
+        dispatch(postItem(this.state.selectedItem));
       }
-      this.props.onUpdateData(data);
+      else {
+        dispatch(putItem(this.state.selectedItem));
+      }
+      dispatch(getItemsIfNeeded());
+
       this.close();
     }
   };
@@ -243,7 +267,7 @@ class Inventory extends Component {
     }
     let fullID = "0".repeat(4 - iid.length) + iid;
     this.setState({
-      isItemIdUnavailable: this.props.data.items.some(
+      isItemIdUnavailable: this.props.items.some(
         (item, i) => item.iid === fullID && this.state.selectedItemId !== i
       ),
     });
@@ -251,8 +275,8 @@ class Inventory extends Component {
   };
 
   generateInitialNextItemId = () => {
-    if (this.props.data.items.length === 0) return "0001";
-    const ids = this.props.data.items
+    if (this.props.items.length === 0) return "0001";
+    const ids = this.props.items
       .map((item) => parseInt(item.iid))
       .sort((a, b) => a - b);
     const newId = (ids.find((id) => !ids.includes(id + 1)) + 1).toString();
@@ -262,18 +286,19 @@ class Inventory extends Component {
   //Function to clear lifted state items of tableData
   //
   //returns: lifted state item data without tableData
-  getList = (items) => {
-    var returnData = [];
-    items.forEach((element) => {
-      var elCopy = Object.assign({}, element);
-      delete elCopy["tableData"];
-      returnData.push(elCopy);
-    });
-    return returnData;
-  };
+  // getList = (items) => {
+  //   var returnData = [];
+  //   items.forEach((element) => {
+  //     var elCopy = Object.assign({}, element);
+  //     delete elCopy["tableData"];
+  //     returnData.push(elCopy);
+  //   });
+  //   return returnData;
+  // };
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   render() {
+    const { items } = this.props;
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
     let formTablePanes = [];
@@ -330,12 +355,12 @@ class Inventory extends Component {
         render: (rowData) => {
           return rowData.courses.length > 0
             ? rowData.courses.reduce((result, item) => (
-                <>
-                  {result}
-                  {", "}
-                  {item}
-                </>
-              ))
+              <>
+                {result}
+                {", "}
+                {item}
+              </>
+            ))
             : "";
         },
       },
@@ -347,19 +372,19 @@ class Inventory extends Component {
           rowData.expected ? this.formatDate(rowData.expected) : "Available",
         customFilterAndSearch: (term, rowData) =>
           this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
-            -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
+          -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
       },
     ];
 
 
-    let items = Array.from(this.props.data.items);
-    items.forEach((items) => {
-      let result = this.props.data.transactions.filter(
-        (transaction) => items.atid === transaction.tid
-      );
-      items.expected = !(items.atid === "") ? result[0].dueDate : "";
-      items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
-    });
+    // let itemsTemp = Array.from(this.props.items);
+    // itemsTemp.forEach((items) => {
+    //   let result = this.props.data.transactions.filter(
+    //     (transaction) => items.atid === transaction.tid
+    //   );
+    //   items.expected = !(items.atid === "") ? result[0].dueDate : "";
+    //   items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
+    // });
 
     if (this.state.selectedItem != null && this.state.selectedItemId >= 0) {
       formTablePanes = [
@@ -382,11 +407,11 @@ class Inventory extends Component {
                   render: (rowData) => this.formatDate(rowData.dueDate),
                 },
               ]}
-              data={Array.from(
-                this.state.selectedItem.transactions.filter(
-                  (name) => name.checkedInDate === ""
-                )
-              )}
+            // data={Array.from(
+            //   this.state.selectedItem.transactions.filter(
+            //     (name) => name.checkedInDate === ""
+            //   )
+            // )}
             ></Table>
           ),
         },
@@ -409,96 +434,94 @@ class Inventory extends Component {
                   render: (rowData) => this.formatDate(rowData.checkedInDate),
                 },
               ]}
-              data={Array.from(
-                this.state.selectedItem.transactions.filter(
-                  (name) => !(name.checkedInDate === "")
-                )
-              )}
+            // data={Array.from(
+            //   this.state.selectedItem.transactions.filter(
+            //     (name) => !(name.checkedInDate === "")
+            //   )
+            // )}
             ></Table>
           ),
         },
       ];
     }
-    const inventoryTablePanes = [
-      {
-        menuItem: "All",
-        render: () => (
-          <Table
-            data={this.getList(this.props.data.items)}
-            columns={columnSet}
-            title={<h2>All</h2>}
-            onRowClick={(event, rowData) =>
-              this.handleItemSelectClick(event, rowData)
-            }
-          />
-        ),
-      },
-      {
-        menuItem: "Available",
-        render: () => (
-          <Table
-            data={this.getList(
-              this.props.data.items.filter(
-                (name) => name.backgroundColor !== "mistyrose"
-              )
-            )}
-            columns={columnSet}
-            title={<h2>Available</h2>}
-            onRowClick={(event, rowData) =>
-              this.handleItemSelectClick(event, rowData)
-            }
-          />
-        ),
-      },
-      {
-        menuItem: "Unavailable",
-        render: () => (
-          <Table
-            data={this.getList(
-              this.props.data.items.filter(
-                (name) => name.backgroundColor === "mistyrose"
-              )
-            )}
-            columns={columnSet}
-            title={<h2>Unavailable</h2>}
-            onRowClick={(event, rowData) =>
-              this.handleItemSelectClick(event, rowData)
-            }
-          />
-        ),
-      },
-    ];
+    // const inventoryTablePanes = [
+    //   {
+    //     menuItem: "All",
+    //     render: () => (
+    //       <Table
+    //         data= {Array.from(items)}
+    //         columns={columnSet}
+    //         title={<h2>All</h2>}
+    //         onRowClick={(event, rowData) =>
+    //           this.handleItemSelectClick(event, rowData)
+    //         }
+    //       />
+    //     ),
+    //   },
+    //   {
+    //     menuItem: "Available",
+    //     render: () => (
+    //       <Table
+    //         data={
+    //           Array.from(items).filter(
+    //             (name) => name.backgroundColor !== "mistyrose"
+    //           )
+    //         }
+    //         columns={columnSet}
+    //         title={<h2>Available</h2>}
+    //         onRowClick={(event, rowData) =>
+    //           this.handleItemSelectClick(event, rowData)
+    //         }
+    //       />
+    //     ),
+    //   },
+    //   {
+    //     menuItem: "Unavailable",
+    //     render: () => (
+    //       <Table
+    //         data={
+    //           Array.from(items).filter(
+    //             (name) => name.backgroundColor === "mistyrose"
+    //         )}
+    //         columns={columnSet}
+    //         title={<h2>Unavailable</h2>}
+    //         onRowClick={(event, rowData) =>
+    //           this.handleItemSelectClick(event, rowData)
+    //         }
+    //       />
+    //     ),
+    //   },
+    // ];
 
-    const tempItems = this.props.data.items;
+    //const tempItems = this.props.items;
     const categories = [
-      ...new Set(tempItems.map((item) => item.category)),
+      ...new Set(items.map((item) => item.category)),
     ].sort();
 
-    categories.forEach((category) => {
-      inventoryTablePanes.push({
-        menuItem: category,
-        render: () => (
-          <Table
-            data={tempItems.filter((item) => item.category === category)}
-            itemType={"item"}
-            columns={columnSet}
-            title={<h3>{category}</h3>}
-            onRowClick={(event, rowData) =>
-              this.handleItemSelectClick(event, rowData)
-            }
-          />
-        ),
-      });
-    });
-
+    // categories.forEach((category) => {
+    //   inventoryTablePanes.push({
+    //     menuItem: category,
+    //     render: () => (
+    //       <Table
+    //         data={tempItems.filter((item) => item.category === category)}
+    //         itemType={"item"}
+    //         columns={columnSet}
+    //         title={<h3>{category}</h3>}
+    //         onRowClick={(event, rowData) =>
+    //           this.handleItemSelectClick(event, rowData)
+    //         }
+    //       />
+    //     ),
+    //   });
+    // });
     const courseOptions = Array.from(
       new Set(
         [].concat.apply(
           [],
           [
             this.state.selectedItem,
-            ...this.props.data.items,
-            ...this.props.data.users,
+            ...this.props.items,
+            ...this.props.users,
           ]
             .filter((item) => item.courses)
             .map((item) => item.courses)
@@ -507,9 +530,10 @@ class Inventory extends Component {
     )
       .sort()
       .map((item) => ({ text: item, value: item }));
+
     const brandOptions = Array.from(
       new Set(
-        [this.state.selectedItem, ...this.props.data.items]
+        [this.state.selectedItem, ...this.props.items]
           .filter((item) => item.brand)
           .map((item) => item.brand)
       )
@@ -518,7 +542,7 @@ class Inventory extends Component {
       .map((item) => ({ text: item, value: item }));
     const categoryOptions = Array.from(
       new Set(
-        [this.state.selectedItem, ...this.props.data.items]
+        [this.state.selectedItem, ...this.props.items]
           .filter((item) => item.category)
           .map((item) => item.category)
       )
@@ -548,7 +572,15 @@ class Inventory extends Component {
         </div>
         <div className="page-content stretch-h">
           <Col className="stretch-h flex-shrink flex-col">
-            <Tab panes={inventoryTablePanes} className="stretch-h flex-col" />
+            {/* <Tab panes={inventoryTablePanes} className="stretch-h flex-col" /> */}
+            <Table
+              data={Array.from(items)}
+              columns={columnSet}
+              title={<h2>Items</h2>}
+              onRowClick={(event, rowData) =>
+                this.handleItemSelectClick(event, rowData)
+              }
+            />
             <Modal centered show={selectedItemId != null} onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>Item</Modal.Title>
@@ -707,9 +739,9 @@ class Inventory extends Component {
                           <Form.Input
                             name="creationDate"
                             placeholder="creationDate"
-                            defaultValue={this.formatItemDate(
+                            defaultValue={
                               selectedItem.creationDate
-                            )}
+                            }
                             readOnly
                           ></Form.Input>
                         </Form.Field>
@@ -789,4 +821,21 @@ class Inventory extends Component {
   }
 }
 
-export default Inventory;
+Inventory.propTypes = {
+  getItemsIfNeeded: PropTypes.func.isRequired,
+  getUsersIfNeeded: PropTypes.func.isRequired,
+  putItem: PropTypes.func.isRequired,
+  postItem: PropTypes.func.isRequired,
+  items: PropTypes.array.isRequired,
+  users: PropTypes.array.isRequired,
+  isGetting: PropTypes.bool.isRequired,
+  lastUpdated: PropTypes.number,
+  dispatch: PropTypes.func.isRequired
+};
+function mapStateToProps(state) {
+  const { item, user } = state;
+  const { users } = user;
+  const { isGetting, lastUpdated, items } = item;
+  return { items, isGetting, lastUpdated, users };
+}
+export default connect(mapStateToProps)(Inventory);
