@@ -8,6 +8,43 @@ const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
 
 const User = require('../models/User');
+const Item = require('../models/Item')
+
+// Item Routes
+router.get('/items', (req, res) => {
+    Item.find({})
+        .then((data) => {
+            console.log('Data: ', data);
+            res.json(data);
+        })
+        .catch((error) => {
+            console.log('error: ', error);
+        });
+});
+
+router.post('/items', (req, res) => {
+    const newItem = new Item(req.body);
+    newItem.save((error) => {
+        if (error) {
+            res.status(500).json({ msg: "Err: couldn't save new Item" });
+            return;
+        }
+        return res.json({ msg: "Item saved" });
+    })
+})
+
+router.put('/items/:id', (req, res) => {
+    Item.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        .then(item => {
+            if (!item)
+                return res.status(404).send({ message: "Item not found with id " + req.params.id });
+            res.send(item)
+        }).catch(err => {
+            if (err.kind === 'ObjectId')
+                return res.status(404).send({ message: "Item not found with id " + req.params.id });
+            return res.status(500).send({ message: "Error updating item with id " + req.params.id });
+        })
+})
 
 // User Routes
 router.get('/users', (req, res) => {
