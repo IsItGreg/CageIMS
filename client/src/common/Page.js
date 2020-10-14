@@ -179,10 +179,7 @@ class Page extends Component {
                                 <Staff onUpdateData={this.handleDataUpdate} />
                             </Route>
                             <Route path="/transactions">
-                                <Transactions
-                                    data={this.state.data}
-                                    onUpdateData={this.handleDataUpdate}
-                                />
+                                <Transactions />
                             </Route>
                         </Switch>
                     </Col>

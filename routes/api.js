@@ -8,7 +8,44 @@ const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
 
 const User = require('../models/User');
-const Item = require('../models/Item')
+const Item = require('../models/Item');
+const Transaction = require("../models/Transaction");
+
+// Transaction Routes
+router.get('/transactions', (req, res) => {
+    Transaction.find({})
+        .then((data) => {
+            console.log('Data: ', data);
+            res.json(data);
+        })
+        .catch((error) => {
+            console.log('error: ', error);
+        });
+});
+
+router.post('/transactions', (req, res) => {
+    const newTransaction = new Transaction(req.body);
+    newTransaction.save((error) => {
+        if (error) {
+            res.status(500).json({ msg: "Err: couldn't save new Item" });
+            return;
+        }
+        return res.json({ msg: "Item saved" });
+    })
+})
+
+router.put('/transactions/:id', (req, res) => {
+    Transaction.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        .then(transaction => {
+            if (!transaction)
+                return res.status(404).send({ message: "Transaction not found with id " + req.params.id });
+            res.send(item)
+        }).catch(err => {
+            if (err.kind === 'ObjectId')
+                return res.status(404).send({ message: "Item not found with id " + req.params.id });
+            return res.status(500).send({ message: "Error updating item with id " + req.params.id });
+        })
+})
 
 // Item Routes
 router.get('/items', (req, res) => {
@@ -45,6 +82,7 @@ router.put('/items/:id', (req, res) => {
             return res.status(500).send({ message: "Error updating item with id " + req.params.id });
         })
 })
+
 
 // User Routes
 router.get('/users', (req, res) => {
