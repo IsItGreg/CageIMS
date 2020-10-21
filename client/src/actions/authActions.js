@@ -63,3 +63,18 @@ export const logoutUser = () => dispatch => {
     // Set current user to empty object {} which will set isAuthenticated to false
     dispatch(setCurrentUser({}));
 };
+
+export const forgotPassword = userData => dispatch => {
+    console.log("Forgot Password", userData);
+    axios
+        .post("/api/forgotPassword", userData)
+        .catch(err => dispatch({ type: GET_ERRORS, payload: err.response.data }));
+}
+
+export const resetPassword = userData => dispatch => {
+    console.log(userData);
+    axios
+        .put("/api/resetPassword", userData)
+        .then(res => window.location.href="/login")
+        .catch(err => dispatch({ type: GET_ERRORS, payload: err.response.data }));
+}

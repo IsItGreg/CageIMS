@@ -9,6 +9,7 @@ import "./App.scss";
 import PrivateRoute from "./common/PrivateRoute";
 import Login from "./pages/Login";
 import Page from "./common/Page";
+import Reset from "./pages/Reset";
 
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
@@ -36,10 +37,6 @@ if (localStorage.jwtToken) {
 }
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <Provider store={store}>
@@ -49,7 +46,12 @@ class App extends Component {
               <Route exact path="/login">
                 <Login onUpdateActiveUser={this.handleActiveUserUpdate} />
               </Route>
-              <PrivateRoute component={Page} />
+              <Route path="/reset">
+                <Reset />
+              </Route>
+              <Route >
+                <PrivateRoute component={Page} />
+              </Route>
             </Switch>
           </Router>
         </MuiPickersUtilsProvider>
