@@ -5,7 +5,7 @@ import {
     CREATE_USER,
     DELETE_USER
 } from "../actions/userActions";
-const isEmpty = require("is-empty");
+// const isEmpty = require("is-empty");
 
 export default function (
     state = {
@@ -33,20 +33,3 @@ export default function (
             return state
     }
 }
-
-// export default function (state = initialState, action) {
-//     switch (action.type) {
-//         case GET_USERS:
-//             return {
-//                 ...state,
-//                 users: action.payload
-//             };
-//         case USER_LOADING:
-//             return {
-//                 ...state,
-//                 loading: true
-//             };
-//         default:
-//             return state;
-//     }
-// }

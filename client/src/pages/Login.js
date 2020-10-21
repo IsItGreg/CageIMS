@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { Col, Row } from "react-bootstrap";
-import { Button, Form } from "semantic-ui-react";
+import { Col, Row, Modal } from "react-bootstrap";
+import { Form } from "semantic-ui-react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { loginUser } from "../actions/authActions";
+import { loginUser, forgotPassword } from "../actions/authActions";
 import classnames from "classnames";
 
 class Login extends Component {
@@ -80,14 +80,19 @@ class Login extends Component {
       password: this.state.password
     };
     this.props.loginUser(userData);
-    // axios
-    //   .post("/api/users/find", { email: this.state.email })
-    //   .then(res => {
-    //     if (res) {
-    //       this.props.onUpdateActiveUser(res.data);
-    //       window.location.href = '/#/';
-    //     }
-    //   })
+  }
+
+  openForgotPasswordModal(e) {
+    e.preventDefault();
+    this.setState({ showForgotPasswordModal: true });
+  }
+
+  resetPassword() {
+    if (this.state.femail1 === this.state.femail2) {
+      this.props.forgotPassword({ email: this.state.femail1 });
+    }
+
+    this.setState({ showForgotPasswordModal: false });
   }
 
   render() {
@@ -126,15 +131,51 @@ class Login extends Component {
                   })}
                 />
               </Form.Field>
-              <Form.Field>
-                <Button basic>Forgot Password</Button>
-              </Form.Field>
+              <Form.Button basic
+                content="Forgot Password"
+                onClick={(e) => { this.openForgotPasswordModal(e) }}
+              />
               <Form.Button
                 style={{ backgroundColor: "#46C88C", color: "white" }}
                 content="Log In"
               />
             </Form>
           </div>
+          <Modal
+            centered
+            show={this.state.showForgotPasswordModal}
+            onHide={() => this.setState({ showForgotPasswordModal: false })}
+          >
+            <Modal.Header closeButton bsPrefix="modal-header">
+              <Modal.Title>Reset Password</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Row>
+                <Col>
+                  <Form onSubmit={() => { this.resetPassword() }}>
+                    <Form.Field>
+                      <label>Email</label>
+                      <Form.Input
+                        onChange={(e) => { this.setState({ femail1: e.target.value }) }}
+                        placeholder="Email"
+                      />
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Confirm Email</label>
+                      <Form.Input
+                        onChange={(e) => { this.setState({ femail2: e.target.value }) }}
+                        placeholder="Confirm Email"
+                      />
+                    </Form.Field>
+                    <Form.Button
+                      style={{ backgroundColor: "#46C88C", color: "white" }}
+                      content="Reset Password"
+                    />
+                  </Form>
+                </Col>
+              </Row>
+            </Modal.Body>
+          </Modal>
         </Col>
       </Row>
     );
@@ -143,6 +184,7 @@ class Login extends Component {
 
 Login.propTypes = {
   loginUser: PropTypes.func.isRequired,
+  forgotPassword: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
@@ -152,5 +194,5 @@ const mapStateToProps = state => ({
 });
 export default connect(
   mapStateToProps,
-  { loginUser }
+  { loginUser, forgotPassword }
 )(Login);

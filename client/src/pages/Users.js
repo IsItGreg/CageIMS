@@ -545,7 +545,7 @@ class Users extends Component {
           selection
           options={courseOptionsExport}
           onChange={(e, { value }) => {
-            if (value != "All") {
+            if (value !== "All") {
               props.onFilterChanged(props.columnDef.tableData.id, value);
               console.log(props)
               console.log(value);
