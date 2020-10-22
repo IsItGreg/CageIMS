@@ -117,3 +117,5 @@ dist
 
 # production
 client/build
+*.env
+keys.json
