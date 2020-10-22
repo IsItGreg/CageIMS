@@ -5,8 +5,11 @@ const jwt = require("jsonwebtoken");
 
 const crypto = require("crypto");
 
+const fs = require('fs');
+const keys = JSON.parse(fs.readFileSync('./keys.json', 'utf8'));
+
 const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey('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');
+sgMail.setApiKey(keys.SG_API_KEY);
 
 // const keys = require("../../config/keys");
 
