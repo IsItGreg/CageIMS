@@ -6,6 +6,9 @@ const path = require('path');
 const bodyParser = require("body-parser");
 const passport = require("passport");
 
+const fs = require('fs');
+const keys = JSON.parse(fs.readFileSync('./keys.json', 'utf8'));
+
 const app = express();
 const PORT = process.env.PORT || 8080; // Step 1
 
@@ -13,21 +16,20 @@ const routes = require('./routes/api');
 
 // Bodyparser middleware
 app.use(
-    bodyParser.urlencoded({
-      extended: false
-    })
-  );
-  app.use(bodyParser.json());
+  bodyParser.urlencoded({
+    extended: false
+  })
+);
+app.use(bodyParser.json());
 
 // Step 2
-const mongo_uri = "mongodb+srv://dbUser:dbUserPassword@cims-cluster.36vz8.azure.mongodb.net/CageDB?retryWrites=true&w=majority";
-mongoose.connect(mongo_uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+mongoose.connect(keys.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 });
 
 mongoose.connection.on('connected', () => {
-    console.log('Mongoose is connected!!!!');
+  console.log('Mongoose is connected!!!!');
 });
 
 // Data parsing
@@ -37,7 +39,7 @@ app.use(express.urlencoded({ extended: false }));
 // Step 3
 
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static('client/build'));
+  app.use(express.static('client/build'));
 }
 
 // Passport middleware
