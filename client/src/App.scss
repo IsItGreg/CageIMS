@@ -299,3 +299,15 @@
     text-align: center;
   }
 }
+
+.table-wrapper {
+  > .MuiPaper-root {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    >div>div, >div>div>div {
+      height:100%
+    }
+    height:100%;
+  }
+}

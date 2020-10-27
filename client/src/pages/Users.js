@@ -19,7 +19,7 @@ import * as FileSaver from 'file-saver';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getUsersIfNeeded, putUser, postUser } from "../actions/userActions"
-import { getItemsIfNeeded} from "../actions/itemActions"
+import { getItemsIfNeeded } from "../actions/itemActions"
 
 class Users extends Component {
   constructor(props) {
@@ -569,18 +569,18 @@ class Users extends Component {
     ];
 
     return (
-      <Col className="stretch-h flex-col">
+      <Col className="stretch-h flex-col" style={{overflow: "hidden"}}>
         <div className="top-bar">
           <Row>
             <Col>
-            <Button
-              className="float-down"
-              size="small"
-              floated="left"
-              style={{ backgroundColor: "#46C88C", color: "white" }}
-              onClick={this.handleAddUserClick}
-            >
-              Create New User
+              <Button
+                className="float-down"
+                size="small"
+                floated="left"
+                style={{ backgroundColor: "#46C88C", color: "white" }}
+                onClick={this.handleAddUserClick}
+              >
+                Create New User
               </Button>
             </Col>
             <Col xs="auto">
@@ -588,6 +588,15 @@ class Users extends Component {
             </Col>
             <Col>
               <div className="float-down right-buttons">
+                <Button
+                  basic
+                  floated="right"
+                  color="red"
+                  size="tiny"
+                  onClick={this.handleClearAllCoursesClick}
+                >
+                  Clear All Courses
+                </Button>
                 <Button
                   basic
                   floated="right"
@@ -611,22 +620,13 @@ class Users extends Component {
                   style={{ display: "none" }}
                   onChange={this.onChangeFile.bind(this)}
                 />
-                <Button
-                  basic
-                  floated="right"
-                  color="red"
-                  size="tiny"
-                  onClick={this.handleClearAllCoursesClick}
-                >
-                  Clear All Courses
-                </Button>
               </div>
             </Col>
           </Row>
           <Divider clearing />
         </div>
-        <div className="page-content stretch-h">
-          <Col className="stretch-h flex-col">
+        <div className="page-content stretch-h" style={{overflow: "hidden"}}>
+          <Col className="stretch-h flex-col table-wrapper">
             <Table
               data={Array.from(users)}
               columns={columnSet}
@@ -953,9 +953,9 @@ Users.propTypes = {
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  const { user,item } = state;
-  const {items} = item;
+  const { user, item } = state;
+  const { items } = item;
   const { isGetting, lastUpdated, users } = user;
-  return { users, isGetting, lastUpdated,items };
+  return { users, isGetting, lastUpdated, items };
 }
 export default connect(mapStateToProps)(Users);
