@@ -99,13 +99,11 @@ class Login extends Component {
     const errors = this.state.errors;
     return (
       <Row className="stretch-h">
-        <Col className="login-page-left ">
-          <div className="vertical-center">
-            <h1>{this.state.curTime}</h1>
-          </div>
+        <Col xs={6} className="login-page-left ">
+          <h1>{this.state.curTime}</h1>
         </Col>
-        <Col className="login-page-right">
-          <div>
+        <Col xs={6} className="login-page-right">
+          <div className="centered-form">
             <Form onSubmit={() => { this.submitLogin() }}>
               <h1>Login</h1>
               <Form.Field>
@@ -133,10 +131,12 @@ class Login extends Component {
               </Form.Field>
               <Form.Button basic
                 content="Forgot Password"
+                className="button-right"
                 onClick={(e) => { this.openForgotPasswordModal(e) }}
               />
               <Form.Button
                 style={{ backgroundColor: "#46C88C", color: "white" }}
+                className="button-center"
                 content="Log In"
               />
             </Form>
