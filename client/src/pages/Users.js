@@ -572,6 +572,7 @@ class Users extends Component {
       <Col className="stretch-h flex-col">
         <div className="top-bar">
           <Row>
+            <Col>
             <Button
               className="float-down"
               size="small"
@@ -581,7 +582,8 @@ class Users extends Component {
             >
               Create New User
               </Button>
-            <Col>
+            </Col>
+            <Col xs="auto">
               <h1>User List</h1>
             </Col>
             <Col>
