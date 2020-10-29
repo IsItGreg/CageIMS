@@ -8,7 +8,7 @@ let itemSchema = new Schema({
     category: String,
     iid: String,
     transactions: [{type: Schema.Types.ObjectId, ref: 'Transaction'}],
-    activeTransactions: [{type: Schema.Types.ObjectId, ref: 'Transaction'}],
+    activeTransaction: {type: Schema.Types.ObjectId, ref: 'Transaction'},
     courses: [String],
     notes: String,
 }, { timestamps: true });

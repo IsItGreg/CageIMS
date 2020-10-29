@@ -44,7 +44,6 @@ class Inventory extends Component {
         atid: "",
         courses: [],
         expected: "",
-        transactions: [],
       },
     };
   }
@@ -130,7 +129,6 @@ class Inventory extends Component {
         atid: "",
         courses: [],
         expected: "",
-        transactions: [],
       },
       editable: false,
       isChangesMadeToModal: false,

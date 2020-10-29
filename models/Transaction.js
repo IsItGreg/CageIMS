@@ -2,17 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let transactionSchema = new Schema({
-
-    fname:String,
-    lname:String,
-    name:String,
-    category:String,
-    tid: String,
-    uid: String,
-    iid: String,
-    checkedOutDate: String,
-    dueDate: String,
-    checkedInDate:String,
+    user_id: {type: Schema.Types.ObjectId, ref: 'User'},
+    item_id: {type: Schema.Types.ObjectId, ref: 'Item'},
+    checkedOutDate: Date,
+    dueDate: Date,
+    checkedInDate:Date,
     notes: String,
 }, { timestamps: true });
 

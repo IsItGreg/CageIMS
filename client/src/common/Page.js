@@ -164,10 +164,7 @@ class Page extends Component {
                     <Col className="no-gutters stretch-h">
                         <Switch>
                             <Route exact path="/">
-                                <CheckInOut
-                                    data={this.state.data}
-                                    onUpdateData={this.handleDataUpdate}
-                                />
+                                <CheckInOut />
                             </Route>
                             <Route path="/users">
                                 <Users />

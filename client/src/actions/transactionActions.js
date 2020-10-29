@@ -42,6 +42,29 @@ function getTransactions() {
     }
 }
 
+export function getTransactionsByUser(json){
+    console.log(json._id);
+    return dispatch => {
+        dispatch(requestTransactions());
+        return axios
+            .get("/api/transactions/findbyuser/"+json._id ,json)
+            .then(response => dispatch(receiveTransactions(response)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
+export function getAllTransactionsByUser(json){
+    console.log(json._id);
+    return dispatch => {
+        dispatch(requestTransactions());
+        return axios
+            .get("/api/transactions/findbyuserall/"+json._id ,json)
+            .then(response => dispatch(receiveTransactions(response)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
+
 function shouldGetTransactions(state) {
     const transactions = state.transactions;
     if (!transactions) {

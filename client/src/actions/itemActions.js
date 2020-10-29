@@ -41,6 +41,16 @@ function getItems() {
     }
 }
 
+export function getAvailableItems() {
+    return dispatch => {
+        dispatch(requestItems());
+        return axios
+            .get("/api/items/available")
+            .then(response => dispatch(receiveItems(response)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
 function shouldGetItems(state) {
     const items = state.items;
     if (!items) {
@@ -66,6 +76,7 @@ function updateItems(res) {
 }
 
 export function putItem(json) {
+    console.log(json);
     return dispatch => {
         return axios
             .put("/api/items/" + json._id, json)
@@ -85,7 +96,7 @@ export function postItem(json) {
     return dispatch => {
         return axios
             .post("/api/items", json)
-            .then(res => dispatch(createItem(res)))
+            .then(res => dispatch(updateItems(res)))
             .catch(err => dispatch(getErrors(err)));
     }
 }

@@ -9,11 +9,18 @@ export const GET_ERRORS = 'GET_ERRORS'
 export const UPDATE_USER = 'UPDATE_USER'
 export const CREATE_USER = 'CREATE_USER'
 export const DELETE_USER = 'DELETE_USER'
+export const RECEIVE_USER = 'RECEIVE_USER'
+export const REQUEST_USER = 'REQUEST_USER'
 
 function getErrors(payload) {
     return {
         type: GET_ERRORS,
         payload
+    }
+}
+function requestUser() {
+    return {
+        type: REQUEST_USER
     }
 }
 
@@ -28,6 +35,16 @@ function receiveUsers(json) {
     return {
         type: RECEIVE_USERS,
         users: json,
+        receivedAt: Date.now()
+    }
+}
+
+function receiveUser(json) {
+    console.log(json);
+    return {
+        type: RECEIVE_USER,
+        users: json,
+        sentUser:json.data,
         receivedAt: Date.now()
     }
 }
@@ -59,6 +76,33 @@ export function getUsersIfNeeded() {
     }
 }
 
+function shouldGetUser(state) {
+    const users = state.users;
+    if (!users) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export function getUserIfNeeded(userCode) {
+    return (dispatch, getState) => {
+        if (shouldGetUser(getState())) {
+            return dispatch(getUser(userCode))
+        }
+    }
+}
+
+function getUser(userCode){
+    return dispatch => {
+        dispatch(requestUser(userCode));
+        return axios
+            .get("/api/users/" + userCode)
+            .then(res => dispatch(receiveUser(res)))
+            .catch(err => dispatch(getErrors(err)));
+    } 
+}
+
 function updateUsers(res) {
     return {
         type: UPDATE_USER,
@@ -68,12 +112,14 @@ function updateUsers(res) {
 
 export function putUser(json) {
     return dispatch => {
+        console.log(json);
         return axios
-            .put("/api/users/" + json._id, json)
+            .put("/api/users/", json)
             .then(res => dispatch(updateUsers(res)))
             .catch(err => dispatch(getErrors(err)));
     }
 }
+
 
 function createUser(res) {
     return {

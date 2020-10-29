@@ -32,8 +32,6 @@ class Transactions extends Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch(getUsersIfNeeded());
-    dispatch(getItemsIfNeeded());
     dispatch(getTransactionsIfNeeded());
   }
 
@@ -92,6 +90,7 @@ class Transactions extends Component {
     const {transactions} = this.props;
     const selectedTransactionId = this.state.selectedTransactionId;
     const selectedTransaction = this.state.selectedTransaction;
+    console.log(this.state.selectedTransaction);
     const headerStyleGrey = {
       backgroundColor: "#E2E2E2",
       color: "black",
@@ -99,11 +98,11 @@ class Transactions extends Component {
     };
 
     const columnSet = [
-      { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
-      { title: "Last Name", field: "lname", headerStyle: headerStyleGrey },
-      { title: "Item Name", field: "name", headerStyle: headerStyleGrey },
-      { title: "Item ID", field: "iid", headerStyle: headerStyleGrey },
-      { title: "Category", field: "category", headerStyle: headerStyleGrey },
+      { title: "First Name", field: "user.fname", headerStyle: headerStyleGrey },
+      { title: "Last Name", field: "user.lname", headerStyle: headerStyleGrey },
+      { title: "Item Name", field: "item.name", headerStyle: headerStyleGrey },
+      { title: "Item ID", field: "item.iid", headerStyle: headerStyleGrey },
+      { title: "Category", field: "item.category", headerStyle: headerStyleGrey },
       {
         title: "Notes",
         field: "notes",
@@ -195,7 +194,7 @@ class Transactions extends Component {
                           <Form.Input
                             name="name"
                             placeholder="name"
-                            defaultValue={selectedTransaction.name}
+                            defaultValue={selectedTransaction.item? selectedTransaction.item.name:null}
                             readOnly
                           ></Form.Input>
                         </Form.Field>
@@ -204,7 +203,7 @@ class Transactions extends Component {
                           <Form.Input
                             name="category"
                             placeholder="Category"
-                            defaultValue={selectedTransaction.category}
+                            defaultValue={selectedTransaction.item? selectedTransaction.item.category:null}
                             readOnly
                           ></Form.Input>
                         </Form.Field>
@@ -215,13 +214,13 @@ class Transactions extends Component {
                           <Form.Input
                             name="fname"
                             placeholder="First Name"
-                            defaultValue={selectedTransaction.fname}
+                            defaultValue={selectedTransaction.user? selectedTransaction.user.fname:null}
                             readOnly
                           ></Form.Input>
                           <Form.Input
                             name="lname"
                             placeholder="Last Name"
-                            defaultValue={selectedTransaction.lname}
+                            defaultValue={selectedTransaction.user? selectedTransaction.user.lname:null}
                             readOnly
                           ></Form.Input>
                         </Form.Group>
@@ -231,7 +230,7 @@ class Transactions extends Component {
                         <Form.Input
                           name="iid"
                           placeholder="Item ID"
-                          defaultValue={selectedTransaction.iid}
+                          defaultValue={selectedTransaction.item? selectedTransaction.item.iid:null}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
@@ -294,24 +293,18 @@ class Transactions extends Component {
   }
 }
 
-Transactions.propTypes = {
-  //getUsersIfNeeded: PropTypes.func.isRequired,
-  //getItemsIfNeeded: PropTypes.func.isRequired,
+Transactions.propTypes = {  
   getTransactionsIfNeeded:  PropTypes.func.isRequired,
   putTransaction: PropTypes.func.isRequired,
   postTransaction: PropTypes.func.isRequired,
-  //users: PropTypes.array.isRequired,
-  items: PropTypes.array.isRequired,
   transactions: PropTypes.array.isRequired,
   isGetting: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  const { transaction,item,user } = state;
-  const {items} = item;
-  const {users} = user;
+  const { transaction } = state;
   const { isGetting, lastUpdated, transactions } = transaction;
-  return {isGetting, lastUpdated,transactions,items,users };
+  return {isGetting, lastUpdated,transactions };
 }
 export default connect(mapStateToProps)(Transactions);

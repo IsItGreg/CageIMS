@@ -20,6 +20,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getUsersIfNeeded, putUser, postUser } from "../actions/userActions"
 import { getItemsIfNeeded } from "../actions/itemActions"
+import {getAllTransactionsByUser} from "../actions/transactionActions"
 
 class Users extends Component {
   constructor(props) {
@@ -42,6 +43,7 @@ class Users extends Component {
       showExportExcelModal: false,
       importedExcelData: [],
       importEmailErrors: {},
+      transactions: [],
 
       selectedUserId: null,
       selectedUser: {
@@ -52,7 +54,6 @@ class Users extends Component {
         email: "",
         phone: "",
         notes: "",
-        transactions: [],
         creationDate: "",
       },
     };
@@ -63,6 +64,24 @@ class Users extends Component {
     dispatch(getUsersIfNeeded());
     dispatch(getItemsIfNeeded());
   }
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    this.setState({
+      transactions: this.getTransactionsToShow(nextProps.transactions),
+    });
+  }
+
+  getTransactionsToShow(preSetTransactions) {
+    console.log(preSetTransactions);
+    if(preSetTransactions == null){
+      return null;
+    }
+    else{
+      return preSetTransactions;
+    }
+  }
+
 
   close = () => {
     this.setState({
@@ -75,9 +94,9 @@ class Users extends Component {
         email: "",
         phone: "",
         notes: "",
-        transactions: [],
         creationDate: "",
       },
+      transactions: [],
       firstNameError: false,
       lastNameError: false,
       idError: false,
@@ -112,7 +131,9 @@ class Users extends Component {
   };
 
   handleUserSelectClick = (e, rowData) => {
+    const {dispatch} = this.props;
     console.log(rowData);
+    dispatch(getAllTransactionsByUser(rowData));
     this.setState({
       selectedUserId: rowData.tableData.id,
       selectedUser: rowData,
@@ -428,8 +449,8 @@ class Users extends Component {
                 this.state.selectedUser.lname
               }
               columns={[
-                { title: "Item ID", field: "iid" },
-                { title: "Transaction ID", field: "tid" },
+                { title: "Item ID", field: "item.iid" },
+                { title: "Item Name", field: "item.name" },
                 {
                   title: "Checked Out Date",
                   field: "checkedOutDate",
@@ -441,10 +462,10 @@ class Users extends Component {
                   render: (rowData) => this.formatDate(rowData.dueDate),
                 },
               ]}
-              data={Array.from(
-                this.state.selectedUser.transactions.filter(
-                  (name) => name.checkedInDate === ""
-                )
+              data={Array.from(this.state.transactions?
+                this.state.transactions.filter(
+                  (name) => name.checkedInDate === null
+                ):[]
               )}
             />
           ),
@@ -452,32 +473,34 @@ class Users extends Component {
         {
           menuItem: "Completed Transactions",
           render: () => (
-            <Table
-              title={
-                this.state.selectedUser.fname +
-                " " +
-                this.state.selectedUser.lname
-              }
-              columns={[
-                { title: "Item ID", field: "iid" },
-                { title: "Transaction ID", field: "tid" },
-                {
-                  title: "Checked Out Date",
-                  field: "checkedOutDate",
-                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
-                },
-                {
-                  title: "Checked In Date",
-                  field: "checkedInDate",
-                  render: (rowData) => this.formatDate(rowData.checkedInDate),
-                },
-              ]}
-              data={Array.from(
-                this.state.selectedUser.transactions.filter(
-                  (name) => !(name.checkedInDate === "")
-                )
-              )}
-            />
+            <Col className="stretch-h flex-col table-wrapper">
+              <Table
+                title={
+                  this.state.selectedUser.fname +
+                  " " +
+                  this.state.selectedUser.lname
+                }
+                columns={[
+                  { title: "Item ID", field: "item.iid" },
+                  { title: "Item Name", field: "item.name" },
+                  {
+                    title: "Checked Out Date",
+                    field: "checkedOutDate",
+                    render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                  },
+                  {
+                    title: "Checked In Date",
+                    field: "checkedInDate",
+                    render: (rowData) => this.formatDate(rowData.checkedInDate),
+                  },
+                ]}
+                data={Array.from(this.state.transactions?
+                  this.state.transactions.filter(
+                    (name) => !(name.checkedInDate === null)
+                  ):[]
+                )}
+              />
+            </Col>
           ),
         },
       ];
@@ -727,7 +750,7 @@ class Users extends Component {
                 </Button>
               </Modal.Footer>
             </Modal>
-            <Modal centered show={selectedUserId != null} onHide={this.close}>
+            <Modal centered size ="lg" show={selectedUserId != null} onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>User</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
@@ -944,18 +967,21 @@ class Users extends Component {
 Users.propTypes = {
   getUsersIfNeeded: PropTypes.func.isRequired,
   getItemsIfNeeded: PropTypes.func.isRequired,
+  getAllTransactionsByUser: PropTypes.func.isRequired,
   putUser: PropTypes.func.isRequired,
   postUser: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,
+  transactions: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,
   isGetting: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  const { user, item } = state;
+  const { user, item, transaction} = state;
   const { items } = item;
+  const {transactions} = transaction;
   const { isGetting, lastUpdated, users } = user;
-  return { users, isGetting, lastUpdated, items };
+  return { users, isGetting, lastUpdated, items,transactions };
 }
 export default connect(mapStateToProps)(Users);
