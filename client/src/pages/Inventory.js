@@ -571,7 +571,7 @@ class Inventory extends Component {
           <Divider clearing />
         </div>
         <div className="page-content stretch-h">
-          <Col className="stretch-h flex-shrink flex-col">
+          <Col className="stretch-h flex-col table-wrapper">
             {/* <Tab panes={inventoryTablePanes} className="stretch-h flex-col" /> */}
             <Table
               data={Array.from(items)}

@@ -54,7 +54,6 @@ class Table extends Component {
   render() {
     return (
       <MaterialTable
-        style={{ flexGrow: 1 }}
         components={{
           Toolbar: (props) => (
             <div>
@@ -81,6 +80,7 @@ class Table extends Component {
           ...{
             search: true,
             paging: false,
+            headerStyle: {position: 'sticky', top: 0},
             rowStyle: (rowData) => ({
               backgroundColor: rowData.backgroundColor
                 ? rowData.backgroundColor
@@ -94,7 +94,7 @@ class Table extends Component {
         }}
         onRowClick={this.props.onRowClick}
         onSelectionChange={this.props.onSelectionChange}
-      ></MaterialTable>
+      />
     );
   }
 }
