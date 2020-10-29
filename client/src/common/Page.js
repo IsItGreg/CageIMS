@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 
 import { Row, Col, Container } from "react-bootstrap";
 import CheckInOut from "../pages/CheckInOut";
@@ -157,11 +157,11 @@ class Page extends Component {
         return (
             <Container fluid className="no-gutters flex-col stretch-hw">
                 <Header activeUser={this.state.activeUser} />
-                <Row className="flex-grow no-gutters">
+                <Row className="flex-grow no-gutters" style={{overflow: "hidden"}}>
                     <Col md="auto" className="no-gutters">
                         <Sidebar />
                     </Col>
-                    <Col className="no-gutters">
+                    <Col className="no-gutters stretch-h">
                         <Switch>
                             <Route exact path="/">
                                 <CheckInOut

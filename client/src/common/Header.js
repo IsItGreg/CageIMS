@@ -74,8 +74,9 @@ class Header extends Component {
       <Row
         className="header align-items-center"
         style={{ display: "flex", flexDirection: "row" }}
+        noGutters
       >
-        <Col>
+        <Col fluid>
           <Nav.Link href="#/">
             <h2>
               <SvgIcon
@@ -88,12 +89,12 @@ class Header extends Component {
             </h2>
           </Nav.Link>
         </Col>
-        <Col xs={{ span: 3, offset: 3 }}>
-          <div>
+        <Col xs="auto">
+          <div style={{textAlign: "right"}}>
             <h5>{this.state.curTime}</h5>
           </div>
         </Col>
-        <Col>
+        <Col xs="auto">
           <Dropdown
             className="header-dropdown"
             trigger={trigger}

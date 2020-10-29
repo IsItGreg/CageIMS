@@ -12,6 +12,8 @@ let userSchema = new Schema({
     courses: [String],
     phone: String,
     notes: String,
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema, "users");

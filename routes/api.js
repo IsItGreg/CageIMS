@@ -2,10 +2,20 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
+const crypto = require("crypto");
+
+const fs = require('fs');
+const keys = JSON.parse(fs.readFileSync('./keys.json', 'utf8'));
+
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(keys.SG_API_KEY);
+
 // const keys = require("../../config/keys");
 
 const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
+const validateResetInput = require("../validation/reset");
 
 const User = require('../models/User');
 const Item = require('../models/Item');
@@ -88,7 +98,7 @@ router.put('/items/:id', (req, res) => {
 router.get('/users', (req, res) => {
     User.find({})
         .then((data) => {
-            data.forEach(user => delete user.password);
+
             res.json(data);
         })
         .catch((error) => {
@@ -225,44 +235,72 @@ router.post("/login", (req, res) => {
     });
 });
 
-// Routes
-// router.get('/', (req, res) => {
+router.post("/forgotPassword", (req, res) => {
+    if (req.body.email === "") {
+        res.status(400).send("Email required");
+    }
+    User.findOne({ email: req.body.email }).then(user => {
+        if (user === null) {
+            res.status(403).send("User not found");
+        } else {
+            const token = crypto.randomBytes(20).toString('hex');
+            user.resetPasswordToken = token;
+            user.resetPasswordExpires = Date.now() + 3600000;
+            user.save()
+                .then(() => {
+                    const msg = {
+                        to: user.email,
+                        from: 'Cage_IMS_no_reply@gsme.dev',
+                        subject: 'CageIMS Password Reset',
+                        text: 'You are receiveing this email because you (or someone else) has requested to reset the password for your CageIMS account.\n\n'
+                            + 'If you wish to reset your password, please click on the following link or paste it into your browser:\n\n'
+                            + `http://localhost:3000/#/reset/${token}\n\n`
+                            + 'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+                            + 'The link will expire in 60 minutes.'
+                    }
+                    sgMail
+                        .send(msg)
+                        .then(() => { console.log('Email sent'); })
+                        .catch((err) => { console.log(err); });
+                }).catch(err => console.log(err));
+        }
+    });
+});
 
-//     BlogPost.find({  })
-//         .then((data) => {
-//             console.log('Data: ', data);
-//             res.json(data);
-//         })
-//         .catch((error) => {
-//             console.log('error: ', error);
-//         });
-// });
-
-// router.post('/save', (req, res) => {
-//     const data = req.body;
-
-//     const newBlogPost = new BlogPost(data);
-
-//     newBlogPost.save((error) => {
-//         if (error) {
-//             res.status(500).json({ msg: 'Sorry, internal server errors' });
-//             return;
-//         }
-//         // BlogPost
-//         return res.json({
-//             msg: 'Your data has been saved!!!!!!'
-//         });
-//     });
-// });
-
-
-// router.get('/name', (req, res) => {
-//     const data =  {
-//         username: 'peterson',
-//         age: 5
-//     };
-//     res.json(data);
-// });
+router.put("/resetPassword", (req, res) => {
+    console.log(req.body);
+    User.findOne({
+        resetPasswordToken: req.body.token,
+        // resetPasswordExpires: {
+        //     $gt: Date.now(),
+        // },
+    }).then(user => {
+        if (user == null) {
+            console.log('Password reset link invalid or has expired');
+            res.json('Password reset link invalid or has expired');
+        } else {
+            console.log(user);
+            const { errors, isValid } = validateResetInput(req.body);
+            console.log(errors);
+            if (!isValid) {
+                return res.status(400).json(errors);
+            }
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(req.body.password, salt, (err, hash) => {
+                    if (err) throw err;
+                    user.password = hash;
+                    user.resetPasswordExpires = null;
+                    user.resetPasswordToken = null;
+                    user.save();
+                });
+            });
+        }
+    }).then(() => {
+        return res.json({
+            success: true,
+        });
+    })
+})
 
 
 
