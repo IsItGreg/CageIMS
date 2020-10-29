@@ -74,6 +74,7 @@ class Header extends Component {
       <Row
         className="header align-items-center"
         style={{ display: "flex", flexDirection: "row" }}
+        noGutters
       >
         <Col fluid>
           <Nav.Link href="#/">

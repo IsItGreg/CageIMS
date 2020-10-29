@@ -625,7 +625,7 @@ class Users extends Component {
           </Row>
           <Divider clearing />
         </div>
-        <div className="page-content stretch-h" style={{overflow: "hidden"}}>
+        <div className="page-content stretch-h">
           <Col className="stretch-h flex-col table-wrapper">
             <Table
               data={Array.from(users)}
