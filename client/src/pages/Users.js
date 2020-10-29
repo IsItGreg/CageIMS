@@ -66,18 +66,23 @@ class Users extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     this.setState({
       transactions: this.getTransactionsToShow(nextProps.transactions),
     });
   }
 
   getTransactionsToShow(preSetTransactions) {
-    console.log(preSetTransactions);
     if(preSetTransactions == null){
       return null;
     }
     else{
+      preSetTransactions.forEach((transaction) => {
+        transaction.backgroundColor =
+          !transaction.checkedInDate &&
+          new Date(transaction.dueDate).getTime() < new Date().getTime()
+            ? "mistyrose"
+            : "";
+      });
       return preSetTransactions;
     }
   }
@@ -132,29 +137,11 @@ class Users extends Component {
 
   handleUserSelectClick = (e, rowData) => {
     const {dispatch} = this.props;
-    console.log(rowData);
     dispatch(getAllTransactionsByUser(rowData));
     this.setState({
       selectedUserId: rowData.tableData.id,
       selectedUser: rowData,
     });
-    // this.setState((prevState) => {
-    //   let selectedUser = Object.assign({}, prevState.selectedUser);
-    //   let transactions = Array.from(
-    //     this.props.data.transactions.filter(
-    //       (name) => name.uid === selectedUser.uid
-    //     )
-    //   );
-    //   transactions.forEach((transaction) => {
-    //     transaction.backgroundColor =
-    //       !transaction.checkedInDate &&
-    //       new Date(transaction.dueDate).getTime() < new Date().getTime()
-    //         ? "mistyrose"
-    //         : "";
-    //   });
-    //   selectedUser["transactions"] = transactions;
-    //   return { selectedUser };
-    // });
   };
 
   handleAddUserClick = () => {
@@ -235,7 +222,6 @@ class Users extends Component {
           return existingUser;
         });
 
-      console.log(data);
       this.setState({ importedExcelData: data, showImportExcelModal: true });
     };
 
@@ -298,8 +284,6 @@ class Users extends Component {
       newUsers.forEach(
         (user) => {
           let exists = this.props.users.find(u => u.email === user.email);
-          console.log(user);
-          console.log(exists);
           if (!exists) {
             user.courses = user.courses.concat(this.state.selectedUser.courses);
             dispatch(postUser(user));
@@ -407,7 +391,6 @@ class Users extends Component {
 
   handleExportFile = () => {
     let arr = []
-    console.log(this.state.exportModalDropdownSelection);
 
     arr = this.props.users.map(a => {
       let newObject = {};
@@ -570,8 +553,6 @@ class Users extends Component {
           onChange={(e, { value }) => {
             if (value !== "All") {
               props.onFilterChanged(props.columnDef.tableData.id, value);
-              console.log(props)
-              console.log(value);
             } else {
               props.onFilterChanged(props.columnDef.tableData.id);
             }

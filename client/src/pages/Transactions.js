@@ -76,7 +76,6 @@ class Transactions extends Component {
     ];
     if (!dateString) return "";
     const date = new Date(dateString);
-    console.log(date.getMonth());
     return (
       monthNames[date.getMonth()] +
       " " +
@@ -90,7 +89,6 @@ class Transactions extends Component {
     const {transactions} = this.props;
     const selectedTransactionId = this.state.selectedTransactionId;
     const selectedTransaction = this.state.selectedTransaction;
-    console.log(this.state.selectedTransaction);
     const headerStyleGrey = {
       backgroundColor: "#E2E2E2",
       color: "black",

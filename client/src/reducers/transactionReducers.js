@@ -20,7 +20,6 @@ export default function (
                 isGetting: true
             })
         case RECEIVE_TRANSACTIONS:
-            console.log(action);
             return Object.assign({}, state, {
                 isGetting: false,
                 transactions: action.transactions.data,

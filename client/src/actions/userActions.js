@@ -31,7 +31,6 @@ function requestUsers() {
 }
 
 function receiveUsers(json) {
-    console.log(json);
     return {
         type: RECEIVE_USERS,
         users: json,
@@ -40,7 +39,6 @@ function receiveUsers(json) {
 }
 
 function receiveUser(json) {
-    console.log(json);
     return {
         type: RECEIVE_USER,
         users: json,
@@ -112,7 +110,6 @@ function updateUsers(res) {
 
 export function putUser(json) {
     return dispatch => {
-        console.log(json);
         return axios
             .put("/api/users/", json)
             .then(res => dispatch(updateUsers(res)))

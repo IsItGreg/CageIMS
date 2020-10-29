@@ -8,9 +8,8 @@ import DateRange from "@material-ui/icons/DateRange";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { putUser } from "../actions/userActions"
-import { getItemsIfNeeded, putItem, postItem,getAvailableItems } from "../actions/itemActions"
-import { getTransactionsByUser, putTransaction, postTransaction, getTransactionsIfNeeded } from "../actions/transactionActions"
+import {getAvailableItems } from "../actions/itemActions"
+import { getTransactionsByUser, putTransaction, postTransaction } from "../actions/transactionActions"
 
 class CheckInOutViewUser extends Component {
   constructor(props) {
@@ -34,7 +33,6 @@ class CheckInOutViewUser extends Component {
   }
 
   getTransactionsToShow = (preSetTransactions) => {
-    console.log(preSetTransactions);
     if (preSetTransactions == null) {
       return null;
     }
@@ -49,7 +47,6 @@ class CheckInOutViewUser extends Component {
   };
 
   getItemsToShow = (preSetItems) => {
-    console.log(preSetItems);
     if(preSetItems == null) {
       return null;
     }
@@ -66,7 +63,6 @@ class CheckInOutViewUser extends Component {
   };
 
   componentDidMount() {
-    console.log(this.props.selectedUser)
     const { dispatch } = this.props;
     dispatch(getTransactionsByUser(this.props.selectedUser))
     dispatch(getAvailableItems());
@@ -88,7 +84,6 @@ class CheckInOutViewUser extends Component {
   };
 
   handleOpSelectClick = (e, op) => {
-    console.log(this.state.transactions);
     this.state.transactions.forEach((transaction) => {
       if (transaction.tableData) transaction.tableData.checked = false;
     });
@@ -137,8 +132,6 @@ class CheckInOutViewUser extends Component {
     const { dispatch } = this.props;
     const completedTransactionIds = this.state.transactions
       .filter((transaction) => transaction.tableData?.checked);
-    console.log(completedTransactionIds);
-    console.log(this.state.transactions);
     let t = completedTransactionIds.forEach((id) => {
       id.checkedInDate = new Date().getTime();
       dispatch(putTransaction(id));
@@ -169,7 +162,6 @@ class CheckInOutViewUser extends Component {
         dueDate: "",
         checkedInDate: "",
       });
-      console.log(item);
     });
 
     this.setState({ newTransactions, isCheckoutModalOpen: true });
@@ -761,7 +753,6 @@ CheckInOutViewUser.propTypes = {
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  console.log(state);
   const { transaction, item, user } = state;
   const { sentUser } = user;
   const { items } = item;

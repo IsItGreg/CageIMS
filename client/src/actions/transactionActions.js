@@ -24,7 +24,6 @@ function requestTransactions() {
 }
 
 function receiveTransactions(json) {
-    console.log(json);
     return {
         type: RECEIVE_TRANSACTIONS,
         transactions: json,
@@ -43,7 +42,6 @@ function getTransactions() {
 }
 
 export function getTransactionsByUser(json){
-    console.log(json._id);
     return dispatch => {
         dispatch(requestTransactions());
         return axios
@@ -54,7 +52,6 @@ export function getTransactionsByUser(json){
 }
 
 export function getAllTransactionsByUser(json){
-    console.log(json._id);
     return dispatch => {
         dispatch(requestTransactions());
         return axios

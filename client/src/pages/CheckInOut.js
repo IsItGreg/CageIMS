@@ -1,10 +1,6 @@
 import React, { Component } from "react";
-import { Input, Button, Icon, Form, Tab } from "semantic-ui-react";
-import { Container, Col, Row, Modal } from "react-bootstrap";
-import Table from "../common/Table";
-import { KeyboardDatePicker, DatePicker } from "@material-ui/pickers";
-import IconButton from "@material-ui/core/IconButton";
-import DateRange from "@material-ui/icons/DateRange";
+import { Input, Button, Icon } from "semantic-ui-react";
+import { Container } from "react-bootstrap";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -33,7 +29,6 @@ class CheckInOut extends Component {
   componentWillReceiveProps(nextProps) {
     //if user is found by id in database
     if(nextProps.sentUser !== null && this.state.madeRequest == true ){
-      console.log(nextProps.sentUser);
       this.setState({userFound:nextProps.sentUser})
     }
     //if no user matches id entered in search bar

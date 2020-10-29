@@ -29,14 +29,12 @@ export default function (
             })
             break;
         case RECEIVE_USERS:
-            console.log(action);
             return Object.assign({}, state, {
                 isGetting: false,
                 users: action.users.data,
                 lastUpdated: action.receivedAt
             })
         case RECEIVE_USER:
-            console.log(action);
             return Object.assign({}, state, {
                 isGetting: false,
                 sentUser: action.users.data,

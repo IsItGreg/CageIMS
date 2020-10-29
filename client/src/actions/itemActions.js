@@ -23,7 +23,6 @@ function requestItems() {
 }
 
 function receiveItems(json) {
-    console.log(json);
     return {
         type: RECEIVE_ITEMS,
         items: json,
@@ -76,7 +75,6 @@ function updateItems(res) {
 }
 
 export function putItem(json) {
-    console.log(json);
     return dispatch => {
         return axios
             .put("/api/items/" + json._id, json)

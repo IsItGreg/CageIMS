@@ -31,11 +31,9 @@ router.get('/transactions', (req, res) => {
         { $unwind: "$user" }
     ])
         .then((data) => {
-            console.log('Data: ', data);
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
 
@@ -59,12 +57,10 @@ router.put('/transactions/:id', (req, res) => {
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 })
 
 router.get('/transactions/findbyuser/:id', (req, res) => {
-    console.log(req.params);
     Transaction.aggregate([
         {
             "$match": {
@@ -80,16 +76,13 @@ router.get('/transactions/findbyuser/:id', (req, res) => {
         { $unwind: "$user" }
     ])
         .then((data) => {
-            console.log('Data: ', data);
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
 
 router.get('/transactions/findbyuserall/:id', (req, res) => {
-    console.log(req.params);
     Transaction.aggregate([
         {
             "$match": {
@@ -104,11 +97,9 @@ router.get('/transactions/findbyuserall/:id', (req, res) => {
         { $unwind: "$user" }
     ])
         .then((data) => {
-            console.log('Data: ', data);
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
 
@@ -117,11 +108,9 @@ router.get('/transactions/findbyuserall/:id', (req, res) => {
 router.get('/items', (req, res) => {
     Item.find({})
         .then((data) => {
-            console.log('Data: ', data);
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
 
@@ -160,11 +149,9 @@ router.get('/items/available', (req, res) => {
         },
     ])
         .then((data) => {
-            console.log('Data: ', data);
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
 
@@ -203,7 +190,6 @@ router.get('/users', (req, res) => {
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
 
@@ -213,7 +199,6 @@ router.get('/users/:ucode', (req, res) => {
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
 
@@ -223,7 +208,6 @@ router.post('/users/find', (req, res) => {
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
 
@@ -239,7 +223,6 @@ router.post('/users', (req, res) => {
 })
 
 router.put('/users/', (req, res) => {
-    console.log(req);
     User.findByIdAndUpdate(req.body._id, req.body, { new: true })
         .then(user => {
             if (!user)
@@ -382,7 +365,6 @@ router.post("/forgotPassword", (req, res) => {
 });
 
 router.put("/resetPassword", (req, res) => {
-    console.log(req.body);
     User.findOne({
         resetPasswordToken: req.body.token,
         // resetPasswordExpires: {
