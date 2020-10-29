@@ -5,3 +5,7 @@ export const GET_USERS = "GET_USERS";
 export const ITEM_LOADING = "ITEM_LOADING";
 export const SET_CURRENT_ITEM = "SET_CURRENT_ITEM";
 export const GET_ITEMS = "GET_ITEMS";
+export const TRANSACTION_LOADING = "ITEM_LOADING";
+export const SET_CURRENT_TRANSACTION = "SET_CURRENT_ITEM";
+export const GET_TRANSACTIONS = "GET_ITEMS";
+

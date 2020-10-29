@@ -23,7 +23,6 @@ function requestItems() {
 }
 
 function receiveItems(json) {
-    console.log(json);
     return {
         type: RECEIVE_ITEMS,
         items: json,
@@ -36,6 +35,16 @@ function getItems() {
         dispatch(requestItems());
         return axios
             .get("/api/items")
+            .then(response => dispatch(receiveItems(response)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
+export function getAvailableItems() {
+    return dispatch => {
+        dispatch(requestItems());
+        return axios
+            .get("/api/items/available")
             .then(response => dispatch(receiveItems(response)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -85,7 +94,7 @@ export function postItem(json) {
     return dispatch => {
         return axios
             .post("/api/items", json)
-            .then(res => dispatch(createItem(res)))
+            .then(res => dispatch(updateItems(res)))
             .catch(err => dispatch(getErrors(err)));
     }
 }

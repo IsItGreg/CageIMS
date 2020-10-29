@@ -18,19 +18,143 @@ const validateLoginInput = require("../validation/login");
 const validateResetInput = require("../validation/reset");
 
 const User = require('../models/User');
-const Item = require('../models/Item')
+const Item = require('../models/Item');
+const Transaction = require("../models/Transaction");
+const { Types } = require('mongoose');
 
-// Item Routes
-router.get('/items', (req, res) => {
-    Item.find({})
+/////////////////////////////////////////////// Transaction Routes /////////////////////////////////////////////////
+router.get('/transactions', (req, res) => {
+    Transaction.aggregate([
+        { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
+        { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
+        { $unwind: "$item" },
+        { $unwind: "$user" }
+    ])
         .then((data) => {
-            console.log('Data: ', data);
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
+
+router.post('/transactions', (req, res) => {
+    const newTransaction = new Transaction(req.body);
+    newTransaction.save((error) => {
+        if (error) {
+            res.status(500).json({ msg: "Err: couldn't save new Item" });
+            return;
+        }
+        return res.json({ msg: "Item saved" });
+    })
+})
+
+router.put('/transactions/:id', (req, res) => {
+    Transaction.findOne({ _id: req.params.id }, function (err, transaction) {
+        transaction.checkedInDate = req.body.checkedInDate;
+        transaction.save();
+    })
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+        });
+})
+
+router.get('/transactions/findbyuser/:id', (req, res) => {
+    Transaction.aggregate([
+        {
+            "$match": {
+                "$and": [
+                    { "user_id": Types.ObjectId(req.params.id) },
+                    { "checkedInDate": null },
+                ]
+            }
+        },
+        { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
+        { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
+        { $unwind: "$item" },
+        { $unwind: "$user" }
+    ])
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+        });
+});
+
+router.get('/transactions/findbyuserall/:id', (req, res) => {
+    Transaction.aggregate([
+        {
+            "$match": {
+                "$and": [
+                    { "user_id": Types.ObjectId(req.params.id) },
+                ]
+            }
+        },
+        { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
+        { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
+        { $unwind: "$item" },
+        { $unwind: "$user" }
+    ])
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+        });
+});
+
+
+//.///////////////////////////////// Item Routes //////////////////////////////////////////////////////
+router.get('/items', (req, res) => {
+    Item.find({})
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+        });
+});
+
+router.get('/items/available', (req, res) => {
+    Item.aggregate([
+        {
+            $lookup:
+            {
+                from: "transactions",
+                localField: "_id",
+                foreignField: "item_id",
+                as: "transactions",
+            }
+        },
+        {
+            $project: {
+                id : "$_id",
+                transactions: "$transactions",
+                courses: "$courses",
+                name: "$name",
+                iid: "$iid",
+                serial: "$serial",
+                category: "$category",
+                notes: "$notes",
+                brand: "$brand",
+                activeTransaction: {
+                    $filter : {
+                        input: "$transactions",
+                        as : "activeTransaction",
+                        cond : {
+                            $eq: ["$$activeTransaction.checkedInDate",null]
+                        }
+                    }
+                }
+            }
+        },
+    ])
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+        });
+});
+
 
 router.post('/items', (req, res) => {
     const newItem = new Item(req.body);
@@ -56,15 +180,25 @@ router.put('/items/:id', (req, res) => {
         })
 })
 
+
 // User Routes
 router.get('/users', (req, res) => {
     User.find({})
         .then((data) => {
 
+            data.forEach(user => user.password = null);
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
+        });
+});
+
+router.get('/users/:ucode', (req, res) => {
+    User.findOne({ userCode: req.params.ucode })
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
         });
 });
 
@@ -74,7 +208,6 @@ router.post('/users/find', (req, res) => {
             res.json(data);
         })
         .catch((error) => {
-            console.log('error: ', error);
         });
 });
 
@@ -89,8 +222,8 @@ router.post('/users', (req, res) => {
     })
 })
 
-router.put('/users/:id', (req, res) => {
-    User.findByIdAndUpdate(req.params.id, req.body, { new: true })
+router.put('/users/', (req, res) => {
+    User.findByIdAndUpdate(req.body._id, req.body, { new: true })
         .then(user => {
             if (!user)
                 return res.status(404).send({ message: "User not found with id " + req.params.id });
@@ -110,6 +243,8 @@ router.delete('/users/:id', (req, res) => {
             return res.status(500).send({ message: "Error updating user with id " + req.params.id });
         })
 })
+
+
 
 // @route POST api/users/register
 // @desc Register user
@@ -230,7 +365,6 @@ router.post("/forgotPassword", (req, res) => {
 });
 
 router.put("/resetPassword", (req, res) => {
-    console.log(req.body);
     User.findOne({
         resetPasswordToken: req.body.token,
         // resetPasswordExpires: {

@@ -5,67 +5,18 @@ import Table from "../common/Table";
 import IconButton from "@material-ui/core/IconButton";
 import ClearIcon from "@material-ui/icons/Clear";
 
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { getTransactionsIfNeeded, putTransaction, postTransaction } from "../actions/transactionActions"
+import { getUsersIfNeeded} from "../actions/userActions"
+import { getItemsIfNeeded} from "../actions/itemActions"
+
 class Transactions extends Component {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
-    const headerStyleGrey = {
-      backgroundColor: "#E2E2E2",
-      color: "black",
-      fontSize: "24",
-    };
     this.state = {
-      columnSet: [
-        { title: "First Name", field: "fname", headerStyle: headerStyleGrey },
-        { title: "Last Name", field: "lname", headerStyle: headerStyleGrey },
-        { title: "Item Name", field: "name", headerStyle: headerStyleGrey },
-        { title: "Item ID", field: "iid", headerStyle: headerStyleGrey },
-        { title: "Category", field: "category", headerStyle: headerStyleGrey },
-        {
-          title: "Notes",
-          field: "notes",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => {
-            return (
-              rowData.notes && (
-                <Icon size="large" className="notes-icon" name="check circle" />
-              )
-            );
-          },
-        },
-        {
-          title: "Checked Out",
-          field: "checkedOutDate",
-          defaultSort: "desc",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => this.formatDate(rowData.checkedOutDate),
-          customFilterAndSearch: (term, rowData) =>
-            this.formatDateForSearchBar(rowData.checkedOutDate).indexOf(
-              term
-            ) !== -1 ||
-            this.formatDate(rowData.checkedOutDate).indexOf(term) !== -1,
-        },
-        {
-          title: "Due Date",
-          field: "dueDate",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => this.formatDate(rowData.dueDate),
-          customFilterAndSearch: (term, rowData) =>
-            this.formatDateForSearchBar(rowData.dueDate).indexOf(term) !== -1 ||
-            this.formatDate(rowData.dueDate).indexOf(term) !== -1,
-        },
-        {
-          title: "Checked In",
-          field: "checkedInDate",
-          headerStyle: headerStyleGrey,
-          render: (rowData) => this.formatDate(rowData.checkedInDate),
-          customFilterAndSearch: (term, rowData) =>
-            this.formatDateForSearchBar(rowData.checkedInDate).indexOf(term) !==
-              -1 || this.formatDate(rowData.checkedInDate).indexOf(term) !== -1,
-        },
-      ],
-      selectedItemId: null,
-      selectedItem: {
+      selectedTransactionId: null,
+      selectedTransaction: {
         fname: "",
         lname: "",
         name: "",
@@ -79,39 +30,24 @@ class Transactions extends Component {
     };
   }
 
-  close = () =>
-    this.setState({
-      selectedItemId: null,
-    });
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(getTransactionsIfNeeded());
+  }
 
-  handleChange = (e, userProp) => {
-    const val = e.target.value;
-    this.setState((prevState) => {
-      let selectedItem = Object.assign({}, prevState.selectedItem);
-      selectedItem[userProp] = val;
-      return { selectedItem };
+  close = () =>{
+    this.setState({
+      selectedTransactionId: null,
     });
-  };
+    const { dispatch } = this.props;
+    dispatch(getTransactionsIfNeeded());
+  }
+
 
   handleUserSelectClick = (e, rowData) => {
     this.setState({
-      selectedItemId: rowData.tid,
-      selectedItem: rowData,
-    });
-  };
-
-  handleDropdownAddition = (e, { value }) => {
-    this.setState((prevState) => ({
-      courseOptions: [{ text: value, value }, ...prevState.courseOptions],
-    }));
-  };
-
-  handleDropdownChange = (e, { value }) => {
-    const val = value;
-    this.setState((prevState) => {
-      let selectedItem = Object.assign({}, prevState.selectedItem);
-      selectedItem.courses = val;
-      return { selectedItem };
+      selectedTransactionId: rowData.tableData.id,
+      selectedTransaction: rowData,
     });
   };
 
@@ -140,7 +76,6 @@ class Transactions extends Component {
     ];
     if (!dateString) return "";
     const date = new Date(dateString);
-    console.log(date.getMonth());
     return (
       monthNames[date.getMonth()] +
       " " +
@@ -151,29 +86,64 @@ class Transactions extends Component {
   };
 
   render() {
-    const selectedItemId = this.state.selectedItemId;
-    const selectedItem = this.state.selectedItem;
+    const {transactions} = this.props;
+    const selectedTransactionId = this.state.selectedTransactionId;
+    const selectedTransaction = this.state.selectedTransaction;
+    const headerStyleGrey = {
+      backgroundColor: "#E2E2E2",
+      color: "black",
+      fontSize: "24",
+    };
 
-    let transactions = Array.from(this.props.data.transactions);
-    transactions.forEach((transaction) => {
-      let result = this.props.data.users.filter(
-        (user) => transaction.uid === user.uid
-      );
-      transaction.fname = result[0] ? result[0].fname : "";
-      transaction.lname = result[0] ? result[0].lname : "";
-      result = this.props.data.items.filter(
-        (item) => transaction.iid === item.iid
-      );
-      transaction.name = result[0] ? result[0].name : "";
-      transaction.iid = result[0] ? result[0].iid : "";
-      transaction.category = result[0] ? result[0].category : "";
-
-      transaction.backgroundColor =
-        !transaction.checkedInDate &&
-        new Date(transaction.dueDate).getTime() < new Date().getTime()
-          ? "mistyrose"
-          : "";
-    });
+    const columnSet = [
+      { title: "First Name", field: "user.fname", headerStyle: headerStyleGrey },
+      { title: "Last Name", field: "user.lname", headerStyle: headerStyleGrey },
+      { title: "Item Name", field: "item.name", headerStyle: headerStyleGrey },
+      { title: "Item ID", field: "item.iid", headerStyle: headerStyleGrey },
+      { title: "Category", field: "item.category", headerStyle: headerStyleGrey },
+      {
+        title: "Notes",
+        field: "notes",
+        headerStyle: headerStyleGrey,
+        render: (rowData) => {
+          return (
+            rowData.notes && (
+              <Icon size="large" className="notes-icon" name="check circle" />
+            )
+          );
+        },
+      },
+      {
+        title: "Checked Out",
+        field: "checkedOutDate",
+        defaultSort: "desc",
+        headerStyle: headerStyleGrey,
+        render: (rowData) => this.formatDate(rowData.checkedOutDate),
+        customFilterAndSearch: (term, rowData) =>
+          this.formatDateForSearchBar(rowData.checkedOutDate).indexOf(
+            term
+          ) !== -1 ||
+          this.formatDate(rowData.checkedOutDate).indexOf(term) !== -1,
+      },
+      {
+        title: "Due Date",
+        field: "dueDate",
+        headerStyle: headerStyleGrey,
+        render: (rowData) => this.formatDate(rowData.dueDate),
+        customFilterAndSearch: (term, rowData) =>
+          this.formatDateForSearchBar(rowData.dueDate).indexOf(term) !== -1 ||
+          this.formatDate(rowData.dueDate).indexOf(term) !== -1,
+      },
+      {
+        title: "Checked In",
+        field: "checkedInDate",
+        headerStyle: headerStyleGrey,
+        render: (rowData) => this.formatDate(rowData.checkedInDate),
+        customFilterAndSearch: (term, rowData) =>
+          this.formatDateForSearchBar(rowData.checkedInDate).indexOf(term) !==
+            -1 || this.formatDate(rowData.checkedInDate).indexOf(term) !== -1,
+      },
+    ];
 
     return (
       <Col className="stretch-h flex-col">
@@ -198,14 +168,14 @@ class Transactions extends Component {
         <div className="page-content stretch-h">
           <Col className="stretch-h flex-col">
             <Table
-              data={transactions}
-              columns={this.state.columnSet}
+              data={Array.from(transactions)}
+              columns={columnSet}
               title={<h2>Transaction History</h2>}
               onRowClick={(event, rowData) =>
                 this.handleUserSelectClick(event, rowData)
               }
             />
-            <Modal centered show={selectedItemId != null} onHide={this.close}>
+            <Modal centered show={this.state.selectedTransactionId != null} onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>Transaction</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
@@ -222,7 +192,7 @@ class Transactions extends Component {
                           <Form.Input
                             name="name"
                             placeholder="name"
-                            defaultValue={selectedItem.name}
+                            defaultValue={selectedTransaction.item? selectedTransaction.item.name:null}
                             readOnly
                           ></Form.Input>
                         </Form.Field>
@@ -231,7 +201,7 @@ class Transactions extends Component {
                           <Form.Input
                             name="category"
                             placeholder="Category"
-                            defaultValue={selectedItem.category}
+                            defaultValue={selectedTransaction.item? selectedTransaction.item.category:null}
                             readOnly
                           ></Form.Input>
                         </Form.Field>
@@ -242,13 +212,13 @@ class Transactions extends Component {
                           <Form.Input
                             name="fname"
                             placeholder="First Name"
-                            defaultValue={selectedItem.fname}
+                            defaultValue={selectedTransaction.user? selectedTransaction.user.fname:null}
                             readOnly
                           ></Form.Input>
                           <Form.Input
                             name="lname"
                             placeholder="Last Name"
-                            defaultValue={selectedItem.lname}
+                            defaultValue={selectedTransaction.user? selectedTransaction.user.lname:null}
                             readOnly
                           ></Form.Input>
                         </Form.Group>
@@ -258,7 +228,7 @@ class Transactions extends Component {
                         <Form.Input
                           name="iid"
                           placeholder="Item ID"
-                          defaultValue={selectedItem.iid}
+                          defaultValue={selectedTransaction.item? selectedTransaction.item.iid:null}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
@@ -267,12 +237,12 @@ class Transactions extends Component {
                         <Form.Input
                           name="notes"
                           placeholder="Notes"
-                          defaultValue={selectedItem.notes}
+                          defaultValue={selectedTransaction.notes}
                           readOnly
                         ></Form.Input>
                       </Form.Field>
                       <Form.Group
-                        widths={this.state.selectedItem.checkedInDate ? 3 : 2}
+                        widths={this.state.selectedTransaction.checkedInDate ? 3 : 2}
                       >
                         <Form.Field>
                           <label>Checked Out:</label>
@@ -280,20 +250,20 @@ class Transactions extends Component {
                             name="checkedOut"
                             placeholder="Checked Out"
                             defaultValue={this.formatDate(
-                              selectedItem.checkedOutDate
+                              selectedTransaction.checkedOutDate
                             )}
                             readOnly
                           ></Form.Input>
                         </Form.Field>
-                        {this.state.selectedItem.checkedInDate && (
+                        {this.state.selectedTransaction.checkedInDate && (
                           <Form.Field>
                             <label>Checked In:</label>
                             <Form.Input
                               name="checkedIn"
                               placeholder="Checked In"
-                              error={!selectedItem.checkedInDate}
+                              error={!selectedTransaction.checkedInDate}
                               defaultValue={this.formatDate(
-                                selectedItem.checkedInDate
+                                selectedTransaction.checkedInDate
                               )}
                               readOnly
                             ></Form.Input>
@@ -304,7 +274,7 @@ class Transactions extends Component {
                           <Form.Input
                             name="due"
                             placeholder="Due Date"
-                            defaultValue={this.formatDate(selectedItem.dueDate)}
+                            defaultValue={this.formatDate(selectedTransaction.dueDate)}
                             readOnly
                           ></Form.Input>
                         </Form.Field>
@@ -321,4 +291,18 @@ class Transactions extends Component {
   }
 }
 
-export default Transactions;
+Transactions.propTypes = {  
+  getTransactionsIfNeeded:  PropTypes.func.isRequired,
+  putTransaction: PropTypes.func.isRequired,
+  postTransaction: PropTypes.func.isRequired,
+  transactions: PropTypes.array.isRequired,
+  isGetting: PropTypes.bool.isRequired,
+  lastUpdated: PropTypes.number,
+  dispatch: PropTypes.func.isRequired
+};
+function mapStateToProps(state) {
+  const { transaction } = state;
+  const { isGetting, lastUpdated, transactions } = transaction;
+  return {isGetting, lastUpdated,transactions };
+}
+export default connect(mapStateToProps)(Transactions);

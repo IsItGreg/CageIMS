@@ -1,35 +1,34 @@
 import {
-    RECEIVE_ITEMS,
-    REQUEST_ITEMS,
-    ITEM_LOADING,
-    UPDATE_ITEM,
-    CREATE_ITEM
-} from "../actions/itemActions";
+    RECEIVE_TRANSACTIONS,
+    REQUEST_TRANSACTIONS,
+    UPDATE_TRANSACTION,
+    CREATE_TRANSACTION,
+    DELETE_TRANSACTION
+} from "../actions/transactionActions";
 const isEmpty = require("is-empty");
 
 export default function (
     state = {
         isGetting: false,
-        items: []
+        transactions: []
     },
     action
 ) {
     switch (action.type) {
-        case REQUEST_ITEMS:
+        case REQUEST_TRANSACTIONS:
             return Object.assign({}, state, {
                 isGetting: true
             })
-        case RECEIVE_ITEMS:
-            console.log(action);
+        case RECEIVE_TRANSACTIONS:
             return Object.assign({}, state, {
                 isGetting: false,
-                items: action.items.data,
+                transactions: action.transactions.data,
                 lastUpdated: action.receivedAt
             })
-        case UPDATE_ITEM:
-        case CREATE_ITEM:
+        case UPDATE_TRANSACTION:
+        case CREATE_TRANSACTION:
+        case DELETE_TRANSACTION:
         default:
             return state
     }
 }
-

@@ -1,5 +1,7 @@
 import {
     RECEIVE_USERS,
+    RECEIVE_USER,
+    REQUEST_USER,
     REQUEST_USERS,
     UPDATE_USER,
     CREATE_USER,
@@ -10,7 +12,8 @@ import {
 export default function (
     state = {
         isGetting: false,
-        users: []
+        users: [],
+        sentUser: null,
     },
     action
 ) {
@@ -19,11 +22,22 @@ export default function (
             return Object.assign({}, state, {
                 isGetting: true
             })
+            break;
+        case REQUEST_USER:
+            return Object.assign({}, state, {
+                isGetting: true,
+            })
+            break;
         case RECEIVE_USERS:
-            console.log(action);
             return Object.assign({}, state, {
                 isGetting: false,
                 users: action.users.data,
+                lastUpdated: action.receivedAt
+            })
+        case RECEIVE_USER:
+            return Object.assign({}, state, {
+                isGetting: false,
+                sentUser: action.users.data,
                 lastUpdated: action.receivedAt
             })
         case UPDATE_USER:
