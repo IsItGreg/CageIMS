@@ -313,3 +313,14 @@
     height:100%;
   }
 }
+
+.modal-body {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.footer-dropdown {
+  flex-grow: 1;
+  margin-right: 25px;
+}
