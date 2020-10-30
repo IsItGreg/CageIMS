@@ -179,42 +179,53 @@ class Users extends Component {
     const rABS = !!reader.readAsBinaryString;
 
     reader.onload = (e) => {
-      const wb = XLSX.read(e.target.result, {
-        type: rABS ? "binary" : "array",
-        bookVBA: true,
-      });
+      let wb;
+      try {
+         wb = XLSX.read(e.target.result, {
+          type: rABS ? "binary" : "array",
+          bookVBA: true,
+        });
+      }
+      catch (err) {
+        console.log("Incorrect file type.");
+        return;
+      }
       let usedUserCodes = [];
-      const data = XLSX.utils
-        .sheet_to_json(wb.Sheets[wb.SheetNames[0]])
-        .map((user) => {
-          let userCode = this.generateNewUserCode(usedUserCodes);
-          usedUserCodes.push(parseInt(userCode));
-          return {
-            fname: user["Preferred Name"].split(/[\s, ]+/)[1],
-            lname: user["Preferred Name"].split(/[\s, ]+/)[0],
-            courses: [],
-            userCode: userCode,
-            email:
-              user["Preferred Name"].split(/[\s, ]+/)[1] +
-              "_" +
-              user["Preferred Name"].split(/[\s, ]+/)[0],
-          }
-        })
+      const users = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])
+      if (!users[0]["First Name"] || !users[0]["Last Name"] || !users[0]["Username"]) {
+        console.log("Error getting data from file.");
+        return;
+      }
+      const data = users.map((user) => {
+        let userCode = this.generateNewUserCode(usedUserCodes);
+        usedUserCodes.push(parseInt(userCode));
+        if (!user["First Name"] ||
+          !user["Last Name"] ||
+          !user["Username"]) {
+          console.log("Failed to upload file.");
+        }
+        return {
+          fname: user["First Name"],
+          lname: user["Last Name"],
+          courses: [],
+          userCode: userCode,
+          email: user["Username"] || user["Email"]
+        }
+      })
         .map((nuser) => {
-          const existingUser = this.props.users.find(
+          let eUser = this.props.users.find(
             (user) => user.email === nuser.email
           );
-          if (existingUser === undefined) return nuser;
+          if (eUser === undefined) eUser = nuser;
           this.setState({
             ["importEmailValid" +
-              existingUser.userCode]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                existingUser.email
+              eUser.userCode]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
+                eUser.email
               ),
           });
-          return existingUser;
+          return eUser;
         });
 
-      console.log(data);
       this.setState({ importedExcelData: data, showImportExcelModal: true });
     };
 
@@ -569,7 +580,7 @@ class Users extends Component {
     ];
 
     return (
-      <Col className="stretch-h flex-col" style={{overflow: "hidden"}}>
+      <Col className="stretch-h flex-col" style={{ overflow: "hidden" }}>
         <div className="top-bar">
           <Row>
             <Col>
