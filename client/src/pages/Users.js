@@ -181,7 +181,7 @@ class Users extends Component {
     reader.onload = (e) => {
       let wb;
       try {
-         wb = XLSX.read(e.target.result, {
+        wb = XLSX.read(e.target.result, {
           type: rABS ? "binary" : "array",
           bookVBA: true,
         });
@@ -665,27 +665,23 @@ class Users extends Component {
                       data={this.state.importedExcelData}
                       columns={importColumns}
                     />
-                    <Form>
-                      <Form.Field>
-                        <label>Courses:</label>
-                        <Dropdown
-                          placeholder="Courses"
-                          name="courses"
-                          fluid
-                          multiple
-                          search
-                          selection
-                          allowAdditions
-                          options={courseOptions}
-                          value={selectedUser.courses}
-                          onChange={this.handleDropdownChange}
-                        />
-                      </Form.Field>
-                    </Form>
+
                   </Col>
                 </Row>
               </Modal.Body>
               <Modal.Footer>
+                <Dropdown
+                  className="footer-dropdown"
+                  placeholder="Select courses to add students to:"
+                  name="courses"
+                  multiple
+                  search
+                  selection
+                  allowAdditions
+                  options={courseOptions}
+                  value={selectedUser.courses}
+                  onChange={this.handleDropdownChange}
+                />
                 <Button
                   id="add-icon-handler"
                   variant="primary"
