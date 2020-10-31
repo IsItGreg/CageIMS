@@ -17,6 +17,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getItemsIfNeeded, putItem, postItem } from "../actions/itemActions"
 import { getUsersIfNeeded } from "../actions/userActions"
+import {getAllTransactionsByItem,getDueTransactionsByItem} from "../actions/transactionActions"
 
 class Inventory extends Component {
   constructor(props) {
@@ -33,6 +34,8 @@ class Inventory extends Component {
       editable: true,
       isChangesMadeToModal: false,
       isItemIdUnavailable: false,
+      transactions:[],
+      dueTransactions:[],
 
       selectedItemId: null,
       selectedItem: {
@@ -41,9 +44,9 @@ class Inventory extends Component {
         serial: "",
         category: "",
         notes: "",
-        atid: "",
         courses: [],
         expected: "",
+        createdAt:"",
       },
     };
   }
@@ -58,6 +61,18 @@ class Inventory extends Component {
   close = () => {
     this.setState({
       selectedItemId: null,
+      selectedItem: {
+        name: "",
+        iid: "",
+        serial: "",
+        category: "",
+        notes: "",
+        courses: [],
+        expected: "",
+        createdAt:"",
+      },
+      transactions:[],
+      dueTransactions:[],
       nameError: false,
       categoryError: false,
       serialError: false,
@@ -70,6 +85,38 @@ class Inventory extends Component {
     const { dispatch } = this.props;
     dispatch(getItemsIfNeeded());
   }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      transactions: this.getTransactionsToShow(nextProps.transactions),
+      dueTransactions:this.getDueTransactionsToShow(nextProps.dueTransactions)
+    });
+  }
+
+  getTransactionsToShow(preSetTransactions) {
+    if(preSetTransactions == null){
+      return [];
+    }
+    else{
+      return preSetTransactions;
+    }
+  }
+
+  getDueTransactionsToShow(preSetTransactions) {
+    if(preSetTransactions == null){
+      return [];
+    }
+    else{
+      preSetTransactions.forEach((transaction) => {
+        transaction.backgroundColor =
+          new Date(transaction.dueDate).getTime() < new Date().getTime()
+            ? "mistyrose"
+            : "";
+      });
+      return preSetTransactions;
+    }
+  }
+
 
 
   handleChange = (e, itemProp) => {
@@ -85,37 +132,14 @@ class Inventory extends Component {
   };
 
   handleItemSelectClick = (e, rowData) => {
-    console.log(rowData);
+    const {dispatch} = this.props;
+    dispatch(getAllTransactionsByItem(rowData));
+    dispatch(getDueTransactionsByItem(rowData))
     this.setState({
       selectedItemId: rowData.tableData.id,
       selectedItem: rowData,
     });
   };
-
-  // handleItemSelectClick = (e, rowData) => {
-  //   let selectedItemId = rowData.tableData.id;
-  //   let selectedItem = Object.assign(
-  //     {},
-  //     this.props.data.items.find((item) => item.iid === rowData.iid)
-  //   );
-  //   let transactions = Array.from(
-  //     this.props.data.transactions.filter(
-  //       (transaction) => transaction.iid === selectedItem.iid
-  //     )
-  //   );
-  //   transactions.forEach((transaction) => {
-  //     transaction.backgroundColor =
-  //       !transaction.checkedInDate &&
-  //       new Date(transaction.dueDate).getTime() < new Date().getTime()
-  //         ? "mistyrose"
-  //         : "";
-  //   });
-  //   selectedItem["transactions"] = transactions;
-  //   this.setState({
-  //     selectedItemId,
-  //     selectedItem,
-  //   });
-  // };
 
   handleItemAddClick = () => {
     this.setState({
@@ -126,7 +150,6 @@ class Inventory extends Component {
         serial: "",
         category: "",
         notes: "",
-        atid: "",
         courses: [],
         expected: "",
       },
@@ -281,18 +304,6 @@ class Inventory extends Component {
     return "0".repeat(4 - newId.length) + newId;
   };
 
-  //Function to clear lifted state items of tableData
-  //
-  //returns: lifted state item data without tableData
-  // getList = (items) => {
-  //   var returnData = [];
-  //   items.forEach((element) => {
-  //     var elCopy = Object.assign({}, element);
-  //     delete elCopy["tableData"];
-  //     returnData.push(elCopy);
-  //   });
-  //   return returnData;
-  // };
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   render() {
@@ -392,8 +403,8 @@ class Inventory extends Component {
             <Table
               title={<h5>{this.state.selectedItem.name}</h5>}
               columns={[
-                { title: "User ID", field: "uid" },
-                { title: "Transaction ID", field: "tid" },
+                { title: "User ID", field: "user.userCode" },
+                { title: "Last Name", field: "user.lname" },
                 {
                   title: "Checked Out Date",
                   field: "checkedOutDate",
@@ -405,11 +416,9 @@ class Inventory extends Component {
                   render: (rowData) => this.formatDate(rowData.dueDate),
                 },
               ]}
-            // data={Array.from(
-            //   this.state.selectedItem.transactions.filter(
-            //     (name) => name.checkedInDate === ""
-            //   )
-            // )}
+              data={
+                this.state.dueTransactions
+              }
             ></Table>
           ),
         },
@@ -419,8 +428,8 @@ class Inventory extends Component {
             <Table
               title={<h5>{this.state.selectedItem.name}</h5>}
               columns={[
-                { title: "User ID", field: "uid" },
-                { title: "Transaction ID", field: "tid" },
+                { title: "User ID", field: "user.userCode" },
+                { title: "Last Name", field: "user.lname" },
                 {
                   title: "Checked Out Date",
                   field: "checkedOutDate",
@@ -432,11 +441,7 @@ class Inventory extends Component {
                   render: (rowData) => this.formatDate(rowData.checkedInDate),
                 },
               ]}
-            // data={Array.from(
-            //   this.state.selectedItem.transactions.filter(
-            //     (name) => !(name.checkedInDate === "")
-            //   )
-            // )}
+              data={this.state.transactions}
             ></Table>
           ),
         },
@@ -579,7 +584,7 @@ class Inventory extends Component {
                 this.handleItemSelectClick(event, rowData)
               }
             />
-            <Modal centered show={selectedItemId != null} onHide={this.close}>
+            <Modal centered show={selectedItemId != null} size ="lg"onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>Item</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
@@ -735,11 +740,11 @@ class Inventory extends Component {
                         <Form.Field>
                           <label>Date Created:</label>
                           <Form.Input
-                            name="creationDate"
-                            placeholder="creationDate"
-                            defaultValue={
-                              selectedItem.creationDate
-                            }
+                            name="createdAt"
+                            placeholder="createdAt"
+                            defaultValue={this.formatDate(
+                              selectedItem.createdAt
+                            )}
                             readOnly
                           ></Form.Input>
                         </Form.Field>
@@ -822,18 +827,21 @@ class Inventory extends Component {
 Inventory.propTypes = {
   getItemsIfNeeded: PropTypes.func.isRequired,
   getUsersIfNeeded: PropTypes.func.isRequired,
+  getAllTransactionsByItem: PropTypes.func.isRequired,
   putItem: PropTypes.func.isRequired,
   postItem: PropTypes.func.isRequired,
   items: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
+  transactions: PropTypes.array.isRequired,
   isGetting: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  const { item, user } = state;
+  const { item, user,transaction } = state;
   const { users } = user;
+  const { transactions,dueTransactions } = transaction;
   const { isGetting, lastUpdated, items } = item;
-  return { items, isGetting, lastUpdated, users };
+  return { items, isGetting, lastUpdated, users,transactions,dueTransactions };
 }
 export default connect(mapStateToProps)(Inventory);

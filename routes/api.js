@@ -103,6 +103,51 @@ router.get('/transactions/findbyuserall/:id', (req, res) => {
         });
 });
 
+router.get('/transactions/findbyitemdue/:id', (req, res) => {
+    Transaction.aggregate([
+        {
+            "$match": {
+                "$and": [
+                    { "item_id": Types.ObjectId(req.params.id) },
+                    { "checkedInDate": null },
+                ]
+            }
+        },
+        { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
+        { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
+        { $unwind: "$item" },
+        { $unwind: "$user" }
+    ])
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+        });
+});
+
+
+router.get('/transactions/findbyitemall/:id', (req, res) => {
+    Transaction.aggregate([
+        {
+            "$match": {
+                "$and": [
+                    { "item_id": Types.ObjectId(req.params.id) },
+                ]
+            }
+        },
+        { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
+        { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
+        { $unwind: "$item" },
+        { $unwind: "$user" }
+    ])
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+        });
+});
+
+
 
 //.///////////////////////////////// Item Routes //////////////////////////////////////////////////////
 router.get('/items', (req, res) => {
