@@ -5,6 +5,7 @@ import { get } from "mongoose";
 
 export const REQUEST_TRANSACTIONS = 'REQUEST_TRANSACTIONS'
 export const RECEIVE_TRANSACTIONS = 'RECEIVE_TRANSACTIONS'
+export const RECEIVE_DUE_TRANSACTIONS = 'RECEIVE_DUE_TRANSACTIONS'
 export const GET_ERRORS = 'GET_ERRORS'
 export const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION'
 export const CREATE_TRANSACTION = 'CREATE_TRANSACTION'
@@ -27,6 +28,14 @@ function receiveTransactions(json) {
     return {
         type: RECEIVE_TRANSACTIONS,
         transactions: json,
+        receivedAt: Date.now()
+    }
+}
+
+function receiveDueTransactions(json) {
+    return {
+        type: RECEIVE_DUE_TRANSACTIONS,
+        dueTransactions: json,
         receivedAt: Date.now()
     }
 }
@@ -57,6 +66,26 @@ export function getAllTransactionsByUser(json){
         return axios
             .get("/api/transactions/findbyuserall/"+json._id ,json)
             .then(response => dispatch(receiveTransactions(response)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
+export function getAllTransactionsByItem(json){
+    return dispatch => {
+        dispatch(requestTransactions());
+        return axios
+            .get("/api/transactions/findbyitemall/"+json._id ,json)
+            .then(response => dispatch(receiveTransactions(response)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
+export function getDueTransactionsByItem(json){
+    return dispatch => {
+        dispatch(requestTransactions());
+        return axios
+            .get("/api/transactions/findbyitemdue/"+json._id ,json)
+            .then(response => dispatch(receiveDueTransactions(response)))
             .catch(err => dispatch(getErrors(err)));
     }
 }
