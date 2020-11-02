@@ -166,7 +166,7 @@ class Transactions extends Component {
           <Divider clearing />
         </div>
         <div className="page-content stretch-h">
-          <Col className="stretch-h flex-col">
+          <Col className="stretch-h flex-col table-wrapper">
             <Table
               data={Array.from(transactions)}
               columns={columnSet}
