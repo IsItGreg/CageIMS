@@ -54,7 +54,7 @@ class Users extends Component {
         email: "",
         phone: "",
         notes: "",
-        creationDate: "",
+        createdAt: "",
       },
     };
   }
@@ -99,7 +99,7 @@ class Users extends Component {
         email: "",
         phone: "",
         notes: "",
-        creationDate: "",
+        createdAt: "",
       },
       transactions: [],
       firstNameError: false,
@@ -386,11 +386,11 @@ class Users extends Component {
   }
 
   regenerateUserCode = () => {
-    this.setState((prevState) => {
-      let selectedUser = Object.assign({}, prevState.selectedUser);
-      selectedUser.userCode = this.generateNewUserCode();
-      return { selectedUser, isChangesMadeToModel: true };
-    })
+      this.setState((prevState) => {
+        let selectedUser = Object.assign({}, prevState.selectedUser);
+        selectedUser.userCode = this.generateNewUserCode();
+        return { selectedUser, isChangesMadeToModal: true };
+      })
   }
 
   handleExportSpreadsheetClick = () => {
@@ -749,7 +749,7 @@ class Users extends Component {
               <Modal.Body>
                 {this.state.activeItem === "user" &&
                   this.state.selectedUser !== null && (
-                    <Form>
+                    <Form keyboardShortcuts = {false}>
                       <Form.Group widths={2}>
                         <Form.Field>
                           <label>
@@ -830,7 +830,7 @@ class Users extends Component {
                           <label>
                             &nbsp;
                         </label>
-                          <Form.Button color='blue' disabled={this.state.editable} onClick={this.regenerateUserCode}>Genrate New User ID</Form.Button>
+                          <Button type ="button" color='blue' type="button" disabled={this.state.editable} onKeyDown ={(e) =>{e.preventDefault()}} onClick={this.regenerateUserCode} >Genrate New User ID</Button>
                         </Form.Field>
                       </Form.Group>
                       <Form.Group widths={2}>
@@ -886,7 +886,7 @@ class Users extends Component {
                             name="creationDate"
                             placeholder="creationDate"
                             defaultValue={this.formatUserDate(
-                              selectedUser.creationDate
+                              selectedUser.createdAt
                             )}
                             readOnly
                           ></Form.Input>
