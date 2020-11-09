@@ -38,9 +38,12 @@ class Users extends Component {
       editable: true,
       isChangesMadeToModal: false,
       exportModalDropdownSelection: "",
+      clearCoursesText:"",
 
       showImportExcelModal: false,
       showExportExcelModal: false,
+      showClearCoursesModal:false,
+      clearAllCoursesError:false,
       importedExcelData: [],
       importEmailErrors: {},
       transactions: [],
@@ -166,20 +169,50 @@ class Users extends Component {
     this.refs.fileUploader.click();
   };
 
-  handleClearAllCoursesClick = () => {
+  handleConfirmClearAllCoursesClick = () => {
     const { dispatch } = this.props;
-    if (
-      window.confirm(
-        "Are you sure you want to clear every user's courses? This process is irreversible."
-      )
+    if(
+      this.state.clearCoursesText === "I confirm that I want to clear all courses"
     ) {
       this.props.users.forEach(user => {
         user.courses = [];
         dispatch(putUser(user));
       })
+      this.setState({
+        clearCoursesText: "",
+        clearAllCoursesError:false,
+      })
+      dispatch(getUsersIfNeeded());
+      this.closeClearCoursesModal();
+    }else{
+      this.setState({
+        clearAllCoursesError:true,
+      })
     }
-    dispatch(getUsersIfNeeded());
+  }
+
+  handleClearAllCoursesClick = () => {
+    this.setState({
+      clearCoursesText: "",
+      clearAllCoursesError:false,
+      showClearCoursesModal:true,
+    })
   };
+
+  closeClearCoursesModal = () =>{
+    this.setState({
+      clearCoursesText: "",
+      clearAllCoursesError:false,
+      showClearCoursesModal:false,
+    })
+  }
+
+  handleClearAllCoursesText = (e) => {
+    const val = e.target.value;
+    this.setState({
+      clearCoursesText: val
+    });
+  }
 
   onChangeFile(event) {
     const fileObj = event.target.files[0];
@@ -944,6 +977,28 @@ class Users extends Component {
                   ) : null}
                   {this.state.isChangesMadeToModal ? this.state.selectedUserId < 0 ? "Create" : "Save" : "Close"}
                 </Button>
+              </Modal.Footer>
+            </Modal>
+            <Modal 
+              show = {this.state.showClearCoursesModal}
+              centered
+              onHide={this.closeClearCoursesModal}
+            >
+              <Modal.Header bsPrefix="modal-header">
+                <Modal.Title>Clear Courses</Modal.Title>
+                <IconButton onClick={this.closeClearCoursesModal} size="small" color="inherit">
+                  <ClearIcon />
+                </IconButton>
+              </Modal.Header>
+              <Modal.Body>
+                <p className = "non-selectable-course-text">Please type "<b>I confirm that I want to clear all courses</b>" if you would like to clear all the users' courses. This action can not be undone.</p>
+                <Form>
+                  <Form.Input error = {this.state.clearAllCoursesError} onChange = {this.handleClearAllCoursesText}></Form.Input >
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick = {this.closeClearCoursesModal} variant="secondary">Close</Button>
+                <Button onClick = {this. handleConfirmClearAllCoursesClick} variant="primary">Confirm</Button>
               </Modal.Footer>
             </Modal>
           </Col>
