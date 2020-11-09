@@ -39,11 +39,15 @@ class CheckInOut extends Component {
   }
 
   //Function that handles the user clicking the search button
-  handleSearchButtonClick = async () => {
+  handleSearchButtonClick =  () => {
     //api call to database
-    const { dispatch } = this.props;
-    dispatch(getUserIfNeeded(this.state.searchInput));
-    this.setState({ madeRequest: true, reset: false });
+    if( /^[0-9]{4}$/.test(this.state.searchInput)){
+      const { dispatch } = this.props;
+      dispatch(getUserIfNeeded(this.state.searchInput)); 
+      this.setState({madeRequest:true,reset : false});
+    }else{
+      this.setState({error:true});
+    }
   };
 
   //Function that handles user pressing enter key
