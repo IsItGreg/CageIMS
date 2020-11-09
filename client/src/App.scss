@@ -102,9 +102,12 @@
 }
 
 .checkinout {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   .checkinout-search {
-    display: block;
-    padding: 15% 25%;
+    min-width: 50%;
     .error-text {
       margin: -7% auto;
     }
@@ -118,17 +121,21 @@
     }
   }
   .checkinout-viewuser {
-    margin: 0 15px;
-    .row {
-      margin-top: 3em;
+    height: 100%;
+    width: 80%;
+    padding: 10% 0;
+    display: flex;
+    flex-direction: column;
+    > .table-row {
+      flex-grow: 1;
+      min-height: 20em;
     }
     .current-table-container {
-      min-height: 400px;
       width: 100%;
     }
     .checkout-table-wrapper {
       width: 100%;
-      min-height: 400px;
+      height: 100%;
       display: flex;
       justify-content: space-between;
 
@@ -146,9 +153,13 @@
 
     .page-menu {
       justify-content: space-between;
+      margin-bottom: 3em;
     }
     .checkinout-buttons {
       justify-content: space-evenly;
+    }
+    .menu-buttons {
+      margin-top: 3em;
     }
   }
 }
