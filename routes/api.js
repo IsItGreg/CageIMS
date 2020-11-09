@@ -7,11 +7,9 @@ const crypto = require("crypto");
 
 const fs = require('fs');
 const keys = JSON.parse(fs.readFileSync('./keys.json', 'utf8'));
-console.log(keys);
 
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(keys.SG_API_KEY);
-console.log(keys.SG_API_KEY)
 
 // const keys = require("../../config/keys");
 
