@@ -49,7 +49,7 @@ class Sidebar extends Component {
               </h5>
             </Nav.Link>
           </Nav.Item>
-          <Nav.Item>
+          {/* <Nav.Item>
             <Nav.Link
               href="#/staff"
               active={this.props.location.pathname === "/staff"}
@@ -59,7 +59,7 @@ class Sidebar extends Component {
                 Staff
               </h5>
             </Nav.Link>
-          </Nav.Item>
+          </Nav.Item> */}
           <Dropdown.Divider />
         </Nav>
       </Navbar>
