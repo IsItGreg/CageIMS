@@ -8,11 +8,15 @@ const passport = require("passport");
 
 const fs = require('fs');
 const keys = JSON.parse(fs.readFileSync('./keys.json', 'utf8'));
+console.log(keys);
 
 const app = express();
 const PORT = process.env.PORT || 8080; // Step 1
 
 const routes = require('./routes/api');
+const transactionRoute = require('./routes/transactionApi');
+const itemRoute = require('./routes/itemApi');
+const userRoute = require('./routes/userApi');
 
 // Bodyparser middleware
 app.use(
@@ -50,6 +54,8 @@ require("./config/passport")(passport);
 // HTTP request logger
 app.use(morgan('tiny'));
 app.use('/api', routes);
-
+app.use('/transactions',transactionRoute);
+app.use('/items',itemRoute);
+app.use('/users',userRoute);
 
 app.listen(PORT, console.log(`Server is starting at ${PORT}`));

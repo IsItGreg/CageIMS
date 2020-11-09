@@ -34,7 +34,7 @@ function getItems() {
     return dispatch => {
         dispatch(requestItems());
         return axios
-            .get("/api/items")
+            .get("/items/")
             .then(response => dispatch(receiveItems(response)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -44,7 +44,7 @@ export function getAvailableItems() {
     return dispatch => {
         dispatch(requestItems());
         return axios
-            .get("/api/items/available")
+            .get("/items/available")
             .then(response => dispatch(receiveItems(response)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -77,7 +77,7 @@ function updateItems(res) {
 export function putItem(json) {
     return dispatch => {
         return axios
-            .put("/api/items/" + json._id, json)
+            .put("/items/" + json._id, json)
             .then(res => dispatch(updateItems(res)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -93,7 +93,7 @@ function createItem(res) {
 export function postItem(json) {
     return dispatch => {
         return axios
-            .post("/api/items", json)
+            .post("/items/", json)
             .then(res => dispatch(updateItems(res)))
             .catch(err => dispatch(getErrors(err)));
     }

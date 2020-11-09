@@ -1,7 +1,7 @@
 import axios from "axios";
-import setAuthToken from "../utils/setAuthToken";
-import jwt_decode from "jwt-decode";
-import { get } from "mongoose";
+// import setAuthToken from "../utils/setAuthToken";
+// import jwt_decode from "jwt-decode";
+// import { get } from "mongoose";
 
 export const REQUEST_TRANSACTIONS = 'REQUEST_TRANSACTIONS'
 export const RECEIVE_TRANSACTIONS = 'RECEIVE_TRANSACTIONS'
@@ -44,7 +44,7 @@ function getTransactions() {
     return dispatch => {
         dispatch(requestTransactions());
         return axios
-            .get("/api/transactions")
+            .get("/transactions/")
             .then(response => dispatch(receiveTransactions(response)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -54,7 +54,7 @@ export function getTransactionsByUser(json){
     return dispatch => {
         dispatch(requestTransactions());
         return axios
-            .get("/api/transactions/findbyuser/"+json._id ,json)
+            .get("/transactions/findbyuser/"+json._id ,json)
             .then(response => dispatch(receiveTransactions(response)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -64,7 +64,7 @@ export function getAllTransactionsByUser(json){
     return dispatch => {
         dispatch(requestTransactions());
         return axios
-            .get("/api/transactions/findbyuserall/"+json._id ,json)
+            .get("/transactions/findbyuserall/"+json._id ,json)
             .then(response => dispatch(receiveTransactions(response)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -74,7 +74,7 @@ export function getAllTransactionsByItem(json){
     return dispatch => {
         dispatch(requestTransactions());
         return axios
-            .get("/api/transactions/findbyitemall/"+json._id ,json)
+            .get("/transactions/findbyitemall/"+json._id ,json)
             .then(response => dispatch(receiveTransactions(response)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -84,7 +84,7 @@ export function getDueTransactionsByItem(json){
     return dispatch => {
         dispatch(requestTransactions());
         return axios
-            .get("/api/transactions/findbyitemdue/"+json._id ,json)
+            .get("/transactions/findbyitemdue/"+json._id ,json)
             .then(response => dispatch(receiveDueTransactions(response)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -118,7 +118,7 @@ function updateTransactions(res) {
 export function putTransaction(json) {
     return dispatch => {
         return axios
-            .put("/api/transactions/" + json._id, json)
+            .put("/transactions/" + json._id, json)
             .then(res => dispatch(updateTransactions(res)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -134,7 +134,7 @@ function createTransaction(res) {
 export function postTransaction(json) {
     return dispatch => {
         return axios
-            .post("/api/transactions", json)
+            .post("/transactions", json)
             .then(res => dispatch(updateTransactions(res)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -150,7 +150,7 @@ function deleteTransaction(res) {
 export function delTransaction(json) {
     return dispatch => {
         return axios
-            .delete("/api/transactions/" + json._id, json)
+            .delete("/transactions/" + json._id, json)
             .then(res => dispatch(deleteTransaction(res)))
             .catch(err => dispatch(getErrors(err)));
     }
