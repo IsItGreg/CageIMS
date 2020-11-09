@@ -4,7 +4,7 @@ import { Container } from "react-bootstrap";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { getUserIfNeeded} from "../actions/userActions"
+import { getUserIfNeeded } from "../actions/userActions"
 import CheckInOutViewUser from "../pages/CheckInOutViewUser"
 
 
@@ -16,8 +16,8 @@ class CheckInOut extends Component {
     this.state = {
       error: false, //boolean error variable for when user is not found 
       userFound: null, //the user found by typing in id from database
-      searchInput:"", //input recieved from search bar
-      madeRequest:false, //variable for api call request made
+      searchInput: "", //input recieved from search bar
+      madeRequest: false, //variable for api call request made
     };
   }
 
@@ -28,13 +28,13 @@ class CheckInOut extends Component {
 
   componentWillReceiveProps(nextProps) {
     //if user is found by id in database
-    if(nextProps.sentUser !== null && this.state.madeRequest == true ){
-      this.setState({userFound:nextProps.sentUser})
+    if (nextProps.sentUser !== null && this.state.madeRequest == true) {
+      this.setState({ userFound: nextProps.sentUser })
     }
     //if no user matches id entered in search bar
-    else if(this.state.madeRequest == true && nextProps.isGetting == false && nextProps.sentUser == null){
-      this.setState({error:true})
-      this.setState({madeRequest:false});
+    else if (this.state.madeRequest == true && nextProps.isGetting == false && nextProps.sentUser == null) {
+      this.setState({ error: true })
+      this.setState({ madeRequest: false });
     }
   }
 
@@ -57,8 +57,8 @@ class CheckInOut extends Component {
     }
   };
 
-  handleSearchResult(userFound,clear) {
-    this.setState({ userFound:null,searchInput:"" ,error: false,madeRequest:false});
+  handleSearchResult(userFound, clear) {
+    this.setState({ userFound: null, searchInput: "", error: false, madeRequest: false });
   }
 
   render() {
@@ -67,36 +67,36 @@ class CheckInOut extends Component {
     if (!userFound)
       page = (
         <div className="checkinout-search">
-        <h1>Check In / Out</h1>
-        <Input
-          error={this.state.error}
-          onChange={this.handleChange}
-          onKeyPress={this.handleKeyDown}
-          size="huge"
-          fluid
-          icon="users"
-          iconPosition="left"
-          placeholder="Search by exact ID..."
-          className="drop-shadow"
-        />
-        {this.state.error && (
-          <div className="error-text">
-            <p>Error: ID is invalid.</p>
-          </div>
-        )}
-        <Button
-          size="big"
-          positive
-          basic
-          animated
-          onClick={this.handleSearchButtonClick}
-        >
-          <Button.Content visible>Search</Button.Content>
-          <Button.Content hidden>
-            <Icon name="search" />
-          </Button.Content>
-        </Button>
-      </div>
+          <h1>Check In / Out</h1>
+          <Input
+            error={this.state.error}
+            onChange={this.handleChange}
+            onKeyPress={this.handleKeyDown}
+            size="huge"
+            fluid
+            icon="users"
+            iconPosition="left"
+            placeholder="Search by exact ID..."
+            className="drop-shadow"
+          />
+          {this.state.error && (
+            <div className="error-text">
+              <p>Error: ID is invalid.</p>
+            </div>
+          )}
+          <Button
+            size="big"
+            positive
+            basic
+            animated
+            onClick={this.handleSearchButtonClick}
+          >
+            <Button.Content visible>Search</Button.Content>
+            <Button.Content hidden>
+              <Icon name="search" />
+            </Button.Content>
+          </Button>
+        </div>
       );
     else
       page = (
@@ -123,12 +123,12 @@ CheckInOut.propTypes = {
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  
-  const { user,transaction,item } = state;
-  const {transactions} = transaction;
-  const {items} = item;
-  const { isGetting, lastUpdated,sentUser} = user;
-  return { isGetting, lastUpdated,sentUser,transactions,items };
+
+  const { user, transaction, item } = state;
+  const { transactions } = transaction;
+  const { items } = item;
+  const { isGetting, lastUpdated, sentUser } = user;
+  return { isGetting, lastUpdated, sentUser, transactions, items };
 }
 export default connect(mapStateToProps)(CheckInOut);
 

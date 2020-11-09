@@ -374,17 +374,12 @@ class CheckInOutViewUser extends Component {
                 this.handleOpSelectClick(e, "");
               }}
               size="big"
-              animated
               color="green"
-            >
-              <Button.Content visible>Back</Button.Content>
-              <Button.Content hidden>
-                <Icon name="arrow circle left" />
-              </Button.Content>
-            </Button>
+              content="Back"
+            />
           </Row>
-          <Row>
-            <div className="current-table-container">
+          <Row className="table-row">
+            <div className="current-table-container table-wrapper">
               <Table
                 data={this.state.transactions}
                 itemType={"item"}
@@ -397,7 +392,7 @@ class CheckInOutViewUser extends Component {
               />
             </div>
           </Row>
-          <Row className="flex-end">
+          <Row className="flex-end menu-buttons">
             <Button
               onClick={(e) => {
                 this.handleOpSelectClick(e, "");
@@ -434,19 +429,14 @@ class CheckInOutViewUser extends Component {
                 this.handleOpSelectClick(e, "");
               }}
               size="big"
-              animated
               color="green"
-            >
-              <Button.Content visible>Back</Button.Content>
-              <Button.Content hidden>
-                <Icon name="arrow circle left" />
-              </Button.Content>
-            </Button>
+              content="Back"
+            />
           </Row>
-          <Row>
+          <Row className="table-row">
             <div className="checkout-table-wrapper">
-              <Tab className="checkout-inv-table" panes={itemPanes} />
-              <Tab className="checkout-cart-table" panes={cartPanes} />
+              <Tab className="checkout-inv-table table-wrapper" panes={itemPanes} />
+              <Tab className="checkout-cart-table table-wrapper" panes={cartPanes} />
               <Modal
                 centered
                 size={this.state.selectedUserId >= 0 ? "xl" : "lg"}
@@ -536,7 +526,7 @@ class CheckInOutViewUser extends Component {
               </Modal>
             </div>
           </Row>
-          <Row className="flex-end">
+          <Row className="flex-end menu-buttons">
             <Button
               onClick={(e) => {
                 this.handleOpSelectClick(e, "");
@@ -570,17 +560,12 @@ class CheckInOutViewUser extends Component {
             <Button
               onClick={this.handleDoneClick}
               size="big"
-              animated
               color="green"
-            >
-              <Button.Content visible>Complete Transactions</Button.Content>
-              <Button.Content hidden>
-                <Icon name="check" />
-              </Button.Content>
-            </Button>
+              content="Complete Transactions"
+            />
           </Row>
-          <Row>
-            <div className="current-table-container">
+          <Row className="table-row">
+            <div className="current-table-container table-wrapper">
               <Table
                 data={this.state.transactions}
                 itemType={"item"}
@@ -711,7 +696,7 @@ class CheckInOutViewUser extends Component {
               </Modal>
             </div>
           </Row>
-          <Row className="checkinout-buttons">
+          <Row className="checkinout-buttons menu-buttons">
             <Button
               onClick={(e) => {
                 this.handleOpSelectClick(e, "checkin");
