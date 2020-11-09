@@ -75,6 +75,6 @@ export const resetPassword = userData => dispatch => {
     console.log(userData);
     axios
         .put("/api/resetPassword", userData)
-        .then(res => window.location.href="/login")
+        .then(res => window.location.href="/#/login")
         .catch(err => dispatch({ type: GET_ERRORS, payload: err.response.data }));
 }

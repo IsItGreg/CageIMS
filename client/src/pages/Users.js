@@ -863,7 +863,7 @@ class Users extends Component {
                           <label>
                             &nbsp;
                         </label>
-                          <Button type ="button" color='blue' type="button" disabled={this.state.editable} onKeyDown ={(e) =>{e.preventDefault()}} onClick={this.regenerateUserCode} >Genrate New User ID</Button>
+                          <Button type ="button" color='blue'  disabled={this.state.editable} onKeyDown ={(e) =>{e.preventDefault()}} onClick={this.regenerateUserCode} >Genrate New User ID</Button>
                         </Form.Field>
                       </Form.Group>
                       <Form.Group widths={2}>
@@ -940,6 +940,7 @@ class Users extends Component {
                   <Button
                     className="btn btn-primary mr-auto"
                     toggle
+                    type="button"
                     active={!this.state.editable}
                     onClick={this.handleUserEditClick}
                   >
@@ -970,6 +971,7 @@ class Users extends Component {
                 <Button
                   id="add-icon-handler"
                   variant="primary"
+                  type="button"
                   onClick={this.handleSubmitClick}
                 >
                   {this.state.isChangesMadeToModal ? (

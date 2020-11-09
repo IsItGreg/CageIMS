@@ -130,11 +130,13 @@ class Login extends Component {
                 />
               </Form.Field>
               <Form.Button basic
+                type="button"
                 content="Forgot Password"
                 className="button-right"
                 onClick={(e) => { this.openForgotPasswordModal(e) }}
               />
               <Form.Button
+                type="submit"
                 style={{ backgroundColor: "#46C88C", color: "white" }}
                 className="button-center"
                 content="Log In"

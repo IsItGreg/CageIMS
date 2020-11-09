@@ -19,10 +19,8 @@ const { Types } = require('mongoose');
 
 // User Routes
 router.get('/', (req, res) => {
-    User.find({})
+    User.find({}).select("-password")
         .then((data) => {
-
-            data.forEach(user => user.password = null);
             res.json(data);
         })
         .catch((error) => {
@@ -30,7 +28,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:ucode', (req, res) => {
-    User.findOne({ userCode: req.params.ucode })
+    User.findOne({ userCode: req.params.ucode }).select("-password")
         .then((data) => {
             res.json(data);
         })
@@ -39,7 +37,7 @@ router.get('/:ucode', (req, res) => {
 });
 
 router.post('/find', (req, res) => {
-    User.findOne({ email: req.body.email })
+    User.findOne({ email: req.body.email }).select("-password")
         .then((data) => {
             res.json(data);
         })
@@ -59,7 +57,7 @@ router.post('/', (req, res) => {
 })
 
 router.put('/', (req, res) => {
-    User.findByIdAndUpdate(req.body._id, req.body, { new: true })
+    User.findByIdAndUpdate(req.body._id, req.body, { new: true }).select("-password")
         .then(user => {
             if (!user)
                 return res.status(404).send({ message: "User not found with id " + req.params.id });
@@ -72,7 +70,7 @@ router.put('/', (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
-    User.findByIdAndDelete(req.params.id)
+    User.findByIdAndDelete(req.params.id).select("-password")
         .catch(err => {
             if (err.kind === 'ObjectId')
                 return res.status(404).send({ message: "User not found with id " + req.params.id });
