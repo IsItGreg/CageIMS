@@ -51,7 +51,7 @@ function getUsers() {
     return dispatch => {
         dispatch(requestUsers());
         return axios
-            .get("/api/users")
+            .get("/users/")
             .then(response => dispatch(receiveUsers(response)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -95,7 +95,7 @@ function getUser(userCode){
     return dispatch => {
         dispatch(requestUser(userCode));
         return axios
-            .get("/api/users/" + userCode)
+            .get("/users/" + userCode)
             .then(res => dispatch(receiveUser(res)))
             .catch(err => dispatch(getErrors(err)));
     } 
@@ -111,7 +111,7 @@ function updateUsers(res) {
 export function putUser(json) {
     return dispatch => {
         return axios
-            .put("/api/users/", json)
+            .put("/users/", json)
             .then(res => dispatch(updateUsers(res)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -128,7 +128,7 @@ function createUser(res) {
 export function postUser(json) {
     return dispatch => {
         return axios
-            .post("/api/users", json)
+            .post("/users/", json)
             .then(res => dispatch(createUser(res)))
             .catch(err => dispatch(getErrors(err)));
     }
@@ -144,7 +144,7 @@ function deleteUser(res) {
 export function delUser(json) {
     return dispatch => {
         return axios
-            .delete("/api/users/" + json._id, json)
+            .delete("/users/" + json._id, json)
             .then(res => dispatch(deleteUser(res)))
             .catch(err => dispatch(getErrors(err)));
     }
