@@ -28,11 +28,11 @@ class CheckInOut extends Component {
 
   componentWillReceiveProps(nextProps) {
     //if user is found by id in database
-    if (nextProps.sentUser !== null && this.state.madeRequest == true) {
+    if (nextProps.sentUser !== null && this.state.madeRequest === true) {
       this.setState({ userFound: nextProps.sentUser })
     }
     //if no user matches id entered in search bar
-    else if (this.state.madeRequest == true && nextProps.isGetting == false && nextProps.sentUser == null) {
+    else if (this.state.madeRequest === true && nextProps.isGetting === false && nextProps.sentUser === null) {
       this.setState({ error: true })
       this.setState({ madeRequest: false });
     }
@@ -76,7 +76,7 @@ class CheckInOut extends Component {
             fluid
             icon="users"
             iconPosition="left"
-            placeholder="Search by exact ID..."
+            placeholder="Search by exact User Code..."
             className="drop-shadow"
           />
           {this.state.error && (
