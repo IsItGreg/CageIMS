@@ -668,6 +668,7 @@ class Users extends Component {
                   ref="fileUploader"
                   style={{ display: "none" }}
                   onChange={this.onChangeFile.bind(this)}
+                  onClick={(event)=>{event.target.value=null}}
                 />
               </div>
             </Col>
