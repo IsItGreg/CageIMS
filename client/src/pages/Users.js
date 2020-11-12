@@ -695,7 +695,7 @@ class Users extends Component {
               onHide={this.close}
             >
               <Modal.Header closeButton bsPrefix="modal-header">
-                <Modal.Title>Import from Excel file</Modal.Title>
+                <Modal.Title>Import From Excel File</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Row>
@@ -703,6 +703,7 @@ class Users extends Component {
                     <Table
                       data={this.state.importedExcelData}
                       columns={importColumns}
+                      title={<h3>New Users</h3>}
                     />
 
                   </Col>
