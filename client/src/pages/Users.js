@@ -255,7 +255,7 @@ class Users extends Component {
       })
         .map((nuser) => {
           let eUser = this.props.users.find(
-            (user) => user.email === nuser.email
+            (user) => user.email.toLowerCase() === nuser.email.toLowerCase()
           );
           if (eUser === undefined) eUser = nuser;
           this.setState({
@@ -328,12 +328,12 @@ class Users extends Component {
 
       newUsers.forEach(
         (user) => {
-          let exists = this.props.users.find(u => u.email === user.email);
+          let exists = this.props.users.find(u => u.email.toLowerCase() === user.email.toLowerCase());
           if (!exists) {
-            user.courses = user.courses.concat(this.state.selectedUser.courses);
+            user.courses = Array.from(new Set(user.courses.concat(this.state.selectedUser.courses)));
             dispatch(postUser(user));
           } else {
-            exists.courses = exists.courses.concat(this.state.selectedUser.courses)
+            exists.courses = Array.from(new Set(exists.courses.concat(this.state.selectedUser.courses)));
             dispatch(putUser({ ...user, ...exists }));
           }
         }
@@ -393,7 +393,7 @@ class Users extends Component {
   };
 
   updateImportEmail = (e, userCode) => {
-    // TODO: Fix this
+    // TODO: Fix this - makes changing email very slow
     const val = e.target.value;
     this.setState((prevState) => {
       let importedExcelData = Array.from(prevState.importedExcelData);
@@ -560,6 +560,7 @@ class Users extends Component {
       {
         title: "Email",
         field: "email",
+        cellStyle: {width: '40%'},
         render: (rowData) => (
           <TextField
             defaultValue={rowData.email}
@@ -569,6 +570,7 @@ class Users extends Component {
                 ? "Enter a valid email."
                 : ""
             }
+            className="import-users-email-input"
             onChange={(e) => {
               this.updateImportEmail(e, rowData.userCode);
             }}
@@ -668,6 +670,7 @@ class Users extends Component {
                   ref="fileUploader"
                   style={{ display: "none" }}
                   onChange={this.onChangeFile.bind(this)}
+                  onClick={(event)=>{event.target.value=null}}
                 />
               </div>
             </Col>
@@ -694,7 +697,7 @@ class Users extends Component {
               onHide={this.close}
             >
               <Modal.Header closeButton bsPrefix="modal-header">
-                <Modal.Title>Import from Excel file</Modal.Title>
+                <Modal.Title>Import From Excel File</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Row>
@@ -702,6 +705,7 @@ class Users extends Component {
                     <Table
                       data={this.state.importedExcelData}
                       columns={importColumns}
+                      title={<h3>New Users</h3>}
                     />
 
                   </Col>
