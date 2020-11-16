@@ -560,6 +560,7 @@ class Users extends Component {
       {
         title: "Email",
         field: "email",
+        cellStyle: {width: '40%'},
         render: (rowData) => (
           <TextField
             defaultValue={rowData.email}
@@ -569,6 +570,7 @@ class Users extends Component {
                 ? "Enter a valid email."
                 : ""
             }
+            className="import-users-email-input"
             onChange={(e) => {
               this.updateImportEmail(e, rowData.userCode);
             }}
