@@ -255,7 +255,7 @@ class Users extends Component {
       })
         .map((nuser) => {
           let eUser = this.props.users.find(
-            (user) => user.email === nuser.email
+            (user) => user.email.toLowerCase() === nuser.email.toLowerCase()
           );
           if (eUser === undefined) eUser = nuser;
           this.setState({
@@ -393,7 +393,7 @@ class Users extends Component {
   };
 
   updateImportEmail = (e, userCode) => {
-    // TODO: Fix this
+    // TODO: Fix this - makes changing email very slow
     const val = e.target.value;
     this.setState((prevState) => {
       let importedExcelData = Array.from(prevState.importedExcelData);
