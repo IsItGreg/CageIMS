@@ -328,12 +328,12 @@ class Users extends Component {
 
       newUsers.forEach(
         (user) => {
-          let exists = this.props.users.find(u => u.email === user.email);
+          let exists = this.props.users.find(u => u.email.toLowerCase() === user.email.toLowerCase());
           if (!exists) {
-            user.courses = user.courses.concat(this.state.selectedUser.courses);
+            user.courses = Array.from(new Set(user.courses.concat(this.state.selectedUser.courses)));
             dispatch(postUser(user));
           } else {
-            exists.courses = exists.courses.concat(this.state.selectedUser.courses)
+            exists.courses = Array.from(new Set(exists.courses.concat(this.state.selectedUser.courses)));
             dispatch(putUser({ ...user, ...exists }));
           }
         }
