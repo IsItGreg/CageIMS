@@ -1015,11 +1015,6 @@ class Users extends Component {
 }
 
 Users.propTypes = {
-  getUsersIfNeeded: PropTypes.func.isRequired,
-  getItemsIfNeeded: PropTypes.func.isRequired,
-  getAllTransactionsByUser: PropTypes.func.isRequired,
-  putUser: PropTypes.func.isRequired,
-  postUser: PropTypes.func.isRequired,
   users: PropTypes.array.isRequired,
   transactions: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,

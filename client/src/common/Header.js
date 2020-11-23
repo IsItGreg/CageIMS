@@ -76,7 +76,7 @@ class Header extends Component {
         style={{ display: "flex", flexDirection: "row" }}
         noGutters
       >
-        <Col fluid>
+        <Col fluid="true">
           <Nav.Link href="#/">
             <h2>
               <SvgIcon
