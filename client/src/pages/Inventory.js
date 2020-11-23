@@ -825,11 +825,6 @@ class Inventory extends Component {
 }
 
 Inventory.propTypes = {
-  getItemsIfNeeded: PropTypes.func.isRequired,
-  getUsersIfNeeded: PropTypes.func.isRequired,
-  getAllTransactionsByItem: PropTypes.func.isRequired,
-  putItem: PropTypes.func.isRequired,
-  postItem: PropTypes.func.isRequired,
   items: PropTypes.array.isRequired,
   users: PropTypes.array.isRequired,
   transactions: PropTypes.array.isRequired,

@@ -292,9 +292,7 @@ class Transactions extends Component {
 }
 
 Transactions.propTypes = {  
-  getTransactionsIfNeeded:  PropTypes.func.isRequired,
-  putTransaction: PropTypes.func.isRequired,
-  postTransaction: PropTypes.func.isRequired,
+
   transactions: PropTypes.array.isRequired,
   isGetting: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
