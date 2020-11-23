@@ -725,11 +725,6 @@ class CheckInOutViewUser extends Component {
 }
 
 CheckInOutViewUser.propTypes = {
-  getUsersIfNeeded: PropTypes.func.isRequired,
-  getAvailableItems: PropTypes.func.isRequired,
-  getUser: PropTypes.func.isRequired,
-  putUser: PropTypes.func.isRequired,
-  postTransaction: PropTypes.func.isRequired,
   transactions: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,
   sentUser: PropTypes.object.isRequired,
