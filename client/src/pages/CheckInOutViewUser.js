@@ -8,7 +8,7 @@ import DateRange from "@material-ui/icons/DateRange";
 
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import {getAvailableItems } from "../actions/itemActions"
+import { getAvailableItems } from "../actions/itemActions"
 import { getTransactionsByUser, putTransaction, postTransaction } from "../actions/transactionActions"
 
 class CheckInOutViewUser extends Component {
@@ -47,13 +47,13 @@ class CheckInOutViewUser extends Component {
   };
 
   getItemsToShow = (preSetItems) => {
-    if(preSetItems == null) {
+    if (preSetItems == null) {
       return null;
     }
     let items = Array.from(
       (preSetItems ? preSetItems : this.props.items).filter(
         (item) =>
-          (item.hasOwnProperty('activeTransaction') && item.activeTransaction.length == 0)&&
+          (item.hasOwnProperty('activeTransaction') && item.activeTransaction.length == 0) &&
           this.props.selectedUser.courses.some((course) =>
             item.courses.includes(course)
           )
@@ -117,8 +117,16 @@ class CheckInOutViewUser extends Component {
       this.setState({ transactions });
     } else if (this.state.op === "checkout") {
       let items = this.state.items;
-      const item = items.find((item) => item.iid === rowData.iid);
-      if (rowClick) item.tableData.checked = !item.tableData.checked;
+      if (rowData === undefined) {
+        if (items.some((item) => item.tableData.checked)) {
+          items.forEach((item) => item.tableData.checked = false);
+        } else {
+          items.forEach((item) => item.tableData.checked = true);
+        }
+      } else {
+        const item = items.find((item) => item._id === rowData._id);
+        if (rowClick) item.tableData.checked = !item.tableData.checked;
+      }
       this.setState({ items });
     } else {
       this.setState({
@@ -350,7 +358,7 @@ class CheckInOutViewUser extends Component {
               this.handleRowItemClick(event, rowData)
             }
             onSelectionChange={(event, rowData) => {
-              this.handleRowItemClick(event, rowData, false);
+              this.handleRowItemClick(event, rowData, true);
             }}
             options={{ selection: true, search: false }}
           />
