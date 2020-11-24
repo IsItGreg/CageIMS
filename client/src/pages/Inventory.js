@@ -373,27 +373,25 @@ class Inventory extends Component {
             : "";
         },
       },
-      // {
-      //   title: "Expected Return Date",
-      //   field: "expected",
-      //   headerStyle: headerStyleGrey,
-      //   render: (rowData) =>
-      //     rowData.expected ? this.formatDate(rowData.expected) : "Available",
-      //   customFilterAndSearch: (term, rowData) =>
-      //     this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
-      //     -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
-      // },
+      {
+        title: "Expected Return Date",
+        field: "expected",
+        headerStyle: headerStyleGrey,
+        render: (rowData) =>
+          rowData.activeTransaction ? this.formatDate(rowData.activeTransaction.dueDate) : "Available",
+        customFilterAndSearch: (term, rowData) =>
+          this.formatDateForSearchBar(rowData.expected).indexOf(term) !==
+          -1 || this.formatDate(rowData.expected).indexOf(term) !== -1,
+      },
     ];
 
 
-    // let itemsTemp = Array.from(this.props.items);
-    // itemsTemp.forEach((items) => {
-    //   let result = this.props.data.transactions.filter(
-    //     (transaction) => items.atid === transaction.tid
-    //   );
-    //   items.expected = !(items.atid === "") ? result[0].dueDate : "";
-    //   items.backgroundColor = !(items.atid === "") ? "mistyrose" : "";
-    // });
+    let itemsTemp = Array.from(this.props.items);
+    itemsTemp.forEach((items) => {
+      if(items.activeTransaction){
+        items.backgroundColor = (new Date(items.activeTransaction.dueDate).getTime() < new Date().getTime()) ? "mistyrose" : "";
+      }
+    });
 
     if (this.state.selectedItem != null && this.state.selectedItemId >= 0) {
       formTablePanes = [

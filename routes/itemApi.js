@@ -22,7 +22,41 @@ const { Types } = require('mongoose');
 
 ////////////////////////////////////   Item Routes   //////////////////////////////////////////////////////
 router.get('/', (req, res) => {
-    Item.find({})
+    Item.aggregate([
+        {
+            $lookup:
+            {
+                from: "transactions",
+                localField: "_id",
+                foreignField: "item_id",
+                as: "transactions",
+            }
+        },
+        {
+            $project: 
+            {
+                _id : "$_id",
+                transactions: "$transactions",
+                courses: "$courses",
+                name: "$name",
+                iid: "$iid",
+                serial: "$serial",
+                category: "$category",
+                notes: "$notes",
+                brand: "$brand",
+                activeTransaction: { 
+                    $filter : {
+                        input: "$transactions",
+                        as : "activeTransaction",
+                        cond : {
+                            $eq: ["$$activeTransaction.checkedInDate",null]
+                        }
+                    }
+                },
+            }
+        },
+        {$unwind:{ path: "$activeTransaction",preserveNullAndEmptyArrays: true }},
+    ])
         .then((data) => {
             res.json(data);
         })
@@ -43,7 +77,7 @@ router.get('/available', (req, res) => {
         },
         {
             $project: {
-                id : "$_id",
+                _id : "$_id",
                 transactions: "$transactions",
                 courses: "$courses",
                 name: "$name",
