@@ -130,13 +130,14 @@ router.get('/findbyitemall/:id', (req, res) => {
             "$match": {
                 "$and": [
                     { "item_id": Types.ObjectId(req.params.id) },
+                    { "checkedInDate":{$ne : null} },
                 ]
             }
         },
         { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
-        { $unwind: "$user" }
+        { $unwind: "$user" },
     ])
         .then((data) => {
             res.json(data);
