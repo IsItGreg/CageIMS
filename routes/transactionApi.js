@@ -26,7 +26,8 @@ router.get('/', (req, res) => {
         { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
-        { $unwind: "$user" }
+        { $unwind: "$user" },
+        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
     ])
         .then((data) => {
             res.json(data);
@@ -71,7 +72,8 @@ router.get('/findbyuser/:id', (req, res) => {
         { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
-        { $unwind: "$user" }
+        { $unwind: "$user" },
+        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
     ])
         .then((data) => {
             res.json(data);
@@ -86,13 +88,39 @@ router.get('/findbyuserall/:id', (req, res) => {
             "$match": {
                 "$and": [
                     { "user_id": Types.ObjectId(req.params.id) },
+                    { "checkedInDate":{$ne : null} },
+                    
                 ]
             }
         },
         { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
-        { $unwind: "$user" }
+        { $unwind: "$user" },
+        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
+    ])
+        .then((data) => {
+            res.json(data);
+        })
+        .catch((error) => {
+        });
+});
+
+router.get('/findbyuserdue/:id', (req, res) => {
+    Transaction.aggregate([
+        {
+            "$match": {
+                "$and": [
+                    { "user_id": Types.ObjectId(req.params.id) },
+                    { "checkedInDate": null },
+                ]
+            }
+        },
+        { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
+        { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
+        { $unwind: "$item" },
+        { $unwind: "$user" },
+        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
     ])
         .then((data) => {
             res.json(data);
@@ -114,7 +142,8 @@ router.get('/findbyitemdue/:id', (req, res) => {
         { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
-        { $unwind: "$user" }
+        { $unwind: "$user" },
+        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
     ])
         .then((data) => {
             res.json(data);
@@ -138,6 +167,7 @@ router.get('/findbyitemall/:id', (req, res) => {
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
         { $unwind: "$user" },
+        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
     ])
         .then((data) => {
             res.json(data);

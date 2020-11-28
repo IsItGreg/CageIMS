@@ -33,6 +33,7 @@ function receiveTransactions(json) {
 }
 
 function receiveDueTransactions(json) {
+    
     return {
         type: RECEIVE_DUE_TRANSACTIONS,
         dueTransactions: json,
@@ -66,6 +67,16 @@ export function getAllTransactionsByUser(json){
         return axios
             .get("/transactions/findbyuserall/"+json._id ,json)
             .then(response => dispatch(receiveTransactions(response)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
+export function getDueTransactionsByUser(json){
+    return dispatch => {
+        dispatch(requestTransactions());
+        return axios
+            .get("/transactions/findbyuserdue/"+json._id ,json)
+            .then(response => dispatch(receiveDueTransactions(response)))
             .catch(err => dispatch(getErrors(err)));
     }
 }
