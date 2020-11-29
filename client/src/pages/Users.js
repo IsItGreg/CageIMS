@@ -20,7 +20,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getUsersIfNeeded, putUser, postUser } from "../actions/userActions"
 import { getItemsIfNeeded } from "../actions/itemActions"
-import {getAllTransactionsByUser} from "../actions/transactionActions"
+import {getAllTransactionsByUser,getDueTransactionsByUser} from "../actions/transactionActions"
 
 class Users extends Component {
   constructor(props) {
@@ -71,6 +71,7 @@ class Users extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       transactions: this.getTransactionsToShow(nextProps.transactions),
+      dueTransactions:this.getDueTransactionsToShow(nextProps.dueTransactions)
     });
   }
 
@@ -82,6 +83,21 @@ class Users extends Component {
       preSetTransactions.forEach((transaction) => {
         transaction.backgroundColor =
           !transaction.checkedInDate &&
+          new Date(transaction.dueDate).getTime() < new Date().getTime()
+            ? "mistyrose"
+            : "";
+      });
+      return preSetTransactions;
+    }
+  }
+
+  getDueTransactionsToShow(preSetTransactions) {
+    if(preSetTransactions == null){
+      return [];
+    }
+    else{
+      preSetTransactions.forEach((transaction) => {
+        transaction.backgroundColor =
           new Date(transaction.dueDate).getTime() < new Date().getTime()
             ? "mistyrose"
             : "";
@@ -141,6 +157,7 @@ class Users extends Component {
   handleUserSelectClick = (e, rowData) => {
     const {dispatch} = this.props;
     dispatch(getAllTransactionsByUser(rowData));
+    dispatch(getDueTransactionsByUser(rowData))
     this.setState({
       selectedUserId: rowData.tableData.id,
       selectedUser: rowData,
@@ -468,7 +485,7 @@ class Users extends Component {
     if (this.state.selectedUserId != null && this.state.selectedUserId >= 0) {
       formTablePanes = [
         {
-          menuItem: "Due Items",
+          menuItem: "Active",
           render: () => (
             <Table
               title={
@@ -490,16 +507,13 @@ class Users extends Component {
                   render: (rowData) => this.formatDate(rowData.dueDate),
                 },
               ]}
-              data={Array.from(this.state.transactions?
-                this.state.transactions.filter(
-                  (name) => name.checkedInDate === null
-                ):[]
-              )}
+              data={this.state.dueTransactions}
+              
             />
           ),
         },
         {
-          menuItem: "Completed Transactions",
+          menuItem: "Completed",
           render: () => (
             <Col className="stretch-h flex-col table-wrapper">
               <Table
@@ -522,11 +536,7 @@ class Users extends Component {
                     render: (rowData) => this.formatDate(rowData.checkedInDate),
                   },
                 ]}
-                data={Array.from(this.state.transactions?
-                  this.state.transactions.filter(
-                    (name) => !(name.checkedInDate === null)
-                  ):[]
-                )}
+                data={this.state.transactions}
               />
             </Col>
           ),
@@ -640,27 +650,25 @@ class Users extends Component {
             <Col>
               <div className="float-down right-buttons">
                 <Button
-                  basic
                   floated="right"
-                  color="red"
-                  size="tiny"
+                  style={{ backgroundColor: "#e06c6c", color: "white" }}
+                  size="small"
                   onClick={this.handleClearAllCoursesClick}
                 >
                   Clear All Courses
                 </Button>
                 <Button
-                  basic
                   floated="right"
-                  size="tiny"
-                  color="orange"
+                  size="small"
+                  style={{ backgroundColor: "#fabe75", color: "white" }}
                   onClick={this.handleImportSpreadsheetClick}
                 >
                   Import from Excel
                 </Button>
                 <Button
-                  basic
                   floated="right"
-                  size="tiny"
+                  size="small"
+                  style={{ backgroundColor: "#c4c9cc", color: "white" }}
                   onClick={this.handleExportSpreadsheetClick}
                 >
                   Export User List
@@ -1025,8 +1033,8 @@ Users.propTypes = {
 function mapStateToProps(state) {
   const { user, item, transaction} = state;
   const { items } = item;
-  const {transactions} = transaction;
+  const {transactions,dueTransactions} = transaction;
   const { isGetting, lastUpdated, users } = user;
-  return { users, isGetting, lastUpdated, items,transactions };
+  return { users, isGetting, lastUpdated, items,transactions,dueTransactions };
 }
 export default connect(mapStateToProps)(Users);

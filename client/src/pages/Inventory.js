@@ -25,6 +25,7 @@ class Inventory extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       activeItem: "item",
+      activeCategory:"All",
       open: false,
 
       nameError: false,
@@ -73,6 +74,7 @@ class Inventory extends Component {
       },
       transactions:[],
       dueTransactions:[],
+      items:{},
       nameError: false,
       categoryError: false,
       serialError: false,
@@ -89,7 +91,7 @@ class Inventory extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       transactions: this.getTransactionsToShow(nextProps.transactions),
-      dueTransactions:this.getDueTransactionsToShow(nextProps.dueTransactions)
+      dueTransactions:this.getDueTransactionsToShow(nextProps.dueTransactions),
     });
   }
 
@@ -116,8 +118,6 @@ class Inventory extends Component {
       return preSetTransactions;
     }
   }
-
-
 
   handleChange = (e, itemProp) => {
     let val = e.target.value;
@@ -306,6 +306,8 @@ class Inventory extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
+  changeInventoryTableTab = (e,data) => this.setState({activeCategory:data.panes[data.activeIndex].menuItem})
+
   render() {
     const { items } = this.props;
     const selectedItemId = this.state.selectedItemId;
@@ -445,76 +447,72 @@ class Inventory extends Component {
         },
       ];
     }
-    // const inventoryTablePanes = [
-    //   {
-    //     menuItem: "All",
-    //     render: () => (
-    //       <Table
-    //         data= {Array.from(items)}
-    //         columns={columnSet}
-    //         title={<h2>All</h2>}
-    //         onRowClick={(event, rowData) =>
-    //           this.handleItemSelectClick(event, rowData)
-    //         }
-    //       />
-    //     ),
-    //   },
-    //   {
-    //     menuItem: "Available",
-    //     render: () => (
-    //       <Table
-    //         data={
-    //           Array.from(items).filter(
-    //             (name) => name.backgroundColor !== "mistyrose"
-    //           )
-    //         }
-    //         columns={columnSet}
-    //         title={<h2>Available</h2>}
-    //         onRowClick={(event, rowData) =>
-    //           this.handleItemSelectClick(event, rowData)
-    //         }
-    //       />
-    //     ),
-    //   },
-    //   {
-    //     menuItem: "Unavailable",
-    //     render: () => (
-    //       <Table
-    //         data={
-    //           Array.from(items).filter(
-    //             (name) => name.backgroundColor === "mistyrose"
-    //         )}
-    //         columns={columnSet}
-    //         title={<h2>Unavailable</h2>}
-    //         onRowClick={(event, rowData) =>
-    //           this.handleItemSelectClick(event, rowData)
-    //         }
-    //       />
-    //     ),
-    //   },
-    // ];
+    const inventoryTablePanes = [
+      {
+        menuItem: "All",
+        render: () => (
+          <Table
+            data={items}
+            columns={columnSet}
+            title={<h2>All</h2>}
+            onRowClick={(event, rowData) =>
+              this.handleItemSelectClick(event, rowData)
+            }
+          />
+        ),
+      },
+      {
+        menuItem: "Available",
+        render: () => (
+          <Table
+            data={
+              items.filter((item) => !item.activeTransaction)
+            }
+            columns={columnSet}
+            title={<h2>Available</h2>}
+            onRowClick={(event, rowData) =>
+              this.handleItemSelectClick(event, rowData)
+            }
+          />
+        ),
+      },
+      {
+        menuItem: "Unavailable",
+        render: () => (
+          <Table
+            data={
+              items.filter((item) => item.activeTransaction)
+            }
+            columns={columnSet}
+            title={<h2>Unavailable</h2>}
+            onRowClick={(event, rowData) =>
+              this.handleItemSelectClick(event, rowData)
+            }
+          />
+        ),
+      },
+    ];
 
-    //const tempItems = this.props.items;
     const categories = [
       ...new Set(items.map((item) => item.category)),
     ].sort();
 
-    // categories.forEach((category) => {
-    //   inventoryTablePanes.push({
-    //     menuItem: category,
-    //     render: () => (
-    //       <Table
-    //         data={tempItems.filter((item) => item.category === category)}
-    //         itemType={"item"}
-    //         columns={columnSet}
-    //         title={<h3>{category}</h3>}
-    //         onRowClick={(event, rowData) =>
-    //           this.handleItemSelectClick(event, rowData)
-    //         }
-    //       />
-    //     ),
-    //   });
-    // });
+    categories.forEach((category) => {
+      inventoryTablePanes.push({
+        menuItem: category,
+        render: () => (
+          <Table
+            data={items.filter((item) => item.category == category)}
+            itemType={"item"}
+            columns={columnSet}
+            title={<h3>{category}</h3>}
+            onRowClick={(event, rowData) =>
+              this.handleItemSelectClick(event, rowData)
+            }
+          />
+        ),
+      });
+    });
     const courseOptions = Array.from(
       new Set(
         [].concat.apply(
@@ -573,15 +571,7 @@ class Inventory extends Component {
         </div>
         <div className="page-content stretch-h">
           <Col className="stretch-h flex-col table-wrapper">
-            {/* <Tab panes={inventoryTablePanes} className="stretch-h flex-col" /> */}
-            <Table
-              data={Array.from(items)}
-              columns={columnSet}
-              title={<h2>Items</h2>}
-              onRowClick={(event, rowData) =>
-                this.handleItemSelectClick(event, rowData)
-              }
-            />
+            {<Tab panes={inventoryTablePanes}  onTabChange={this.changeInventoryTableTab} renderActiveOnly={true} className="stretch-h flex-col table-wrapper" /> }
             <Modal centered show={selectedItemId != null} size ="lg"onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>Item</Modal.Title>
@@ -741,20 +731,20 @@ class Inventory extends Component {
                             name="createdAt"
                             placeholder="createdAt"
                             defaultValue={this.formatDate(
-                              selectedItem.createdAt
-                            )}
+                              selectedItem.createdAt)
+                            }
                             readOnly
                           ></Form.Input>
                         </Form.Field>
                       ) : null}
-                      {this.state.selectedItem.expected && (
+                      {this.state.selectedItem.activeTransaction && (
                         <Form.Field>
                           <label>Expected Return Date:</label>
                           <Form.Input
                             name="expected"
                             placeholder="Expected"
                             defaultValue={this.formatDate(
-                              selectedItem.expected
+                              selectedItem.activeTransaction.dueDate
                             )}
                             readOnly
                           ></Form.Input>
