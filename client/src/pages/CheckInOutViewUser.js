@@ -445,7 +445,7 @@ class CheckInOutViewUser extends Component {
           </Row>
           <Row className="table-row">
             <div className="checkout-table-wrapper">
-              <Tab className="checkout-inv-table table-wrapper" renderActiveOnly ={true} onTabChange = {this.changeCartTableTab} panes={itemPanes} />
+              <Tab className="checkout-inv-table table-wrapper" renderActiveOnly={true} onTabChange={this.changeCartTableTab} panes={itemPanes} />
               <Tab className="checkout-cart-table table-wrapper" panes={cartPanes} />
               <Modal
                 centered

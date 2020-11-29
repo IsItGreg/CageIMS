@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
         { $unwind: "$user" },
-        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
+        { $unset: [ "user.password", "user.resetPasswordExpires", "user.resetPasswordToken" ] }
     ])
         .then((data) => {
             res.json(data);
@@ -73,7 +73,7 @@ router.get('/findbyuser/:id', (req, res) => {
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
         { $unwind: "$user" },
-        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
+        { $unset: [ "user.password", "user.resetPasswordExpires", "user.resetPasswordToken" ] }
     ])
         .then((data) => {
             res.json(data);
@@ -88,8 +88,7 @@ router.get('/findbyuserall/:id', (req, res) => {
             "$match": {
                 "$and": [
                     { "user_id": Types.ObjectId(req.params.id) },
-                    { "checkedInDate":{$ne : null} },
-                    
+                    { "checkedInDate": { $ne: null } },
                 ]
             }
         },
@@ -97,7 +96,7 @@ router.get('/findbyuserall/:id', (req, res) => {
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
         { $unwind: "$user" },
-        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
+        { $unset: [ "user.password", "user.resetPasswordExpires", "user.resetPasswordToken" ] }
     ])
         .then((data) => {
             res.json(data);
@@ -120,7 +119,7 @@ router.get('/findbyuserdue/:id', (req, res) => {
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
         { $unwind: "$user" },
-        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
+        { $unset: [ "user.password", "user.resetPasswordExpires", "user.resetPasswordToken" ] }
     ])
         .then((data) => {
             res.json(data);
@@ -143,7 +142,7 @@ router.get('/findbyitemdue/:id', (req, res) => {
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
         { $unwind: "$user" },
-        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
+        { $unset: [ "user.password", "user.resetPasswordExpires", "user.resetPasswordToken" ] }
     ])
         .then((data) => {
             res.json(data);
@@ -167,7 +166,7 @@ router.get('/findbyitemall/:id', (req, res) => {
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
         { $unwind: "$item" },
         { $unwind: "$user" },
-        {$unset:["user.password","user.resetPasswordExpires","user.resetPasswordToken"]}
+        { $unset: [ "user.password", "user.resetPasswordExpires", "user.resetPasswordToken" ] }
     ])
         .then((data) => {
             res.json(data);

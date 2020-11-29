@@ -91,7 +91,7 @@ class Inventory extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState({
       transactions: this.getTransactionsToShow(nextProps.transactions),
-      dueTransactions:this.getDueTransactionsToShow(nextProps.dueTransactions),
+      dueTransactions: this.getDueTransactionsToShow(nextProps.dueTransactions),
     });
   }
 
@@ -306,7 +306,7 @@ class Inventory extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
-  changeInventoryTableTab = (e,data) => this.setState({activeCategory:data.panes[data.activeIndex].menuItem})
+  changeInventoryTableTab = (e,data) => this.setState({activeCategory: data.panes[data.activeIndex].menuItem})
 
   render() {
     const { items } = this.props;
@@ -465,9 +465,7 @@ class Inventory extends Component {
         menuItem: "Available",
         render: () => (
           <Table
-            data={
-              items.filter((item) => !item.activeTransaction)
-            }
+            data={items.filter((item) => !item.activeTransaction)}
             columns={columnSet}
             title={<h2>Available</h2>}
             onRowClick={(event, rowData) =>
@@ -480,9 +478,7 @@ class Inventory extends Component {
         menuItem: "Unavailable",
         render: () => (
           <Table
-            data={
-              items.filter((item) => item.activeTransaction)
-            }
+            data={items.filter((item) => item.activeTransaction)}
             columns={columnSet}
             title={<h2>Unavailable</h2>}
             onRowClick={(event, rowData) =>
@@ -730,9 +726,7 @@ class Inventory extends Component {
                           <Form.Input
                             name="createdAt"
                             placeholder="createdAt"
-                            defaultValue={this.formatDate(
-                              selectedItem.createdAt)
-                            }
+                            defaultValue={this.formatDate(selectedItem.createdAt)}
                             readOnly
                           ></Form.Input>
                         </Form.Field>
@@ -743,9 +737,7 @@ class Inventory extends Component {
                           <Form.Input
                             name="expected"
                             placeholder="Expected"
-                            defaultValue={this.formatDate(
-                              selectedItem.activeTransaction.dueDate
-                            )}
+                            defaultValue={this.formatDate(selectedItem.activeTransaction.dueDate)}
                             readOnly
                           ></Form.Input>
                         </Form.Field>
@@ -825,6 +817,6 @@ function mapStateToProps(state) {
   const { users } = user;
   const { transactions,dueTransactions } = transaction;
   const { isGetting, lastUpdated, items } = item;
-  return { items, isGetting, lastUpdated, users,transactions,dueTransactions };
+  return { items, isGetting, lastUpdated, users, transactions, dueTransactions };
 }
 export default connect(mapStateToProps)(Inventory);

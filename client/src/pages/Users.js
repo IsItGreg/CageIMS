@@ -157,7 +157,7 @@ class Users extends Component {
   handleUserSelectClick = (e, rowData) => {
     const {dispatch} = this.props;
     dispatch(getAllTransactionsByUser(rowData));
-    dispatch(getDueTransactionsByUser(rowData))
+    dispatch(getDueTransactionsByUser(rowData));
     this.setState({
       selectedUserId: rowData.tableData.id,
       selectedUser: rowData,
@@ -1031,9 +1031,9 @@ Users.propTypes = {
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  const { user, item, transaction} = state;
+  const { user, item, transaction } = state;
   const { items } = item;
-  const {transactions,dueTransactions} = transaction;
+  const { transactions, dueTransactions } = transaction;
   const { isGetting, lastUpdated, users } = user;
   return { users, isGetting, lastUpdated, items,transactions,dueTransactions };
 }

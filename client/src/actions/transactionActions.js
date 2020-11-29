@@ -33,7 +33,6 @@ function receiveTransactions(json) {
 }
 
 function receiveDueTransactions(json) {
-    
     return {
         type: RECEIVE_DUE_TRANSACTIONS,
         dueTransactions: json,

@@ -44,7 +44,7 @@ router.get('/', (req, res) => {
                 category: "$category",
                 notes: "$notes",
                 brand: "$brand",
-                createdAt:"$createdAt",
+                createdAt: "$createdAt",
                 activeTransaction: { 
                     $filter : {
                         input: "$transactions",
@@ -87,7 +87,7 @@ router.get('/available', (req, res) => {
                 category: "$category",
                 notes: "$notes",
                 brand: "$brand",
-                createdAt:"$createdAt",
+                createdAt: "$createdAt",
                 activeTransaction: {
                     $filter : {
                         input: "$transactions",
