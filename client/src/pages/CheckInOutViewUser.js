@@ -204,6 +204,8 @@ class CheckInOutViewUser extends Component {
     );
   };
 
+  changeCartTableTab = (e,data) => this.setState({activeCategory:data.panes[data.activeIndex].menuItem})
+
   render() {
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
@@ -443,7 +445,7 @@ class CheckInOutViewUser extends Component {
           </Row>
           <Row className="table-row">
             <div className="checkout-table-wrapper">
-              <Tab className="checkout-inv-table table-wrapper" panes={itemPanes} />
+              <Tab className="checkout-inv-table table-wrapper" renderActiveOnly ={true} onTabChange = {this.changeCartTableTab} panes={itemPanes} />
               <Tab className="checkout-cart-table table-wrapper" panes={cartPanes} />
               <Modal
                 centered

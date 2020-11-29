@@ -650,27 +650,25 @@ class Users extends Component {
             <Col>
               <div className="float-down right-buttons">
                 <Button
-                  basic
                   floated="right"
-                  color="red"
-                  size="tiny"
+                  style={{ backgroundColor: "#e06c6c", color: "white" }}
+                  size="small"
                   onClick={this.handleClearAllCoursesClick}
                 >
                   Clear All Courses
                 </Button>
                 <Button
-                  basic
                   floated="right"
-                  size="tiny"
-                  color="orange"
+                  size="small"
+                  style={{ backgroundColor: "#fabe75", color: "white" }}
                   onClick={this.handleImportSpreadsheetClick}
                 >
                   Import from Excel
                 </Button>
                 <Button
-                  basic
                   floated="right"
-                  size="tiny"
+                  size="small"
+                  style={{ backgroundColor: "#c4c9cc", color: "white" }}
                   onClick={this.handleExportSpreadsheetClick}
                 >
                   Export User List
