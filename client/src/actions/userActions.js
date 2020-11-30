@@ -11,6 +11,7 @@ export const CREATE_USER = 'CREATE_USER'
 export const DELETE_USER = 'DELETE_USER'
 export const RECEIVE_USER = 'RECEIVE_USER'
 export const REQUEST_USER = 'REQUEST_USER'
+export const COMPLETED_UPDATED_USER = 'COMPLETED_UPDATED_USER'
 
 function getErrors(payload) {
     return {
@@ -101,18 +102,26 @@ function getUser(userCode){
     } 
 }
 
-function updateUsers(res) {
+function updateUsers() {
     return {
         type: UPDATE_USER,
         updatedAt: Date.now()
     }
 }
 
+function completedUpdateUsers() {
+    return {
+        type: COMPLETED_UPDATED_USER,
+        updatedAt: Date.now()
+    }
+}
+
 export function putUser(json) {
     return dispatch => {
+        dispatch(updateUsers());
         return axios
             .put("/users/", json)
-            .then(res => dispatch(updateUsers(res)))
+            .then(dispatch(completedUpdateUsers()))
             .catch(err => dispatch(getErrors(err)));
     }
 }
@@ -127,9 +136,10 @@ function createUser(res) {
 
 export function postUser(json) {
     return dispatch => {
+        dispatch(updateUsers());
         return axios
             .post("/users/", json)
-            .then(res => dispatch(createUser(res)))
+            .then(dispatch(completedUpdateUsers()))
             .catch(err => dispatch(getErrors(err)));
     }
 }

@@ -10,6 +10,8 @@ export const GET_ERRORS = 'GET_ERRORS'
 export const UPDATE_TRANSACTION = 'UPDATE_TRANSACTION'
 export const CREATE_TRANSACTION = 'CREATE_TRANSACTION'
 export const DELETE_TRANSACTION = 'DELETE_TRANSACTION'
+export const START_MULTIPLE_TRANSACTION = 'START_MULTIPLE_TRANSACTION'
+export const DONE_MULTIPLE_TRANSACTION = 'DONE_MULTIPLE_TRANSACTION'
 
 function getErrors(payload) {
     return {
@@ -131,6 +133,28 @@ export function putTransaction(json) {
         return axios
             .put("/transactions/" + json._id, json)
             .then(res => dispatch(updateTransactions(res)))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
+function startPutMultipleTransactions() {
+    return {
+        type: START_MULTIPLE_TRANSACTION,
+    }
+}
+
+function donePutMultipleTransactions() {
+    return {
+        type: DONE_MULTIPLE_TRANSACTION,
+    }
+}
+
+export function putMultipleTransactions(json){
+    return dispatch => {
+        dispatch(startPutMultipleTransactions());
+        return axios
+            .put("/transactions/multipleTransactions/test", json)
+            .then(res => dispatch(donePutMultipleTransactions()))
             .catch(err => dispatch(getErrors(err)));
     }
 }

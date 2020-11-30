@@ -9,13 +9,15 @@ import DateRange from "@material-ui/icons/DateRange";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getAvailableItems } from "../actions/itemActions"
-import { getTransactionsByUser, putTransaction, postTransaction } from "../actions/transactionActions"
+import { getTransactionsByUser, putMultipleTransactions, postTransaction } from "../actions/transactionActions"
 
 class CheckInOutViewUser extends Component {
   constructor(props) {
     super(props);
     this.state = {
       op: "",
+      waitingForResponse: false,
+      mode: "",
 
       selectedItemId: null,
       selectedItem: {},
@@ -73,6 +75,44 @@ class CheckInOutViewUser extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log(nextProps);
+    // console.log("mult:" + nextProps.isPuttingMultiple);
+    // console.log("isget:" + nextProps.isGetting);
+    // console.log("wait: "+ this.state.waitingForResponse);
+    const { dispatch } = this.props;
+    if(nextProps.isPuttingMultiple == true){
+      this.setState({
+        waitingForResponse: true,
+      });
+    }
+    if(!nextProps.isPuttingMultiple && this.state.waitingForResponse == true){
+      this.setState({
+        waitingForResponse: false,
+      });
+      if(this.state.mode == "return"){
+        dispatch(getTransactionsByUser(this.props.selectedUser));
+        dispatch(getAvailableItems())
+      }
+    }
+    if(nextProps.isGetting == true){
+      this.setState({
+        waitingForResponse: true,
+      });
+    }
+    if(!nextProps.isGetting && this.state.waitingForResponse == true){
+      this.setState(
+        {
+          waitingForResponse:false,
+        },
+      );
+      if(this.state.mode == "return"){
+        this.setState({
+          transactions: this.getTransactionsToShow(nextProps.transactions),
+          items: this.getItemsToShow(nextProps.items),
+          mode: "",
+        }, this.handleOpSelectClick(""));
+      }
+    }
     this.setState({
       transactions: this.getTransactionsToShow(nextProps.transactions),
       items: this.getItemsToShow(nextProps.items),
@@ -140,20 +180,13 @@ class CheckInOutViewUser extends Component {
     const { dispatch } = this.props;
     const completedTransactionIds = this.state.transactions
       .filter((transaction) => transaction.tableData?.checked);
-    let t = completedTransactionIds.forEach((id) => {
+    completedTransactionIds.forEach((id) => {
       id.checkedInDate = new Date().getTime();
-      dispatch(putTransaction(id));
     });
-
-    dispatch(getTransactionsByUser(this.props.selectedUser));
-    dispatch(getAvailableItems())
-    this.setState(
-      {
-        transactions: this.getTransactionsToShow(null),
-        items: this.getItemsToShow(null),
-      },
-      this.handleOpSelectClick(e, "")
-    );
+    dispatch(putMultipleTransactions(completedTransactionIds));
+    this.setState({
+      mode: "return",
+    })
   };
 
 
@@ -179,7 +212,6 @@ class CheckInOutViewUser extends Component {
     if (this.state.newTransactions.some((transaction) => !transaction.dueDate))
       return;
     const { dispatch } = this.props;
-    let user = Object.assign({}, this.props.selectedUser);
     this.state.newTransactions.forEach(
       (transaction) => {
         dispatch(postTransaction(transaction));
@@ -737,17 +769,15 @@ class CheckInOutViewUser extends Component {
 CheckInOutViewUser.propTypes = {
   transactions: PropTypes.array.isRequired,
   items: PropTypes.array.isRequired,
-  sentUser: PropTypes.object.isRequired,
   isGetting: PropTypes.bool.isRequired,
   lastUpdated: PropTypes.number,
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  const { transaction, item, user } = state;
-  const { sentUser } = user;
+  const { transaction, item, } = state;
   const { items } = item;
-  const { transactions, isGetting, lastUpdated } = transaction;
-  return { isGetting, lastUpdated, transactions, items, sentUser };
+  const { transactions, isGetting, lastUpdated, isPuttingMultiple } = transaction;
+  return { isGetting, lastUpdated, transactions, items, isPuttingMultiple };
 }
 export default connect(mapStateToProps)(CheckInOutViewUser);
 

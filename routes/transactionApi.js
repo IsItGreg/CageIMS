@@ -59,6 +59,20 @@ router.put('/:id', (req, res) => {
         });
 })
 
+router.put('/multipleTransactions/test', (req, res) => {
+    req.body.forEach((transactionIter) =>
+        Transaction.findOne({ _id: transactionIter._id }, function (err, transaction) {
+            transaction.checkedInDate = transactionIter.checkedInDate;
+            transaction.save();
+        })
+            .then((data) => {
+                res.json(data);
+            })
+            .catch((error) => {
+            })
+    );
+})
+
 router.get('/findbyuser/:id', (req, res) => {
     Transaction.aggregate([
         {

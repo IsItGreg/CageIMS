@@ -7,7 +7,7 @@ export const REQUEST_ITEMS = 'REQUEST_ITEMS'
 export const RECEIVE_ITEMS = 'RECEIVE_ITEMS'
 export const GET_ERRORS = 'GET_ERRORS'
 export const UPDATE_ITEM = 'UPDATE_ITEM'
-export const CREATE_ITEM = 'CREATE_ITEM'
+export const COMPLETED_UPDATED_ITEM = 'COMPLETED_UPDATED_ITEM'
 
 function getErrors(payload) {
     return {
@@ -67,34 +67,36 @@ export function getItemsIfNeeded() {
     }
 }
 
-function updateItems(res) {
+function updateItems() {
     return {
         type: UPDATE_ITEM,
         updatedAt: Date.now()
     }
 }
 
-export function putItem(json) {
-    return dispatch => {
-        return axios
-            .put("/items/" + json._id, json)
-            .then(res => dispatch(updateItems(res)))
-            .catch(err => dispatch(getErrors(err)));
+function completedUpdateItems() {
+    return {
+        type: COMPLETED_UPDATED_ITEM,
+        updatedAt: Date.now()
     }
 }
 
-function createItem(res) {
-    return {
-        type: CREATE_ITEM,
-        createdAt: Date.now()
+export function putItem(json) {
+    return dispatch => {
+        dispatch(updateItems())
+        return axios
+            .put("/items/" + json._id, json)
+            .then(dispatch(completedUpdateItems()))
+            .catch(err => dispatch(getErrors(err)));
     }
 }
 
 export function postItem(json) {
     return dispatch => {
+        dispatch(updateItems())
         return axios
             .post("/items/", json)
-            .then(res => dispatch(updateItems(res)))
+            .then(dispatch(completedUpdateItems()))
             .catch(err => dispatch(getErrors(err)));
     }
 }
