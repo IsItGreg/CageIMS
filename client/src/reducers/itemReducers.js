@@ -8,7 +8,7 @@ const isEmpty = require("is-empty");
 
 export default function (
     state = {
-        isUpdating:false,
+        isUpdating: false,
         isGetting: false,
         items: []
     },
@@ -29,7 +29,6 @@ export default function (
             return Object.assign({}, state, {
                 isUpdating: true
             })
-            break;
         case COMPLETED_UPDATED_ITEM:
             return Object.assign({}, state, {
                 isUpdating: false

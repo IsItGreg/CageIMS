@@ -12,7 +12,7 @@ import {
 
 export default function (
     state = {
-        isUpdating:false,
+        isUpdating: false,
         isGetting: false,
         users: [],
         sentUser: null,

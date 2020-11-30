@@ -86,7 +86,7 @@ export function putItem(json) {
         dispatch(updateItems())
         return axios
             .put("/items/" + json._id, json)
-            .then(res => dispatch(completedUpdateItems()))
+            .then(dispatch(completedUpdateItems()))
             .catch(err => dispatch(getErrors(err)));
     }
 }
@@ -96,7 +96,7 @@ export function postItem(json) {
         dispatch(updateItems())
         return axios
             .post("/items/", json)
-            .then(res => dispatch(completedUpdateItems(res)))
+            .then(dispatch(completedUpdateItems()))
             .catch(err => dispatch(getErrors(err)));
     }
 }

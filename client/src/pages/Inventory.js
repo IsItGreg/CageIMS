@@ -92,12 +92,12 @@ class Inventory extends Component {
     if(nextProps.isUpdating){
       this.setState({
         isWaitingForUpdateResponse: true,
-      })
+      });
     }
     else if(this.state.isWaitingForUpdateResponse && !nextProps.isUpdating){
       this.setState({
         isWaitingForUpdateResponse: false,
-      })
+      });
       this.close();
     }
     this.setState({
@@ -834,6 +834,6 @@ function mapStateToProps(state) {
   const { users } = user;
   const { transactions,dueTransactions } = transaction;
   const { isGetting, lastUpdated, items,isUpdating } = item;
-  return { items, isGetting, lastUpdated, users,transactions,dueTransactions,isUpdating };
+  return{ items, isGetting, lastUpdated, users, transactions, dueTransactions, isUpdating };
 }
 export default connect(mapStateToProps)(Inventory);

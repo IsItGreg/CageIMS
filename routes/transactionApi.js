@@ -60,7 +60,6 @@ router.put('/:id', (req, res) => {
 })
 
 router.put('/multipleTransactions/test', (req, res) => {
-    
     req.body.forEach((transactionIter) =>
         Transaction.findOne({ _id: transactionIter._id }, function (err, transaction) {
             transaction.checkedInDate = transactionIter.checkedInDate;

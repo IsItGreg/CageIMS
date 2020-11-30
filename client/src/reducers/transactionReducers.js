@@ -15,7 +15,7 @@ export default function (
         isPuttingMultiple: false,
         isGetting: false,
         transactions: [],
-        dueTransactions:[],
+        dueTransactions: [],
     },
     action
 ) {

@@ -82,12 +82,12 @@ class CheckInOutViewUser extends Component {
     const { dispatch } = this.props;
     if(nextProps.isPuttingMultiple == true){
       this.setState({
-        waitingForResponse:true,
+        waitingForResponse: true,
       });
     }
     if(!nextProps.isPuttingMultiple && this.state.waitingForResponse == true){
       this.setState({
-        waitingForResponse:false,
+        waitingForResponse: false,
       });
       if(this.state.mode == "return"){
         dispatch(getTransactionsByUser(this.props.selectedUser));
@@ -96,7 +96,7 @@ class CheckInOutViewUser extends Component {
     }
     if(nextProps.isGetting == true){
       this.setState({
-        waitingForResponse:true,
+        waitingForResponse: true,
       });
     }
     if(!nextProps.isGetting && this.state.waitingForResponse == true){
@@ -110,7 +110,7 @@ class CheckInOutViewUser extends Component {
           transactions: this.getTransactionsToShow(nextProps.transactions),
           items: this.getItemsToShow(nextProps.items),
           mode: "",
-        },this.handleOpSelectClick(""));
+        }, this.handleOpSelectClick(""));
       }
     }
     this.setState({
@@ -180,12 +180,12 @@ class CheckInOutViewUser extends Component {
     const { dispatch } = this.props;
     const completedTransactionIds = this.state.transactions
       .filter((transaction) => transaction.tableData?.checked);
-    let t = completedTransactionIds.forEach((id) => {
+    completedTransactionIds.forEach((id) => {
       id.checkedInDate = new Date().getTime();
     });
     dispatch(putMultipleTransactions(completedTransactionIds));
     this.setState({
-      mode:"return",
+      mode: "return",
     })
   };
 
@@ -212,7 +212,6 @@ class CheckInOutViewUser extends Component {
     if (this.state.newTransactions.some((transaction) => !transaction.dueDate))
       return;
     const { dispatch } = this.props;
-    let user = Object.assign({}, this.props.selectedUser);
     this.state.newTransactions.forEach(
       (transaction) => {
         dispatch(postTransaction(transaction));
