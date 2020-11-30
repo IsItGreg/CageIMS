@@ -75,10 +75,10 @@ class CheckInOutViewUser extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-    console.log("mult:" + nextProps.isPuttingMultiple);
-    console.log("isget:" + nextProps.isGetting);
-    console.log("wait: "+ this.state.waitingForResponse);
+    // console.log(nextProps);
+    // console.log("mult:" + nextProps.isPuttingMultiple);
+    // console.log("isget:" + nextProps.isGetting);
+    // console.log("wait: "+ this.state.waitingForResponse);
     const { dispatch } = this.props;
     if(nextProps.isPuttingMultiple == true){
       this.setState({

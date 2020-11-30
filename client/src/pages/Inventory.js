@@ -89,7 +89,6 @@ class Inventory extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
     if(nextProps.isUpdating){
       this.setState({
         isWaitingForUpdateResponse: true,
