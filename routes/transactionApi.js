@@ -48,7 +48,6 @@ router.post('/', (req, res) => {
 })
 
 router.put('/:id', (req, res) => {
-    console.log(req);
     Transaction.findOne({ _id: req.params.id }, function (err, transaction) {
         transaction.checkedInDate = req.body.checkedInDate;
         transaction.save();
@@ -65,7 +64,6 @@ router.put('/multipleTransactions/test', (req, res) => {
     req.body.forEach((transactionIter) =>
         Transaction.findOne({ _id: transactionIter._id }, function (err, transaction) {
             transaction.checkedInDate = transactionIter.checkedInDate;
-            console.log(transaction);
             transaction.save();
         })
             .then((data) => {
