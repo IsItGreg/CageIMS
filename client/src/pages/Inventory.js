@@ -89,6 +89,18 @@ class Inventory extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    if(nextProps.isUpdating){
+      this.setState({
+        isWaitingForUpdateResponse: true,
+      })
+    }
+    else if(this.state.isWaitingForUpdateResponse && !nextProps.isUpdating){
+      this.setState({
+        isWaitingForUpdateResponse: false,
+      })
+      this.close();
+    }
     this.setState({
       transactions: this.getTransactionsToShow(nextProps.transactions),
       dueTransactions:this.getDueTransactionsToShow(nextProps.dueTransactions),
@@ -181,8 +193,6 @@ class Inventory extends Component {
         dispatch(putItem(this.state.selectedItem));
       }
       dispatch(getItemsIfNeeded());
-
-      this.close();
     }
   };
 
@@ -824,7 +834,7 @@ function mapStateToProps(state) {
   const { item, user,transaction } = state;
   const { users } = user;
   const { transactions,dueTransactions } = transaction;
-  const { isGetting, lastUpdated, items } = item;
-  return { items, isGetting, lastUpdated, users,transactions,dueTransactions };
+  const { isGetting, lastUpdated, items,isUpdating } = item;
+  return { items, isGetting, lastUpdated, users,transactions,dueTransactions,isUpdating };
 }
 export default connect(mapStateToProps)(Inventory);

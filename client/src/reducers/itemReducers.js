@@ -1,14 +1,14 @@
 import {
     RECEIVE_ITEMS,
     REQUEST_ITEMS,
-    ITEM_LOADING,
     UPDATE_ITEM,
-    CREATE_ITEM
+    COMPLETED_UPDATED_ITEM
 } from "../actions/itemActions";
 const isEmpty = require("is-empty");
 
 export default function (
     state = {
+        isUpdating:false,
         isGetting: false,
         items: []
     },
@@ -27,7 +27,14 @@ export default function (
                 lastUpdated: action.receivedAt
             })
         case UPDATE_ITEM:
-        case CREATE_ITEM:
+            return Object.assign({}, state, {
+                isUpdating: true
+            })
+            break;
+        case COMPLETED_UPDATED_ITEM:
+            return Object.assign({}, state, {
+                isUpdating: false
+            })
         default:
             return state
     }

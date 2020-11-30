@@ -38,6 +38,7 @@ class Users extends Component {
       editable: true,
       isChangesMadeToModal: false,
       exportModalDropdownSelection: "",
+      isWaitingForUpdateResponse: false,
       clearCoursesText:"",
 
       showImportExcelModal: false,
@@ -69,6 +70,18 @@ class Users extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    if(nextProps.isUpdating){
+      this.setState({
+        isWaitingForUpdateResponse: true,
+      })
+    }
+    else if(this.state.isWaitingForUpdateResponse && !nextProps.isUpdating){
+      this.close();
+      this.setState({
+        isWaitingForUpdateResponse: false,
+      })
+    }
     this.setState({
       transactions: this.getTransactionsToShow(nextProps.transactions),
       dueTransactions:this.getDueTransactionsToShow(nextProps.dueTransactions)
@@ -309,8 +322,6 @@ class Users extends Component {
       else {
         dispatch(putUser(this.state.selectedUser));
       }
-
-      this.close();
     }
   };
 
@@ -1031,10 +1042,10 @@ Users.propTypes = {
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  const { user, item, transaction} = state;
+  const { user, item, transaction } = state;
   const { items } = item;
-  const {transactions,dueTransactions} = transaction;
-  const { isGetting, lastUpdated, users } = user;
-  return { users, isGetting, lastUpdated, items,transactions,dueTransactions };
+  const { transactions, dueTransactions } = transaction;
+  const { isGetting, lastUpdated, users, isUpdating } = user;
+  return { users, isGetting, lastUpdated, items, transactions, dueTransactions, isUpdating };
 }
 export default connect(mapStateToProps)(Users);

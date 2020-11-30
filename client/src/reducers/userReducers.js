@@ -4,6 +4,7 @@ import {
     REQUEST_USER,
     REQUEST_USERS,
     UPDATE_USER,
+    COMPLETED_UPDATED_USER,
     CREATE_USER,
     DELETE_USER
 } from "../actions/userActions";
@@ -11,6 +12,7 @@ import {
 
 export default function (
     state = {
+        isUpdating:false,
         isGetting: false,
         users: [],
         sentUser: null,
@@ -41,6 +43,15 @@ export default function (
                 lastUpdated: action.receivedAt
             })
         case UPDATE_USER:
+            return Object.assign({}, state, {
+                isUpdating: true
+            })
+            break;
+        case COMPLETED_UPDATED_USER:
+            return Object.assign({}, state, {
+                isUpdating: false
+            })
+            break;
         case CREATE_USER:
         case DELETE_USER:
         default:

@@ -11,6 +11,7 @@ export const CREATE_USER = 'CREATE_USER'
 export const DELETE_USER = 'DELETE_USER'
 export const RECEIVE_USER = 'RECEIVE_USER'
 export const REQUEST_USER = 'REQUEST_USER'
+export const COMPLETED_UPDATED_USER = "COMPLETED_UPDATED_USER"
 
 function getErrors(payload) {
     return {
@@ -108,11 +109,19 @@ function updateUsers(res) {
     }
 }
 
+function completedUpdateUsers(res) {
+    return {
+        type: COMPLETED_UPDATED_USER,
+        updatedAt: Date.now()
+    }
+}
+
 export function putUser(json) {
     return dispatch => {
+        dispatch(updateUsers(json));
         return axios
             .put("/users/", json)
-            .then(res => dispatch(updateUsers(res)))
+            .then(res => dispatch(completedUpdateUsers(res)))
             .catch(err => dispatch(getErrors(err)));
     }
 }
@@ -127,9 +136,10 @@ function createUser(res) {
 
 export function postUser(json) {
     return dispatch => {
+        dispatch(updateUsers(json));
         return axios
             .post("/users/", json)
-            .then(res => dispatch(createUser(res)))
+            .then(res => dispatch(completedUpdateUsers(res)))
             .catch(err => dispatch(getErrors(err)));
     }
 }
