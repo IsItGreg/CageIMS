@@ -9,7 +9,7 @@ import DateRange from "@material-ui/icons/DateRange";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getAvailableItems } from "../actions/itemActions"
-import { getTransactionsByUser, putMultipleTransactions, postTransaction } from "../actions/transactionActions"
+import { getTransactionsByUser, putMultipleTransactions, postMultipleTransactions } from "../actions/transactionActions"
 
 class CheckInOutViewUser extends Component {
   constructor(props) {
@@ -99,18 +99,23 @@ class CheckInOutViewUser extends Component {
         waitingForResponse: true,
       });
     }
-    if(!nextProps.isGetting && this.state.waitingForResponse == true){
+    if(!nextProps.isGetting && this.state.waitingForResponse == true && !(nextProps.transactions == [])){
       this.setState(
         {
           waitingForResponse:false,
         },
       );
       if(this.state.mode == "return"){
-        this.setState({
+        this.setState({  
           transactions: this.getTransactionsToShow(nextProps.transactions),
           items: this.getItemsToShow(nextProps.items),
           mode: "",
         }, this.handleOpSelectClick(""));
+      }else{
+        this.setState({
+          transactions: this.getTransactionsToShow(nextProps.transactions),
+          items: this.getItemsToShow(nextProps.items),
+        });
       }
     }
     this.setState({
@@ -185,6 +190,7 @@ class CheckInOutViewUser extends Component {
     });
     dispatch(putMultipleTransactions(completedTransactionIds));
     this.setState({
+      transactions: this.getTransactionsToShow(null),
       mode: "return",
     })
   };
@@ -212,20 +218,11 @@ class CheckInOutViewUser extends Component {
     if (this.state.newTransactions.some((transaction) => !transaction.dueDate))
       return;
     const { dispatch } = this.props;
-    this.state.newTransactions.forEach(
-      (transaction) => {
-        dispatch(postTransaction(transaction));
-      }
-    );
-    dispatch(getTransactionsByUser(this.props.selectedUser));
-    dispatch(getAvailableItems())
-    this.setState(
-      {
-        transactions: this.getTransactionsToShow(null),
-        items: this.getItemsToShow(null),
-      },
-      this.handleOpSelectClick(e, "")
-    );
+    dispatch(postMultipleTransactions(this.state.newTransactions));
+    this.setState({
+      transactions: this.getTransactionsToShow(null),
+      mode: "return",
+    })
   };
 
   formatDate = (dateString) => {

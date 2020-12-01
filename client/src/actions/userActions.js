@@ -121,16 +121,8 @@ export function putUser(json) {
         dispatch(updateUsers());
         return axios
             .put("/users/", json)
-            .then(dispatch(completedUpdateUsers()))
+            .then(() => dispatch(completedUpdateUsers()))
             .catch(err => dispatch(getErrors(err)));
-    }
-}
-
-
-function createUser(res) {
-    return {
-        type: CREATE_USER,
-        createdAt: Date.now()
     }
 }
 
@@ -139,7 +131,7 @@ export function postUser(json) {
         dispatch(updateUsers());
         return axios
             .post("/users/", json)
-            .then(dispatch(completedUpdateUsers()))
+            .then(() => dispatch(completedUpdateUsers()))
             .catch(err => dispatch(getErrors(err)));
     }
 }

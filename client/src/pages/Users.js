@@ -70,6 +70,10 @@ class Users extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+    // console.log(nextProps);
+    // console.log("mult:" + nextProps.isUpdating);
+    // console.log("isget:" + nextProps.isGetting);
+    // console.log("wait: "+ this.state.isWaitingForUpdateResponse);
     if(nextProps.isUpdating){
       this.setState({
         isWaitingForUpdateResponse: true,
