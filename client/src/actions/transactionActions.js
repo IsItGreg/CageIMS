@@ -128,15 +128,6 @@ function updateTransactions(res) {
     }
 }
 
-export function putTransaction(json) {
-    return dispatch => {
-        return axios
-            .put("/transactions/" + json._id, json)
-            .then(res => dispatch(updateTransactions(res)))
-            .catch(err => dispatch(getErrors(err)));
-    }
-}
-
 function startPutMultipleTransactions() {
     return {
         type: START_MULTIPLE_TRANSACTION,
@@ -154,17 +145,30 @@ export function putMultipleTransactions(json){
         dispatch(startPutMultipleTransactions());
         return axios
             .put("/transactions/multipleTransactions/test", json)
-            .then(res => dispatch(donePutMultipleTransactions()))
+            .then(() => dispatch(donePutMultipleTransactions()))
             .catch(err => dispatch(getErrors(err)));
     }
 }
 
-function createTransaction(res) {
-    return {
-        type: CREATE_TRANSACTION,
-        createdAt: Date.now()
+export function putTransaction(json) {
+    return dispatch => {
+        return axios
+            .put("/transactions/" + json._id, json)
+            .then(res => dispatch(updateTransactions(res)))
+            .catch(err => dispatch(getErrors(err)));
     }
 }
+
+export function postMultipleTransactions(json){
+    return dispatch => {
+        dispatch(startPutMultipleTransactions());
+        return axios
+            .post("/transactions/postMultipleTransactions/test", json)
+            .then(() => dispatch(donePutMultipleTransactions()))
+            .catch(err => dispatch(getErrors(err)));
+    }
+}
+
 
 export function postTransaction(json) {
     return dispatch => {

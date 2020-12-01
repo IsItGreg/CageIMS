@@ -2,9 +2,6 @@ import {
     RECEIVE_TRANSACTIONS,
     RECEIVE_DUE_TRANSACTIONS,
     REQUEST_TRANSACTIONS,
-    UPDATE_TRANSACTION,
-    CREATE_TRANSACTION,
-    DELETE_TRANSACTION,
     START_MULTIPLE_TRANSACTION,
     DONE_MULTIPLE_TRANSACTION,
 } from "../actions/transactionActions";
@@ -37,9 +34,6 @@ export default function (
                 dueTransactions: action.dueTransactions.data,
                 lastUpdated: action.receivedAt
             })
-        case UPDATE_TRANSACTION: break;
-        case CREATE_TRANSACTION: break;
-        case DELETE_TRANSACTION: break;
         case START_MULTIPLE_TRANSACTION:
             return Object.assign({}, state, {
                 isPuttingMultiple: true

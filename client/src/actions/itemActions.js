@@ -1,8 +1,4 @@
 import axios from "axios";
-import setAuthToken from "../utils/setAuthToken";
-import jwt_decode from "jwt-decode";
-import { get } from "mongoose";
-
 export const REQUEST_ITEMS = 'REQUEST_ITEMS'
 export const RECEIVE_ITEMS = 'RECEIVE_ITEMS'
 export const GET_ERRORS = 'GET_ERRORS'
@@ -86,7 +82,7 @@ export function putItem(json) {
         dispatch(updateItems())
         return axios
             .put("/items/" + json._id, json)
-            .then(dispatch(completedUpdateItems()))
+            .then(() => dispatch(completedUpdateItems()))
             .catch(err => dispatch(getErrors(err)));
     }
 }
@@ -96,7 +92,7 @@ export function postItem(json) {
         dispatch(updateItems())
         return axios
             .post("/items/", json)
-            .then(dispatch(completedUpdateItems()))
+            .then(() => dispatch(completedUpdateItems()))
             .catch(err => dispatch(getErrors(err)));
     }
 }
