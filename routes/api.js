@@ -11,7 +11,7 @@ const keys = JSON.parse(fs.readFileSync('./keys.json', 'utf8'));
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(keys.SG_API_KEY);
 
-// const keys = require("../../config/keys");
+const settings = require('../config/settings');
 
 const validateRegisterInput = require("../validation/register");
 const validateLoginInput = require("../validation/login");
@@ -87,7 +87,7 @@ router.post("/login", (req, res) => {
                 // Sign token
                 jwt.sign(
                     payload,
-                    "secret",
+                    settings.secret,
                     {
                         expiresIn: 31556926 // 1 year in seconds
                     },

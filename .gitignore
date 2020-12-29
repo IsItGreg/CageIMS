@@ -118,4 +118,7 @@ dist
 # production
 client/build
 *.env
+
+# secret keys
 keys.json
+config/settings.js
