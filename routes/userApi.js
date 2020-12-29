@@ -17,8 +17,20 @@ const User = require('../models/User');
 const { Types } = require('mongoose');
 
 
+getToken = function(headers) {
+    if (headers && headers.authorization) {
+        var parted = headers.authorization.split(' ');
+        if (parted.length === 2) {
+            return parted[1];
+        }
+    }
+    return null;
+}
+
 // User Routes
-router.get('/', (req, res) => {
+router.get('/', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     User.find({}).select("-password -resetPasswordExpires -resetPasswordToken")
         .then((data) => {
             res.json(data);
@@ -27,7 +39,9 @@ router.get('/', (req, res) => {
         });
 });
 
-router.get('/:ucode', (req, res) => {
+router.get('/:ucode', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     User.findOne({ userCode: req.params.ucode }).select("-password -resetPasswordExpires -resetPasswordToken")
         .then((data) => {
             res.json(data);
@@ -36,7 +50,9 @@ router.get('/:ucode', (req, res) => {
         });
 });
 
-router.post('/find', (req, res) => {
+router.post('/find', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     User.findOne({ email: req.body.email }).select("-password -resetPasswordExpires -resetPasswordToken")
         .then((data) => {
             res.json(data);
@@ -45,7 +61,9 @@ router.post('/find', (req, res) => {
         });
 });
 
-router.post('/', (req, res) => {
+router.post('/', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     const newUser = new User(req.body);
     newUser.save((error) => {
         if (error) {
@@ -56,7 +74,9 @@ router.post('/', (req, res) => {
     })
 })
 
-router.put('/', (req, res) => {
+router.put('/', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     User.findByIdAndUpdate(req.body._id, req.body, { new: true }).select("-password -resetPasswordExpires -resetPasswordToken")
         .then(user => {
             if (!user)
@@ -69,7 +89,9 @@ router.put('/', (req, res) => {
         })
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     User.findByIdAndDelete(req.params.id).select("-password -resetPasswordExpires -resetPasswordToken")
         .catch(err => {
             if (err.kind === 'ObjectId')

@@ -1,5 +1,9 @@
 const express = require('express');
 const router = express.Router();
+
+const passport = require('passport');
+require('../config/passport')(passport);
+
 // const bcrypt = require("bcryptjs");
 // const jwt = require("jsonwebtoken");
 
@@ -18,10 +22,24 @@ const router = express.Router();
 // const validateResetInput = require("../validation/reset");
 
 const Item = require('../models/Item');
-const { Types } = require('mongoose');
+const mongoose = require('mongoose');
+
+
+getToken = function(headers) {
+    if (headers && headers.authorization) {
+        var parted = headers.authorization.split(' ');
+        if (parted.length === 2) {
+            return parted[1];
+        }
+    }
+    return null;
+}
+
 
 ////////////////////////////////////   Item Routes   //////////////////////////////////////////////////////
-router.get('/', (req, res) => {
+router.get('/', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Item.aggregate([
         {
             $lookup:
@@ -65,7 +83,9 @@ router.get('/', (req, res) => {
         });
 });
 
-router.get('/available', (req, res) => {
+router.get('/available', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Item.aggregate([
         {
             $lookup:
@@ -108,7 +128,9 @@ router.get('/available', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     const newItem = new Item(req.body);
     newItem.save((error) => {
         if (error) {
@@ -119,7 +141,9 @@ router.post('/', (req, res) => {
     })
 })
 
-router.put('/:id', (req, res) => {
+router.put('/:id', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Item.findByIdAndUpdate(req.params.id, req.body, { new: true })
         .then(item => {
             if (!item)
@@ -131,5 +155,7 @@ router.put('/:id', (req, res) => {
             return res.status(500).send({ message: "Error updating item with id " + req.params.id });
         })
 })
+
+
 
 module.exports = router;

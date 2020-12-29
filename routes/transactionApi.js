@@ -20,8 +20,20 @@ const router = express.Router();
 const Transaction = require("../models/Transaction");
 const { Types } = require('mongoose');
 
+getToken = function(headers) {
+    if (headers && headers.authorization) {
+        var parted = headers.authorization.split(' ');
+        if (parted.length === 2) {
+            return parted[1];
+        }
+    }
+    return null;
+}
+
 /////////////////////////////////////////////// Transaction Routes /////////////////////////////////////////////////
-router.get('/', (req, res) => {
+router.get('/', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Transaction.aggregate([
         { $lookup: { from: "items", localField: "item_id", foreignField: "_id", as: "item" } },
         { $lookup: { from: "users", localField: "user_id", foreignField: "_id", as: "user" } },
@@ -36,7 +48,9 @@ router.get('/', (req, res) => {
         });
 });
 
-router.post('/', (req, res) => {
+router.post('/', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     const newTransaction = new Transaction(req.body);
     newTransaction.save((error) => {
         if (error) {
@@ -47,7 +61,9 @@ router.post('/', (req, res) => {
     })
 })
 
-router.put('/:id', (req, res) => {
+router.put('/:id', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Transaction.findOne({ _id: req.params.id }, function (err, transaction) {
         transaction.checkedInDate = req.body.checkedInDate;
         transaction.save();
@@ -59,7 +75,9 @@ router.put('/:id', (req, res) => {
         });
 })
 
-router.put('/multipleTransactions/test', (req, res) => {
+router.put('/multipleTransactions/test', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     req.body.forEach((transactionIter) =>
         Transaction.findOne({ _id: transactionIter._id }, function (err, transaction) {
             transaction.checkedInDate = transactionIter.checkedInDate;
@@ -73,7 +91,9 @@ router.put('/multipleTransactions/test', (req, res) => {
     );
 })
 
-router.post('/postMultipleTransactions/test', (req, res) => {
+router.post('/postMultipleTransactions/test', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     req.body.forEach((transactionIter) =>{
         let newTransaction = new Transaction(transactionIter);
         newTransaction.save((error) => {
@@ -87,7 +107,9 @@ router.post('/postMultipleTransactions/test', (req, res) => {
 })
 
 
-router.get('/findbyuser/:id', (req, res) => {
+router.get('/findbyuser/:id', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Transaction.aggregate([
         {
             "$match": {
@@ -110,7 +132,9 @@ router.get('/findbyuser/:id', (req, res) => {
         });
 });
 
-router.get('/findbyuserall/:id', (req, res) => {
+router.get('/findbyuserall/:id', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Transaction.aggregate([
         {
             "$match": {
@@ -134,7 +158,9 @@ router.get('/findbyuserall/:id', (req, res) => {
         });
 });
 
-router.get('/findbyuserdue/:id', (req, res) => {
+router.get('/findbyuserdue/:id', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Transaction.aggregate([
         {
             "$match": {
@@ -157,7 +183,9 @@ router.get('/findbyuserdue/:id', (req, res) => {
         });
 });
 
-router.get('/findbyitemdue/:id', (req, res) => {
+router.get('/findbyitemdue/:id', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Transaction.aggregate([
         {
             "$match": {
@@ -181,7 +209,9 @@ router.get('/findbyitemdue/:id', (req, res) => {
 });
 
 
-router.get('/findbyitemall/:id', (req, res) => {
+router.get('/findbyitemall/:id', passport.authenticate('jwt', {session:false}), (req, res) => {
+    var token = getToken(req.headers);
+    if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
     Transaction.aggregate([
         {
             "$match": {
