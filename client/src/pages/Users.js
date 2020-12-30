@@ -466,22 +466,37 @@ class Users extends Component {
   }
 
   handleExportFile = () => {
+    console.log(this.state.exportModalDropdownSelection);
     let arr = []
-
-    arr = this.props.users.map(a => {
-      let newObject = {};
-      newObject["Name"] = a.lname + ", " + a.fname;
-      newObject["ID Code"] = a.userCode;
-      return newObject;
-    });
+    if(this.state.exportModalDropdownSelection == "All"){
+      arr = this.props.users.map(a => {
+        let newObject = {};
+        newObject["Name"] = a.lname + ", " + a.fname;
+        newObject["ID Code"] = a.userCode;
+        return newObject;
+      });
+    }else{
+      arr = this.props.users.filter(user => user.courses.includes(this.state.exportModalDropdownSelection )).map(a => {
+        let newObject = {};
+        newObject["Name"] = a.lname + ", " + a.fname;
+        newObject["ID Code"] = a.userCode;
+        return newObject;
+      });
+    }
+    
 
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
     const fileExtension = '.xlsx';
     const ws = XLSX.utils.json_to_sheet(arr);
+    var wscols = [
+      {wch:40},
+      {wch:20},
+    ];
+    ws['!cols'] = wscols;
     const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
     const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     const data = new Blob([excelBuffer], { type: fileType });
-    FileSaver.saveAs(data, "StudenList" + fileExtension);
+    FileSaver.saveAs(data, "StudentList" + fileExtension);
   }
 
 
@@ -529,7 +544,6 @@ class Users extends Component {
         {
           menuItem: "Completed",
           render: () => (
-            <Col className="stretch-h flex-col table-wrapper">
               <Table
                 title={
                   this.state.selectedUser.fname +
@@ -552,7 +566,6 @@ class Users extends Component {
                 ]}
                 data={this.state.transactions}
               />
-            </Col>
           ),
         },
       ];
@@ -619,6 +632,7 @@ class Users extends Component {
           placeholder="Filter Courses"
           name="courses"
           fluid
+          scrolling
           selection
           options={courseOptionsExport}
           onChange={(e, { value }) => {
@@ -647,11 +661,9 @@ class Users extends Component {
       <Col className="stretch-h flex-col" style={{ overflow: "hidden" }}>
         <div className="top-bar">
           <Row>
-            <Col>
+          <Col>
               <Button
                 className="float-down"
-                size="small"
-                floated="left"
                 style={{ backgroundColor: "#46C88C", color: "white" }}
                 onClick={this.handleAddUserClick}
               >
@@ -760,6 +772,7 @@ class Users extends Component {
             </Modal>
             <Modal
               centered
+              size={"lg"}
               show={this.state.showExportExcelModal}
               onHide={this.close}
             >
@@ -770,24 +783,21 @@ class Users extends Component {
                 </IconButton>
               </Modal.Header>
               <Modal.Body>
-                <p>Would you like to export an excel spreadsheet of the users?</p>
-                <Form>
-                  <Form.Field>
-                    <label>Select Course:</label>
-                    <Dropdown
-                      placeholder="Courses"
-                      name="courses"
-                      fluid
-                      search
-                      selection
-                      options={courseOptionsExport}
-                      value={this.state.exportModalDropdownSelection}
-                      onChange={this.handleDropdownChangeForExportFile}
-                    />
-                  </Form.Field>
-                </Form>
+                <p>Select a course and click the save button. This will download an excel spreadsheet of students from that course.</p>
+               
               </Modal.Body>
               <Modal.Footer>
+                <Dropdown
+                  className="footer-dropdown"
+                  placeholder="Courses"
+                  name="courses"
+                  search
+                  scrolling
+                  selection
+                  options={courseOptionsExport}
+                  value={this.state.exportModalDropdownSelection}
+                  onChange={this.handleDropdownChangeForExportFile}
+                />
                 <Button
                   id="add-icon-handler"
                   variant="primary"
@@ -889,7 +899,7 @@ class Users extends Component {
                           <label>
                             &nbsp;
                         </label>
-                          <Button type ="button" color='blue'  disabled={this.state.editable} onKeyDown ={(e) =>{e.preventDefault()}} onClick={this.regenerateUserCode} >Genrate New User ID</Button>
+                          <Button type ="button" color='blue'  disabled={this.state.editable} onKeyDown ={(e) =>{e.preventDefault()}} onClick={this.regenerateUserCode} >Generate New User Code</Button>
                         </Form.Field>
                       </Form.Group>
                       <Form.Group widths={2}>
