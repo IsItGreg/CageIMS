@@ -283,7 +283,7 @@ class Users extends Component {
           lname: user["Last Name"],
           courses: [],
           userCode: userCode,
-          email: user["Username"] || user["Email"]
+          email: user["Username"].toLowerCase() || user["Email"].toLowerCase()
         }
       })
         .map((nuser) => {
@@ -297,7 +297,7 @@ class Users extends Component {
                 eUser.email
               ),
           });
-          return eUser;
+          return eUser.toLowerCase();
         });
 
       this.setState({ importedExcelData: data, showImportExcelModal: true });

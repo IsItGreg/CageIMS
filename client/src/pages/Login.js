@@ -76,7 +76,7 @@ class Login extends Component {
 
   submitLogin() {
     const userData = {
-      email: this.state.email,
+      email: this.state.email.toLowerCase(),
       password: this.state.password
     };
     this.props.loginUser(userData);
@@ -89,7 +89,7 @@ class Login extends Component {
 
   resetPassword() {
     if (this.state.femail1 === this.state.femail2) {
-      this.props.forgotPassword({ email: this.state.femail1 });
+      this.props.forgotPassword({ email: this.state.femail1.toLowerCase() });
     }
 
     this.setState({ showForgotPasswordModal: false });
