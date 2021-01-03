@@ -122,7 +122,7 @@ router.post("/forgotPassword", (req, res) => {
                 .then(() => {
                     const msg = {
                         to: user.email,
-                        from: 'Cage_IMS_no_reply@gsme.dev',
+                        from: 'CageIMS_no_reply@gsme.dev',
                         subject: 'CageIMS Password Reset',
                         text: 'You are receiveing this email because you (or someone else) has requested to reset the password for your CageIMS account.\n\n'
                             + 'If you wish to reset your password, please click on the following link or paste it into your browser:\n\n'
