@@ -20,7 +20,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getUsersIfNeeded, putUser, postUser } from "../actions/userActions"
 import { getItemsIfNeeded } from "../actions/itemActions"
-import {getAllTransactionsByUser,getDueTransactionsByUser} from "../actions/transactionActions"
+import { getAllTransactionsByUser, getDueTransactionsByUser } from "../actions/transactionActions"
 
 class Users extends Component {
   constructor(props) {
@@ -39,12 +39,13 @@ class Users extends Component {
       isChangesMadeToModal: false,
       exportModalDropdownSelection: "",
       isWaitingForUpdateResponse: false,
-      clearCoursesText:"",
+      clearCoursesText: "",
 
       showImportExcelModal: false,
       showExportExcelModal: false,
-      showClearCoursesModal:false,
-      clearAllCoursesError:false,
+      showClearCoursesModal: false,
+      showConfirmDuplicateNameModal: false,
+      clearAllCoursesError: false,
       importedExcelData: [],
       importEmailErrors: {},
       transactions: [],
@@ -74,12 +75,12 @@ class Users extends Component {
     // console.log("mult:" + nextProps.isUpdating);
     // console.log("isget:" + nextProps.isGetting);
     // console.log("wait: "+ this.state.isWaitingForUpdateResponse);
-    if(nextProps.isUpdating){
+    if (nextProps.isUpdating) {
       this.setState({
         isWaitingForUpdateResponse: true,
       });
     }
-    else if(this.state.isWaitingForUpdateResponse && !nextProps.isUpdating){
+    else if (this.state.isWaitingForUpdateResponse && !nextProps.isUpdating) {
       this.close();
       this.setState({
         isWaitingForUpdateResponse: false,
@@ -92,14 +93,14 @@ class Users extends Component {
   }
 
   getTransactionsToShow(preSetTransactions) {
-    if(preSetTransactions == null){
+    if (preSetTransactions == null) {
       return null;
     }
-    else{
+    else {
       preSetTransactions.forEach((transaction) => {
         transaction.backgroundColor =
           !transaction.checkedInDate &&
-          new Date(transaction.dueDate).getTime() < new Date().getTime()
+            new Date(transaction.dueDate).getTime() < new Date().getTime()
             ? "mistyrose"
             : "";
       });
@@ -108,10 +109,10 @@ class Users extends Component {
   }
 
   getDueTransactionsToShow(preSetTransactions) {
-    if(preSetTransactions == null){
+    if (preSetTransactions == null) {
       return [];
     }
-    else{
+    else {
       preSetTransactions.forEach((transaction) => {
         transaction.backgroundColor =
           new Date(transaction.dueDate).getTime() < new Date().getTime()
@@ -171,7 +172,7 @@ class Users extends Component {
   };
 
   handleUserSelectClick = (e, rowData) => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch(getAllTransactionsByUser(rowData));
     dispatch(getDueTransactionsByUser(rowData))
     this.setState({
@@ -204,7 +205,7 @@ class Users extends Component {
 
   handleConfirmClearAllCoursesClick = () => {
     const { dispatch } = this.props;
-    if(
+    if (
       this.state.clearCoursesText === "I confirm that I want to clear all courses"
     ) {
       this.props.users.forEach(user => {
@@ -213,13 +214,13 @@ class Users extends Component {
       })
       this.setState({
         clearCoursesText: "",
-        clearAllCoursesError:false,
+        clearAllCoursesError: false,
       })
       dispatch(getUsersIfNeeded());
       this.closeClearCoursesModal();
-    }else{
+    } else {
       this.setState({
-        clearAllCoursesError:true,
+        clearAllCoursesError: true,
       })
     }
   }
@@ -227,16 +228,16 @@ class Users extends Component {
   handleClearAllCoursesClick = () => {
     this.setState({
       clearCoursesText: "",
-      clearAllCoursesError:false,
-      showClearCoursesModal:true,
+      clearAllCoursesError: false,
+      showClearCoursesModal: true,
     })
   };
 
-  closeClearCoursesModal = () =>{
+  closeClearCoursesModal = () => {
     this.setState({
       clearCoursesText: "",
-      clearAllCoursesError:false,
-      showClearCoursesModal:false,
+      clearAllCoursesError: false,
+      showClearCoursesModal: false,
     })
   }
 
@@ -245,6 +246,11 @@ class Users extends Component {
     this.setState({
       clearCoursesText: val
     });
+  }
+
+  validateEmail = (email) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
   }
 
   onChangeFile(event) {
@@ -283,7 +289,7 @@ class Users extends Component {
           lname: user["Last Name"],
           courses: [],
           userCode: userCode,
-          email: user["Username"] || user["Email"]
+          email: user["Username"].toLowerCase() || user["Email"].toLowerCase()
         }
       })
         .map((nuser) => {
@@ -292,12 +298,9 @@ class Users extends Component {
           );
           if (eUser === undefined) eUser = nuser;
           this.setState({
-            ["importEmailValid" +
-              eUser.userCode]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(
-                eUser.email
-              ),
+            ["importEmailValid" + eUser.userCode]: this.validateEmail(eUser.email),
           });
-          return eUser;
+          return eUser.toLowerCase();
         });
 
       this.setState({ importedExcelData: data, showImportExcelModal: true });
@@ -315,7 +318,8 @@ class Users extends Component {
       !this.state.firstNameError &&
       !this.state.lastNameError &&
       !this.state.idError &&
-      !this.state.emailError
+      !this.state.emailError &&
+      !this.state.duplicateNameWarning
     ) {
 
       const { dispatch } = this.props;
@@ -330,12 +334,34 @@ class Users extends Component {
 
   handleSubmitClick = () => {
     if (this.state.isChangesMadeToModal) {
+      let emailError = false;
+      if (this.state.selectedUser.email === "") {
+        emailError = "Field is empty";
+      }
+      else if (!this.validateEmail(this.state.selectedUser.email)) {
+        emailError = "Email validation failed"
+      }
+      else if (this.props.users.some(u => (
+        u.email === this.state.selectedUser.email &&
+        u._id !== this.state.selectedUser._id
+      ))) {
+        emailError = "Email used by other user"
+      }
+
+      const duplicateName = this.props.users.some(u => (
+        u.fname === this.state.selectedUser.fname &&
+        u.lname === this.state.selectedUser.lname &&
+        u._id !== this.state.selectedUser._id
+      ));
+
       this.setState(
         {
           firstNameError: this.state.selectedUser.fname === "",
           lastNameError: this.state.selectedUser.lname === "",
           idError: this.state.selectedUser.userCode === "",
-          emailError: this.state.selectedUser.email === "",
+          emailError,
+          showConfirmDuplicateNameModal: duplicateName,
+          duplicateNameWarning: duplicateName
         },
         this.checkErrorUpdateDataSet
       );
@@ -430,8 +456,7 @@ class Users extends Component {
       let importedExcelData = Array.from(prevState.importedExcelData);
       importedExcelData.find((user) => user.userCode === userCode).email = val;
       return {
-        ["importEmailValid" +
-          userCode]: /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(val),
+        ["importEmailValid" + userCode]: this.validateEmail(val),
         isChangesMadeToModal: true,
         importedExcelData,
       };
@@ -450,11 +475,11 @@ class Users extends Component {
   }
 
   regenerateUserCode = () => {
-      this.setState((prevState) => {
-        let selectedUser = Object.assign({}, prevState.selectedUser);
-        selectedUser.userCode = this.generateNewUserCode();
-        return { selectedUser, isChangesMadeToModal: true };
-      })
+    this.setState((prevState) => {
+      let selectedUser = Object.assign({}, prevState.selectedUser);
+      selectedUser.userCode = this.generateNewUserCode();
+      return { selectedUser, isChangesMadeToModal: true };
+    })
   }
 
   handleExportSpreadsheetClick = () => {
@@ -468,29 +493,29 @@ class Users extends Component {
   handleExportFile = () => {
     console.log(this.state.exportModalDropdownSelection);
     let arr = []
-    if(this.state.exportModalDropdownSelection == "All"){
+    if (this.state.exportModalDropdownSelection == "All") {
       arr = this.props.users.map(a => {
         let newObject = {};
         newObject["Name"] = a.lname + ", " + a.fname;
         newObject["ID Code"] = a.userCode;
         return newObject;
       });
-    }else{
-      arr = this.props.users.filter(user => user.courses.includes(this.state.exportModalDropdownSelection )).map(a => {
+    } else {
+      arr = this.props.users.filter(user => user.courses.includes(this.state.exportModalDropdownSelection)).map(a => {
         let newObject = {};
         newObject["Name"] = a.lname + ", " + a.fname;
         newObject["ID Code"] = a.userCode;
         return newObject;
       });
     }
-    
+
 
     const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
     const fileExtension = '.xlsx';
     const ws = XLSX.utils.json_to_sheet(arr);
     var wscols = [
-      {wch:40},
-      {wch:20},
+      { wch: 40 },
+      { wch: 20 },
     ];
     ws['!cols'] = wscols;
     const wb = { Sheets: { 'data': ws }, SheetNames: ['data'] };
@@ -537,35 +562,35 @@ class Users extends Component {
                 },
               ]}
               data={this.state.dueTransactions}
-              
+
             />
           ),
         },
         {
           menuItem: "Completed",
           render: () => (
-              <Table
-                title={
-                  this.state.selectedUser.fname +
-                  " " +
-                  this.state.selectedUser.lname
-                }
-                columns={[
-                  { title: "Item ID", field: "item.iid" },
-                  { title: "Item Name", field: "item.name" },
-                  {
-                    title: "Checked Out Date",
-                    field: "checkedOutDate",
-                    render: (rowData) => this.formatDate(rowData.checkedOutDate),
-                  },
-                  {
-                    title: "Checked In Date",
-                    field: "checkedInDate",
-                    render: (rowData) => this.formatDate(rowData.checkedInDate),
-                  },
-                ]}
-                data={this.state.transactions}
-              />
+            <Table
+              title={
+                this.state.selectedUser.fname +
+                " " +
+                this.state.selectedUser.lname
+              }
+              columns={[
+                { title: "Item ID", field: "item.iid" },
+                { title: "Item Name", field: "item.name" },
+                {
+                  title: "Checked Out Date",
+                  field: "checkedOutDate",
+                  render: (rowData) => this.formatDate(rowData.checkedOutDate),
+                },
+                {
+                  title: "Checked In Date",
+                  field: "checkedInDate",
+                  render: (rowData) => this.formatDate(rowData.checkedInDate),
+                },
+              ]}
+              data={this.state.transactions}
+            />
           ),
         },
       ];
@@ -597,7 +622,7 @@ class Users extends Component {
       {
         title: "Email",
         field: "email",
-        cellStyle: {width: '40%'},
+        cellStyle: { width: '40%' },
         render: (rowData) => (
           <TextField
             defaultValue={rowData.email}
@@ -661,7 +686,7 @@ class Users extends Component {
       <Col className="stretch-h flex-col" style={{ overflow: "hidden" }}>
         <div className="top-bar">
           <Row>
-          <Col>
+            <Col>
               <Button
                 className="float-down"
                 style={{ backgroundColor: "#46C88C", color: "white" }}
@@ -704,7 +729,7 @@ class Users extends Component {
                   ref="fileUploader"
                   style={{ display: "none" }}
                   onChange={this.onChangeFile.bind(this)}
-                  onClick={(event)=>{event.target.value=null}}
+                  onClick={(event) => { event.target.value = null }}
                 />
               </div>
             </Col>
@@ -784,7 +809,7 @@ class Users extends Component {
               </Modal.Header>
               <Modal.Body>
                 <p>Select a course and click the save button. This will download an excel spreadsheet of students from that course.</p>
-               
+
               </Modal.Body>
               <Modal.Footer>
                 <Dropdown
@@ -808,7 +833,7 @@ class Users extends Component {
                 </Button>
               </Modal.Footer>
             </Modal>
-            <Modal centered size ="lg" show={selectedUserId != null} onHide={this.close}>
+            <Modal centered size="lg" show={selectedUserId != null} onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>User</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
@@ -818,7 +843,7 @@ class Users extends Component {
               <Modal.Body>
                 {this.state.activeItem === "user" &&
                   this.state.selectedUser !== null && (
-                    <Form keyboardShortcuts = {false}>
+                    <Form keyboardShortcuts={false}>
                       <Form.Group widths={2}>
                         <Form.Field>
                           <label>
@@ -899,7 +924,7 @@ class Users extends Component {
                           <label>
                             &nbsp;
                         </label>
-                          <Button type ="button" color='blue'  disabled={this.state.editable} onKeyDown ={(e) =>{e.preventDefault()}} onClick={this.regenerateUserCode} >Generate New User Code</Button>
+                          <Button type="button" color='blue' disabled={this.state.editable} onKeyDown={(e) => { e.preventDefault() }} onClick={this.regenerateUserCode} >Generate New User Code</Button>
                         </Form.Field>
                       </Form.Group>
                       <Form.Group widths={2}>
@@ -908,7 +933,7 @@ class Users extends Component {
                             Email:
                             {this.state.emailError && (
                               <span className="error-text modal-label-error-text">
-                                Error: Field is empty.
+                                Error: {this.state.emailError}.
                               </span>
                             )}
                           </label>
@@ -1017,8 +1042,29 @@ class Users extends Component {
                 </Button>
               </Modal.Footer>
             </Modal>
-            <Modal 
-              show = {this.state.showClearCoursesModal}
+
+            <Modal
+              centered
+              show={this.state.showConfirmDuplicateNameModal}
+              onHide={() => this.setState({ showConfirmDuplicateNameModal: false })}
+            >
+              <Modal.Header bsPrefix="modal-header">
+                <Modal.Title>Confirm Duplicate Name</Modal.Title>
+                <IconButton onClick={this.closeClearCoursesModal} size="small" color="inherit">
+                  <ClearIcon />
+                </IconButton>
+              </Modal.Header>
+              <Modal.Body>
+                <p>A user already exists with the name {this.state.selectedUser.fname} {this.state.selectedUser.lname}. Are you sure you wish to create a new user with the same name?</p>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button onClick={() => this.setState({ showConfirmDuplicateNameModal: false })}>Cancel</Button>
+                <Button onClick={() => this.setState({ showConfirmDuplicateNameModal: false, duplicateNameWarning: false }, this.checkErrorUpdateDataSet)} primary>Confirm</Button>
+              </Modal.Footer>
+            </Modal>
+
+            <Modal
+              show={this.state.showClearCoursesModal}
               centered
               onHide={this.closeClearCoursesModal}
             >
@@ -1029,14 +1075,14 @@ class Users extends Component {
                 </IconButton>
               </Modal.Header>
               <Modal.Body>
-                <p className = "non-selectable-course-text">Please type "<b>I confirm that I want to clear all courses</b>" if you would like to clear all the users' courses. This action can not be undone.</p>
+                <p className="non-selectable-course-text">Please type "<b>I confirm that I want to clear all courses</b>" if you would like to clear all the users' courses. This action can not be undone.</p>
                 <Form>
-                  <Form.Input error = {this.state.clearAllCoursesError} onChange = {this.handleClearAllCoursesText}></Form.Input >
+                  <Form.Input error={this.state.clearAllCoursesError} onChange={this.handleClearAllCoursesText}></Form.Input >
                 </Form>
               </Modal.Body>
               <Modal.Footer>
-                <Button onClick = {this.closeClearCoursesModal} variant="secondary">Close</Button>
-                <Button onClick = {this. handleConfirmClearAllCoursesClick} variant="primary">Confirm</Button>
+                <Button onClick={this.closeClearCoursesModal}>Cancel</Button>
+                <Button onClick={this.handleConfirmClearAllCoursesClick} primary>Confirm</Button>
               </Modal.Footer>
             </Modal>
           </Col>

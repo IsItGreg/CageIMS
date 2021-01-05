@@ -56,7 +56,7 @@ router.get('/:ucode', passport.authenticate('jwt', {session:false}), (req, res) 
 router.post('/find', passport.authenticate('jwt', {session:false}), (req, res) => {
     var token = getToken(req.headers);
     if (!token) return res.status(401).send({success:false, msg:"Unauthorized."});
-    User.findOne({ email: req.body.email }).select("-password -resetPasswordExpires -resetPasswordToken")
+    User.findOne({ email: req.body.email.toLowerCase() }).select("-password -resetPasswordExpires -resetPasswordToken")
         .then((data) => {
             res.json(data);
         })
