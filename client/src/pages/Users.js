@@ -41,7 +41,7 @@ class Users extends Component {
       isWaitingForUpdateResponse: false,
       clearCoursesText:"",
 
-      coursesTextLenghtError:false,
+      coursesTextLenghtError: false,
       showImportExcelModal: false,
       showExportExcelModal: false,
       showClearCoursesModal:false,
@@ -137,7 +137,7 @@ class Users extends Component {
         notes: "",
         createdAt: "",
       },
-      coursesTextLenghtError:false,
+      coursesTextLenghtError: false,
       transactions: [],
       firstNameError: false,
       lastNameError: false,
@@ -379,23 +379,21 @@ class Users extends Component {
   handleDropdownChange = (e, { value }) => {
 
     const val = value;
-    let shouldSetValue = true
-    console.log(val.length)
+    let shouldSetValue = true;
 
-    if(val.length>0){
+    if(val.length > 0){
       shouldSetValue = val[val.length-1].length < 25;
     }
-
-    console.log(shouldSetValue);
     
     if(shouldSetValue) {
       this.setState((prevState) => {
         let selectedUser = Object.assign({}, prevState.selectedUser);
         selectedUser.courses = val;
-        return { selectedUser, isChangesMadeToModal:true, coursesTextLenghtError:false };
+        return { selectedUser, isChangesMadeToModal: true, coursesTextLenghtError: false };
       });
-    }else{
-      this.setState({coursesTextLenghtError:true})
+    }
+    else {
+      this.setState({ coursesTextLenghtError: true });
     }
   };
 
@@ -846,7 +844,7 @@ class Users extends Component {
                             )}
                           </label>
                           <Form.Input
-                            maxLength = "25"
+                            maxLength="25"
                             error={this.state.firstNameError}
                             name="firstName"
                             placeholder="First Name"
@@ -867,7 +865,7 @@ class Users extends Component {
                             )}
                           </label>
                           <Form.Input
-                            maxLength = "25"
+                            maxLength="25"
                             error={this.state.lastNameError}
                             name="name.last"
                             placeholder="Last Name"

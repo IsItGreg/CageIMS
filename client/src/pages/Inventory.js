@@ -270,51 +270,53 @@ class Inventory extends Component {
 
   handleCourseDropdownChange = (e, { value }) => {
     const val = value;
-    let shouldSetValue = true
-    console.log(val.length)
+    let shouldSetValue = true;
 
-    if(val.length>0){
+    if(val.length > 0){
       shouldSetValue = val[val.length-1].length < 25;
     }
-    console.log(shouldSetValue);
+
     if(shouldSetValue) {
       this.setState((prevState) => {
         let selectedItem = Object.assign({}, prevState.selectedItem);
         selectedItem.courses = val;
-        return { selectedItem, isChangesMadeToModal: true, coursesTextLenghtError:false };
+        return { selectedItem, isChangesMadeToModal: true, coursesTextLenghtError: false };
       });
-    }else{
-      this.setState({coursesTextLenghtError:true})
+    }
+    else {
+      this.setState({ coursesTextLenghtError :true });
     }
   };
 
   handleBrandDropdownChange = (e, { value }) => {
     const val = value;
-    const shouldSetValue = value.length < 25
+    const shouldSetValue = value.length < 25;
 
     if(shouldSetValue) {
       this.setState((prevState) => {
         let selectedItem = Object.assign({}, prevState.selectedItem);
         selectedItem.brand = val;
-        return { selectedItem, isChangesMadeToModal: true,brandTextLengthError:false };
+        return { selectedItem, isChangesMadeToModal: true, brandTextLengthError: false };
       });
-    }else{
-      this.setState({brandTextLengthError:true})
+    }
+    else {
+      this.setState({ brandTextLengthError: true });
     }
   };
 
   handleCategoryDropdownChange = (e, { value }) => {
     const val = value;
-    const shouldSetValue = value.length < 25
+    const shouldSetValue = value.length < 25;
 
     if(shouldSetValue) {
       this.setState((prevState) => {
         let selectedItem = Object.assign({}, prevState.selectedItem);
         selectedItem.category = val;
-        return { selectedItem, isChangesMadeToModal: true,categoryTextLengthError:false };
+        return { selectedItem, isChangesMadeToModal: true, categoryTextLengthError: false };
       });
-    }else{
-      this.setState({categoryTextLengthError:true})
+    }
+    else {
+      this.setState({ categoryTextLengthError: true });
     }
   };
 
@@ -630,7 +632,7 @@ class Inventory extends Component {
                         )}
                       </label>
                       <Form.Input
-                        maxLength = "25"
+                        maxLength="25"
                         error={this.state.nameError}
                         name="name"
                         placeholder="Name"
@@ -682,7 +684,7 @@ class Inventory extends Component {
                           
                         </label>
                         <Form.Input
-                          maxLength = "8"
+                          maxLength="8"
                           name="serial"
                           error={this.state.serialError}
                           placeholder="Serial"
@@ -695,7 +697,7 @@ class Inventory extends Component {
                       </Form.Field>
                     </Form.Group>
                     <Form.Group widths="equal">
-                      <Form.Field width ="1">
+                      <Form.Field width="1">
                         <label>Brand:
                           {this.state.brandTextLengthError && (
                             <span className="error-text modal-label-error-text">
@@ -716,7 +718,7 @@ class Inventory extends Component {
                           disabled={this.state.editable}
                         />
                       </Form.Field>
-                      <Form.Field  width ="1">
+                      <Form.Field width="1">
                         <label>
                           Category:
                           {this.state.categoryError && (
