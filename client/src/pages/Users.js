@@ -41,6 +41,7 @@ class Users extends Component {
       isWaitingForUpdateResponse: false,
       clearCoursesText:"",
 
+      coursesTextLenghtError:false,
       showImportExcelModal: false,
       showExportExcelModal: false,
       showClearCoursesModal:false,
@@ -136,6 +137,7 @@ class Users extends Component {
         notes: "",
         createdAt: "",
       },
+      coursesTextLenghtError:false,
       transactions: [],
       firstNameError: false,
       lastNameError: false,
@@ -375,12 +377,26 @@ class Users extends Component {
   };
 
   handleDropdownChange = (e, { value }) => {
+
     const val = value;
-    this.setState((prevState) => {
-      let selectedUser = Object.assign({}, prevState.selectedUser);
-      selectedUser.courses = val;
-      return { selectedUser, isChangesMadeToModal: true };
-    });
+    let shouldSetValue = true
+    console.log(val.length)
+
+    if(val.length>0){
+      shouldSetValue = val[val.length-1].length < 25;
+    }
+
+    console.log(shouldSetValue);
+    
+    if(shouldSetValue) {
+      this.setState((prevState) => {
+        let selectedUser = Object.assign({}, prevState.selectedUser);
+        selectedUser.courses = val;
+        return { selectedUser, isChangesMadeToModal:true, coursesTextLenghtError:false };
+      });
+    }else{
+      this.setState({coursesTextLenghtError:true})
+    }
   };
 
   formatDate = (dateString) => {
@@ -830,6 +846,7 @@ class Users extends Component {
                             )}
                           </label>
                           <Form.Input
+                            maxLength = "25"
                             error={this.state.firstNameError}
                             name="firstName"
                             placeholder="First Name"
@@ -850,6 +867,7 @@ class Users extends Component {
                             )}
                           </label>
                           <Form.Input
+                            maxLength = "25"
                             error={this.state.lastNameError}
                             name="name.last"
                             placeholder="Last Name"
@@ -862,7 +880,13 @@ class Users extends Component {
                         </Form.Field>
                       </Form.Group>
                       <Form.Field>
-                        <label>Courses:</label>
+                        <label>Courses:
+                          {this.state.coursesTextLenghtError && (
+                            <span className="error-text modal-label-error-text">
+                              Error: Field cannot be longer than 25 characters.
+                            </span>
+                          )}
+                        </label>
                         <Dropdown
                           placeholder="Courses"
                           name="courses"

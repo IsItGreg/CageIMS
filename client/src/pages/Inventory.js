@@ -35,6 +35,9 @@ class Inventory extends Component {
       editable: true,
       isChangesMadeToModal: false,
       isItemIdUnavailable: false,
+      brandTextLengthError: false,
+      categoryTextLengthError: false,
+      coursesTextLenghtError:false,
       transactions:[],
       dueTransactions:[],
 
@@ -83,6 +86,9 @@ class Inventory extends Component {
       submitIcon: null,
       isChangesMadeToModal: false,
       isItemIdUnavailable: false,
+      brandTextLengthError: false,
+      categoryTextLengthError: false,
+      coursesTextLenghtError:false,
     });
     const { dispatch } = this.props;
     dispatch(getItemsIfNeeded());
@@ -264,29 +270,52 @@ class Inventory extends Component {
 
   handleCourseDropdownChange = (e, { value }) => {
     const val = value;
-    this.setState((prevState) => {
-      let selectedItem = Object.assign({}, prevState.selectedItem);
-      selectedItem.courses = val;
-      return { selectedItem, isChangesMadeToModal: true };
-    });
+    let shouldSetValue = true
+    console.log(val.length)
+
+    if(val.length>0){
+      shouldSetValue = val[val.length-1].length < 25;
+    }
+    console.log(shouldSetValue);
+    if(shouldSetValue) {
+      this.setState((prevState) => {
+        let selectedItem = Object.assign({}, prevState.selectedItem);
+        selectedItem.courses = val;
+        return { selectedItem, isChangesMadeToModal: true, coursesTextLenghtError:false };
+      });
+    }else{
+      this.setState({coursesTextLenghtError:true})
+    }
   };
 
   handleBrandDropdownChange = (e, { value }) => {
     const val = value;
-    this.setState((prevState) => {
-      let selectedItem = Object.assign({}, prevState.selectedItem);
-      selectedItem.brand = val;
-      return { selectedItem, isChangesMadeToModal: true };
-    });
+    const shouldSetValue = value.length < 25
+
+    if(shouldSetValue) {
+      this.setState((prevState) => {
+        let selectedItem = Object.assign({}, prevState.selectedItem);
+        selectedItem.brand = val;
+        return { selectedItem, isChangesMadeToModal: true,brandTextLengthError:false };
+      });
+    }else{
+      this.setState({brandTextLengthError:true})
+    }
   };
 
   handleCategoryDropdownChange = (e, { value }) => {
     const val = value;
-    this.setState((prevState) => {
-      let selectedItem = Object.assign({}, prevState.selectedItem);
-      selectedItem.category = val;
-      return { selectedItem, isChangesMadeToModal: true };
-    });
+    const shouldSetValue = value.length < 25
+
+    if(shouldSetValue) {
+      this.setState((prevState) => {
+        let selectedItem = Object.assign({}, prevState.selectedItem);
+        selectedItem.category = val;
+        return { selectedItem, isChangesMadeToModal: true,categoryTextLengthError:false };
+      });
+    }else{
+      this.setState({categoryTextLengthError:true})
+    }
   };
 
   handleItemIdVerify = (iid) => {
@@ -601,6 +630,7 @@ class Inventory extends Component {
                         )}
                       </label>
                       <Form.Input
+                        maxLength = "25"
                         error={this.state.nameError}
                         name="name"
                         placeholder="Name"
@@ -649,8 +679,10 @@ class Inventory extends Component {
                               Error: Field is empty.
                             </span>
                           )}
+                          
                         </label>
                         <Form.Input
+                          maxLength = "8"
                           name="serial"
                           error={this.state.serialError}
                           placeholder="Serial"
@@ -663,12 +695,17 @@ class Inventory extends Component {
                       </Form.Field>
                     </Form.Group>
                     <Form.Group widths="equal">
-                      <Form.Field>
-                        <label>Brand:</label>
+                      <Form.Field width ="1">
+                        <label>Brand:
+                          {this.state.brandTextLengthError && (
+                            <span className="error-text modal-label-error-text">
+                              Error: Field cannot be longer than 25 characters.
+                            </span>
+                          )}
+                        </label>
                         <Dropdown
                           placeholder="Brand"
                           name="brand"
-                          fluid
                           search
                           selection
                           allowAdditions
@@ -679,19 +716,22 @@ class Inventory extends Component {
                           disabled={this.state.editable}
                         />
                       </Form.Field>
-                      <Form.Field>
+                      <Form.Field  width ="1">
                         <label>
                           Category:
                           {this.state.categoryError && (
                             <span className="error-text modal-label-error-text">
                               Error: Field cannot be empty.
                             </span>
+                          ) || this.state.categoryTextLengthError && (
+                            <span className="error-text modal-label-error-text">
+                              Error: Field cannot be longer than 25 characters.
+                            </span>
                           )}
                         </label>
                         <Dropdown
                           placeholder="Category"
                           name="category"
-                          fluid
                           error={this.state.categoryError}
                           search
                           selection
@@ -704,7 +744,13 @@ class Inventory extends Component {
                       </Form.Field>
                     </Form.Group>
                     <Form.Field>
-                      <label>Courses:</label>
+                      <label>Courses:
+                        {this.state.coursesTextLenghtError && (
+                          <span className="error-text modal-label-error-text">
+                            Error: Field cannot be longer than 25 characters.
+                          </span>
+                        )}
+                      </label>
                       <Dropdown
                         placeholder="Courses"
                         name="courses"
@@ -713,6 +759,7 @@ class Inventory extends Component {
                         search
                         selection
                         allowAdditions
+                        scrolling
                         options={courseOptions}
                         value={selectedItem.courses}
                         onChange={this.handleCourseDropdownChange}
