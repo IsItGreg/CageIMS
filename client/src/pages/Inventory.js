@@ -290,11 +290,17 @@ class Inventory extends Component {
   };
 
   handleItemIdVerify = (iid) => {
+    console.log(iid);
     if (iid === "") return "";
     if (isNaN(iid)) {
       this.setState({ isItemIdUnavailable: true });
       return iid;
     }
+    if(iid.indexOf(' ') >= 0){
+      this.setState({ isItemIdUnavailable: true });
+      return iid;
+    }
+    console.log(isNaN(iid));
     let fullID = "0".repeat(4 - iid.length) + iid;
     this.setState({
       isItemIdUnavailable: this.props.items.some(
