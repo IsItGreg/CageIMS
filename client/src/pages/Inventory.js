@@ -290,17 +290,11 @@ class Inventory extends Component {
   };
 
   handleItemIdVerify = (iid) => {
-    console.log(iid);
     if (iid === "") return "";
     if (isNaN(iid)) {
       this.setState({ isItemIdUnavailable: true });
       return iid;
     }
-    if(iid.indexOf(' ') >= 0){
-      this.setState({ isItemIdUnavailable: true });
-      return iid;
-    }
-    console.log(isNaN(iid));
     let fullID = "0".repeat(4 - iid.length) + iid;
     this.setState({
       isItemIdUnavailable: this.props.items.some(
@@ -323,6 +317,16 @@ class Inventory extends Component {
 
   changeInventoryTableTab = (e,data) => this.setState({activeCategory:data.panes[data.activeIndex].menuItem})
 
+  isNumberKey(evt){
+    var theEvent = evt || window.event;
+    var key = theEvent.keyCode || theEvent.which;
+    key = String.fromCharCode( key );
+    var regex = /^[0-9]\d*$/;
+    if( !regex.test(key) ) {
+      theEvent.returnValue = false;
+      if(theEvent.preventDefault) theEvent.preventDefault();
+    }
+  }
   render() {
     const { items } = this.props;
     const selectedItemId = this.state.selectedItemId;
@@ -634,6 +638,7 @@ class Inventory extends Component {
                         </label>
                         <Form.Input
                           name="iid"
+                          onKeyPress = {(e) => this.isNumberKey(e)}
                           error={
                             this.state.iidError ||
                             this.state.isItemIdUnavailable
