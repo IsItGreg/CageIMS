@@ -40,8 +40,6 @@ class Users extends Component {
       exportModalDropdownSelection: "",
       isWaitingForUpdateResponse: false,
       clearCoursesText:"",
-
-      coursesTextLenghtError: false,
       showImportExcelModal: false,
       showExportExcelModal: false,
       showClearCoursesModal:false,
@@ -137,7 +135,6 @@ class Users extends Component {
         notes: "",
         createdAt: "",
       },
-      coursesTextLenghtError: false,
       transactions: [],
       firstNameError: false,
       lastNameError: false,
@@ -379,22 +376,11 @@ class Users extends Component {
   handleDropdownChange = (e, { value }) => {
 
     const val = value;
-    let shouldSetValue = true;
-
-    if(val.length > 0){
-      shouldSetValue = val[val.length-1].length < 25;
-    }
-    
-    if(shouldSetValue) {
-      this.setState((prevState) => {
-        let selectedUser = Object.assign({}, prevState.selectedUser);
-        selectedUser.courses = val;
-        return { selectedUser, isChangesMadeToModal: true, coursesTextLenghtError: false };
-      });
-    }
-    else {
-      this.setState({ coursesTextLenghtError: true });
-    }
+    this.setState((prevState) => {
+      let selectedUser = Object.assign({}, prevState.selectedUser);
+      selectedUser.courses = val;
+      return { selectedUser, isChangesMadeToModal: true, coursesTextLenghtError: false };
+    });
   };
 
   formatDate = (dateString) => {
@@ -518,6 +504,7 @@ class Users extends Component {
     const { users } = this.props;
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
+    const maxFormLength = "25";
     let formTablePanes = [];
     const headerStyleGrey = {
       backgroundColor: "#E2E2E2",
@@ -771,6 +758,7 @@ class Users extends Component {
                   options={courseOptions}
                   value={selectedUser.courses}
                   onChange={this.handleDropdownChange}
+                  searchInput = {<Dropdown.SearchInput  maxLength = {maxFormLength}/>}
                 />
                 <Button
                   id="add-icon-handler"
@@ -811,6 +799,7 @@ class Users extends Component {
                   options={courseOptionsExport}
                   value={this.state.exportModalDropdownSelection}
                   onChange={this.handleDropdownChangeForExportFile}
+                  searchInput = {<Dropdown.SearchInput  maxLength = {maxFormLength}/>}
                 />
                 <Button
                   id="add-icon-handler"
@@ -878,13 +867,7 @@ class Users extends Component {
                         </Form.Field>
                       </Form.Group>
                       <Form.Field>
-                        <label>Courses:
-                          {this.state.coursesTextLenghtError && (
-                            <span className="error-text modal-label-error-text">
-                              Error: Field cannot be longer than 25 characters.
-                            </span>
-                          )}
-                        </label>
+                        <label>Courses:</label>
                         <Dropdown
                           placeholder="Courses"
                           name="courses"
@@ -893,6 +876,7 @@ class Users extends Component {
                           search
                           selection
                           allowAdditions
+                          searchInput = {<Dropdown.SearchInput  maxLength = {maxFormLength}/>}
                           options={courseOptions}
                           value={selectedUser.courses}
                           onChange={this.handleDropdownChange}
