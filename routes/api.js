@@ -31,14 +31,14 @@ router.post("/register", (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     }
-    User.findOne({ email: req.body.email }).then(user => {
+    User.findOne({ email: req.body.email.toLowerCase() }).then(user => {
         if (user) {
             return res.status(400).json({ email: "Email already exists" });
         } else {
             const newUser = new User({
                 fname: req.body.fname,
                 lname: req.body.lname,
-                email: req.body.email,
+                email: req.body.email.toLowerCase(),
                 password: req.body.password
             });
             // Hash password before saving in database
@@ -66,7 +66,7 @@ router.post("/login", (req, res) => {
     if (!isValid) {
         return res.status(400).json(errors);
     }
-    const email = req.body.email;
+    const email = req.body.email.toLowerCase();
     const password = req.body.password;
     // Find user by email
     User.findOne({ email }).then(user => {
@@ -111,7 +111,7 @@ router.post("/forgotPassword", (req, res) => {
     if (req.body.email === "") {
         res.status(400).send("Email required");
     }
-    User.findOne({ email: req.body.email }).then(user => {
+    User.findOne({ email: req.body.email.toLowerCase() }).then(user => {
         if (user === null) {
             res.status(403).send("User not found");
         } else {
@@ -122,7 +122,7 @@ router.post("/forgotPassword", (req, res) => {
                 .then(() => {
                     const msg = {
                         to: user.email,
-                        from: 'Cage_IMS_no_reply@gsme.dev',
+                        from: 'CageIMS_no_reply@gsme.dev',
                         subject: 'CageIMS Password Reset',
                         text: 'You are receiveing this email because you (or someone else) has requested to reset the password for your CageIMS account.\n\n'
                             + 'If you wish to reset your password, please click on the following link or paste it into your browser:\n\n'

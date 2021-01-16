@@ -18,6 +18,7 @@ import { connect } from "react-redux";
 import { getItemsIfNeeded, putItem, postItem } from "../actions/itemActions"
 import { getUsersIfNeeded } from "../actions/userActions"
 import {getAllTransactionsByItem,getDueTransactionsByItem} from "../actions/transactionActions"
+const MAXFORMLENGTH = "25";
 
 class Inventory extends Component {
   constructor(props) {
@@ -324,7 +325,6 @@ class Inventory extends Component {
     const { items } = this.props;
     const selectedItemId = this.state.selectedItemId;
     const selectedItem = this.state.selectedItem;
-    const maxFormLength = "25"
     let formTablePanes = [];
     const headerStyleGrey = {
       backgroundColor: "#E2E2E2",
@@ -515,7 +515,7 @@ class Inventory extends Component {
         menuItem: category,
         render: () => (
           <Table
-            data={items.filter((item) => item.category == category)}
+            data={items.filter((item) => item.category === category)}
             itemType={"item"}
             columns={columnSet}
             title={<h3>{category}</h3>}
@@ -605,7 +605,7 @@ class Inventory extends Component {
                         )}
                       </label>
                       <Form.Input
-                        maxLength="25"
+                        maxLength={ MAXFORMLENGTH }
                         error={this.state.nameError}
                         name="name"
                         placeholder="Name"
@@ -657,7 +657,7 @@ class Inventory extends Component {
                           
                         </label>
                         <Form.Input
-                          maxLength={maxFormLength}
+                          maxLength={ MAXFORMLENGTH }
                           name="serial"
                           error={this.state.serialError}
                           placeholder="Serial"
@@ -685,7 +685,7 @@ class Inventory extends Component {
                           selection
                           allowAdditions
                           clearable
-                          searchInput = {<Dropdown.SearchInput  maxLength = {maxFormLength}/>}
+                          searchInput = {<Dropdown.SearchInput  maxLength = { MAXFORMLENGTH }/>}
                           options={brandOptions}
                           value={selectedItem.brand}
                           onChange={this.handleBrandDropdownChange}
@@ -708,7 +708,7 @@ class Inventory extends Component {
                           search
                           selection
                           allowAdditions
-                          searchInput = {<Dropdown.SearchInput  maxLength = {maxFormLength}/>}
+                          searchInput = {<Dropdown.SearchInput  maxLength = { MAXFORMLENGTH }/>}
                           options={categoryOptions}
                           onChange={this.handleCategoryDropdownChange}
                           disabled={this.state.editable}
@@ -726,7 +726,7 @@ class Inventory extends Component {
                         selection
                         allowAdditions
                         scrolling
-                        searchInput = {<Dropdown.SearchInput  maxLength = {maxFormLength}/>}
+                        searchInput = {<Dropdown.SearchInput  maxLength={ MAXFORMLENGTH }/>}
                         options={courseOptions}
                         value={selectedItem.courses}
                         onChange={this.handleCourseDropdownChange}
