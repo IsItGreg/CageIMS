@@ -324,7 +324,7 @@ class Inventory extends Component {
     var regex = /^[0-9]\d*$/;
     if (!regex.test(key)) {
       e.returnValue = false;
-      if (e.preventDefault) e.preventDefault();
+      e.preventDefault();
     }
   }
 
