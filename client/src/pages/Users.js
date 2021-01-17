@@ -529,7 +529,7 @@ class Users extends Component {
     const { users } = this.props;
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
-    
+
     let formTablePanes = [];
     const headerStyleGrey = {
       backgroundColor: "#E2E2E2",
@@ -783,7 +783,7 @@ class Users extends Component {
                   options={courseOptions}
                   value={selectedUser.courses}
                   onChange={this.handleDropdownChange}
-                  searchInput = { <Dropdown.SearchInput  maxLength={ MAXFORMLENGTH }/> }
+                  searchInput={<Dropdown.SearchInput maxLength={MAXFORMLENGTH} />}
                 />
                 <Button
                   id="add-icon-handler"
@@ -824,7 +824,7 @@ class Users extends Component {
                   options={courseOptionsExport}
                   value={this.state.exportModalDropdownSelection}
                   onChange={this.handleDropdownChangeForExportFile}
-                  searchInput = { <Dropdown.SearchInput  maxLength={ MAXFORMLENGTH }/> }
+                  searchInput={<Dropdown.SearchInput maxLength={MAXFORMLENGTH} />}
                 />
                 <Button
                   id="add-icon-handler"
@@ -901,7 +901,7 @@ class Users extends Component {
                           search
                           selection
                           allowAdditions
-                          searchInput = { <Dropdown.SearchInput  maxLength={ MAXFORMLENGTH }/> }
+                          searchInput={<Dropdown.SearchInput maxLength={MAXFORMLENGTH} />}
                           options={courseOptions}
                           value={selectedUser.courses}
                           onChange={this.handleDropdownChange}
