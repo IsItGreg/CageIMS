@@ -21,6 +21,7 @@ import { connect } from "react-redux";
 import { getUsersIfNeeded, putUser, postUser } from "../actions/userActions"
 import { getItemsIfNeeded } from "../actions/itemActions"
 import { getAllTransactionsByUser, getDueTransactionsByUser } from "../actions/transactionActions"
+const MAXFORMLENGTH = "25";
 
 class Users extends Component {
   constructor(props) {
@@ -40,7 +41,6 @@ class Users extends Component {
       exportModalDropdownSelection: "",
       isWaitingForUpdateResponse: false,
       clearCoursesText: "",
-
       showImportExcelModal: false,
       showExportExcelModal: false,
       showClearCoursesModal: false,
@@ -300,7 +300,7 @@ class Users extends Component {
           this.setState({
             ["importEmailValid" + eUser.userCode]: this.validateEmail(eUser.email),
           });
-          return eUser.toLowerCase();
+          return eUser;
         });
 
       this.setState({ importedExcelData: data, showImportExcelModal: true });
@@ -375,7 +375,6 @@ class Users extends Component {
     if (!this.state.isChangesMadeToModal) {
       this.close();
     }
-
     if (
       this.state.importedExcelData.every(
         (user) => this.state["importEmailValid" + user.userCode]
@@ -401,11 +400,12 @@ class Users extends Component {
   };
 
   handleDropdownChange = (e, { value }) => {
+
     const val = value;
     this.setState((prevState) => {
       let selectedUser = Object.assign({}, prevState.selectedUser);
       selectedUser.courses = val;
-      return { selectedUser, isChangesMadeToModal: true };
+      return { selectedUser, isChangesMadeToModal: true, coursesTextLenghtError: false };
     });
   };
 
@@ -493,7 +493,7 @@ class Users extends Component {
   handleExportFile = () => {
     console.log(this.state.exportModalDropdownSelection);
     let arr = []
-    if (this.state.exportModalDropdownSelection == "All") {
+    if (this.state.exportModalDropdownSelection === "All") {
       arr = this.props.users.map(a => {
         let newObject = {};
         newObject["Name"] = a.lname + ", " + a.fname;
@@ -529,6 +529,7 @@ class Users extends Component {
     const { users } = this.props;
     const selectedUserId = this.state.selectedUserId;
     const selectedUser = this.state.selectedUser;
+
     let formTablePanes = [];
     const headerStyleGrey = {
       backgroundColor: "#E2E2E2",
@@ -782,6 +783,7 @@ class Users extends Component {
                   options={courseOptions}
                   value={selectedUser.courses}
                   onChange={this.handleDropdownChange}
+                  searchInput={<Dropdown.SearchInput maxLength={MAXFORMLENGTH} />}
                 />
                 <Button
                   id="add-icon-handler"
@@ -822,6 +824,7 @@ class Users extends Component {
                   options={courseOptionsExport}
                   value={this.state.exportModalDropdownSelection}
                   onChange={this.handleDropdownChangeForExportFile}
+                  searchInput={<Dropdown.SearchInput maxLength={MAXFORMLENGTH} />}
                 />
                 <Button
                   id="add-icon-handler"
@@ -855,6 +858,7 @@ class Users extends Component {
                             )}
                           </label>
                           <Form.Input
+                            maxLength={MAXFORMLENGTH}
                             error={this.state.firstNameError}
                             name="firstName"
                             placeholder="First Name"
@@ -875,6 +879,7 @@ class Users extends Component {
                             )}
                           </label>
                           <Form.Input
+                            maxLength={MAXFORMLENGTH}
                             error={this.state.lastNameError}
                             name="name.last"
                             placeholder="Last Name"
@@ -896,6 +901,7 @@ class Users extends Component {
                           search
                           selection
                           allowAdditions
+                          searchInput={<Dropdown.SearchInput maxLength={MAXFORMLENGTH} />}
                           options={courseOptions}
                           value={selectedUser.courses}
                           onChange={this.handleDropdownChange}
