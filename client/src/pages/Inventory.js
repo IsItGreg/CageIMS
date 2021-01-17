@@ -17,7 +17,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { getItemsIfNeeded, putItem, postItem } from "../actions/itemActions"
 import { getUsersIfNeeded } from "../actions/userActions"
-import {getAllTransactionsByItem,getDueTransactionsByItem} from "../actions/transactionActions"
+import { getAllTransactionsByItem, getDueTransactionsByItem } from "../actions/transactionActions"
 
 class Inventory extends Component {
   constructor(props) {
@@ -25,7 +25,7 @@ class Inventory extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       activeItem: "item",
-      activeCategory:"All",
+      activeCategory: "All",
       open: false,
 
       nameError: false,
@@ -35,8 +35,8 @@ class Inventory extends Component {
       editable: true,
       isChangesMadeToModal: false,
       isItemIdUnavailable: false,
-      transactions:[],
-      dueTransactions:[],
+      transactions: [],
+      dueTransactions: [],
 
       selectedItemId: null,
       selectedItem: {
@@ -47,7 +47,7 @@ class Inventory extends Component {
         notes: "",
         courses: [],
         expected: "",
-        createdAt:"",
+        createdAt: "",
       },
     };
   }
@@ -70,11 +70,11 @@ class Inventory extends Component {
         notes: "",
         courses: [],
         expected: "",
-        createdAt:"",
+        createdAt: "",
       },
-      transactions:[],
-      dueTransactions:[],
-      items:{},
+      transactions: [],
+      dueTransactions: [],
+      items: {},
       nameError: false,
       categoryError: false,
       serialError: false,
@@ -89,12 +89,12 @@ class Inventory extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.isUpdating){
+    if (nextProps.isUpdating) {
       this.setState({
         isWaitingForUpdateResponse: true,
       });
     }
-    else if(this.state.isWaitingForUpdateResponse && !nextProps.isUpdating){
+    else if (this.state.isWaitingForUpdateResponse && !nextProps.isUpdating) {
       this.setState({
         isWaitingForUpdateResponse: false,
       });
@@ -102,24 +102,24 @@ class Inventory extends Component {
     }
     this.setState({
       transactions: this.getTransactionsToShow(nextProps.transactions),
-      dueTransactions:this.getDueTransactionsToShow(nextProps.dueTransactions),
+      dueTransactions: this.getDueTransactionsToShow(nextProps.dueTransactions),
     });
   }
 
   getTransactionsToShow(preSetTransactions) {
-    if(preSetTransactions == null){
+    if (preSetTransactions == null) {
       return [];
     }
-    else{
+    else {
       return preSetTransactions;
     }
   }
 
   getDueTransactionsToShow(preSetTransactions) {
-    if(preSetTransactions == null){
+    if (preSetTransactions == null) {
       return [];
     }
-    else{
+    else {
       preSetTransactions.forEach((transaction) => {
         transaction.backgroundColor =
           new Date(transaction.dueDate).getTime() < new Date().getTime()
@@ -143,7 +143,7 @@ class Inventory extends Component {
   };
 
   handleItemSelectClick = (e, rowData) => {
-    const {dispatch} = this.props;
+    const { dispatch } = this.props;
     dispatch(getAllTransactionsByItem(rowData));
     dispatch(getDueTransactionsByItem(rowData))
     this.setState({
@@ -315,18 +315,17 @@ class Inventory extends Component {
 
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
-  changeInventoryTableTab = (e,data) => this.setState({activeCategory:data.panes[data.activeIndex].menuItem})
+  changeInventoryTableTab = (e, data) => this.setState({ activeCategory: data.panes[data.activeIndex].menuItem })
 
-  isNumberKey(evt){
-    var theEvent = evt || window.event;
-    var key = theEvent.keyCode || theEvent.which;
-    key = String.fromCharCode( key );
+  restrictItemIdInput(e) {
+    var key = String.fromCharCode(e.keyCode || e.which);
     var regex = /^[0-9]\d*$/;
-    if( !regex.test(key) ) {
-      theEvent.returnValue = false;
-      if(theEvent.preventDefault) theEvent.preventDefault();
+    if (!regex.test(key)) {
+      e.returnValue = false;
+      if (e.preventDefault) e.preventDefault();
     }
   }
+
   render() {
     const { items } = this.props;
     const selectedItemId = this.state.selectedItemId;
@@ -409,7 +408,7 @@ class Inventory extends Component {
 
     let itemsTemp = Array.from(this.props.items);
     itemsTemp.forEach((items) => {
-      if(items.activeTransaction){
+      if (items.activeTransaction) {
         items.backgroundColor = (new Date(items.activeTransaction.dueDate).getTime() < new Date().getTime()) ? "mistyrose" : "";
       }
     });
@@ -590,8 +589,8 @@ class Inventory extends Component {
         </div>
         <div className="page-content stretch-h">
           <Col className="stretch-h flex-col table-wrapper">
-            {<Tab panes={inventoryTablePanes}  onTabChange={this.changeInventoryTableTab} renderActiveOnly={true} className="stretch-h flex-col table-wrapper" /> }
-            <Modal centered show={selectedItemId != null} size ="lg"onHide={this.close}>
+            {<Tab panes={inventoryTablePanes} onTabChange={this.changeInventoryTableTab} renderActiveOnly={true} className="stretch-h flex-col table-wrapper" />}
+            <Modal centered show={selectedItemId != null} size="lg" onHide={this.close}>
               <Modal.Header bsPrefix="modal-header">
                 <Modal.Title>Item</Modal.Title>
                 <IconButton onClick={this.close} size="small" color="inherit">
@@ -638,7 +637,7 @@ class Inventory extends Component {
                         </label>
                         <Form.Input
                           name="iid"
-                          onKeyPress = {(e) => this.isNumberKey(e)}
+                          onKeyPress={(e) => this.restrictItemIdInput(e)}
                           error={
                             this.state.iidError ||
                             this.state.isItemIdUnavailable
@@ -841,10 +840,10 @@ Inventory.propTypes = {
   dispatch: PropTypes.func.isRequired
 };
 function mapStateToProps(state) {
-  const { item, user,transaction } = state;
+  const { item, user, transaction } = state;
   const { users } = user;
-  const { transactions,dueTransactions } = transaction;
-  const { isGetting, lastUpdated, items,isUpdating } = item;
-  return{ items, isGetting, lastUpdated, users, transactions, dueTransactions, isUpdating };
+  const { transactions, dueTransactions } = transaction;
+  const { isGetting, lastUpdated, items, isUpdating } = item;
+  return { items, isGetting, lastUpdated, users, transactions, dueTransactions, isUpdating };
 }
 export default connect(mapStateToProps)(Inventory);
