@@ -300,7 +300,7 @@ class Users extends Component {
           this.setState({
             ["importEmailValid" + eUser.userCode]: this.validateEmail(eUser.email),
           });
-          return eUser.toLowerCase();
+          return eUser;
         });
 
       this.setState({ importedExcelData: data, showImportExcelModal: true });
