@@ -18,6 +18,7 @@ import { connect } from "react-redux";
 import { getItemsIfNeeded, putItem, postItem } from "../actions/itemActions"
 import { getUsersIfNeeded } from "../actions/userActions"
 import { getAllTransactionsByItem, getDueTransactionsByItem } from "../actions/transactionActions"
+
 const MAXFORMLENGTH = "25";
 
 class Inventory extends Component {
@@ -317,6 +318,15 @@ class Inventory extends Component {
   handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 
   changeInventoryTableTab = (e, data) => this.setState({ activeCategory: data.panes[data.activeIndex].menuItem })
+
+  restrictItemIdInput(e) {
+    var key = String.fromCharCode(e.keyCode || e.which);
+    var regex = /^[0-9]\d*$/;
+    if (!regex.test(key)) {
+      e.returnValue = false;
+      e.preventDefault();
+    }
+  }
 
   render() {
     const { items } = this.props;
@@ -630,6 +640,7 @@ class Inventory extends Component {
                         </label>
                         <Form.Input
                           name="iid"
+                          onKeyPress={(e) => this.restrictItemIdInput(e)}
                           error={
                             this.state.iidError ||
                             this.state.isItemIdUnavailable
