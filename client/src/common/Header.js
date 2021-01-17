@@ -90,7 +90,7 @@ class Header extends Component {
           </Nav.Link>
         </Col>
         <Col xs="auto">
-          <div style={{textAlign: "right"}}>
+          <div style={{ "margin-right": "2.5em" }}>
             <h5>{this.state.curTime}</h5>
           </div>
         </Col>

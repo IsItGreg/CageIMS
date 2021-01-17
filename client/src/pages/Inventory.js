@@ -19,6 +19,8 @@ import { getItemsIfNeeded, putItem, postItem } from "../actions/itemActions"
 import { getUsersIfNeeded } from "../actions/userActions"
 import { getAllTransactionsByItem, getDueTransactionsByItem } from "../actions/transactionActions"
 
+const MAXFORMLENGTH = "25";
+
 class Inventory extends Component {
   constructor(props) {
     super(props);
@@ -520,7 +522,7 @@ class Inventory extends Component {
         menuItem: category,
         render: () => (
           <Table
-            data={items.filter((item) => item.category == category)}
+            data={items.filter((item) => item.category === category)}
             itemType={"item"}
             columns={columnSet}
             title={<h3>{category}</h3>}
@@ -610,6 +612,7 @@ class Inventory extends Component {
                         )}
                       </label>
                       <Form.Input
+                        maxLength={MAXFORMLENGTH}
                         error={this.state.nameError}
                         name="name"
                         placeholder="Name"
@@ -659,8 +662,10 @@ class Inventory extends Component {
                               Error: Field is empty.
                             </span>
                           )}
+
                         </label>
                         <Form.Input
+                          maxLength={MAXFORMLENGTH}
                           name="serial"
                           error={this.state.serialError}
                           placeholder="Serial"
@@ -673,23 +678,23 @@ class Inventory extends Component {
                       </Form.Field>
                     </Form.Group>
                     <Form.Group widths="equal">
-                      <Form.Field>
+                      <Form.Field width="1">
                         <label>Brand:</label>
                         <Dropdown
                           placeholder="Brand"
                           name="brand"
-                          fluid
                           search
                           selection
                           allowAdditions
                           clearable
+                          searchInput={<Dropdown.SearchInput maxLength={MAXFORMLENGTH} />}
                           options={brandOptions}
                           value={selectedItem.brand}
                           onChange={this.handleBrandDropdownChange}
                           disabled={this.state.editable}
                         />
                       </Form.Field>
-                      <Form.Field>
+                      <Form.Field width="1">
                         <label>
                           Category:
                           {this.state.categoryError && (
@@ -701,13 +706,12 @@ class Inventory extends Component {
                         <Dropdown
                           placeholder="Category"
                           name="category"
-                          fluid
                           error={this.state.categoryError}
                           search
                           selection
                           allowAdditions
+                          searchInput={<Dropdown.SearchInput maxLength={MAXFORMLENGTH} />}
                           options={categoryOptions}
-                          value={selectedItem.category}
                           onChange={this.handleCategoryDropdownChange}
                           disabled={this.state.editable}
                         />
@@ -723,6 +727,8 @@ class Inventory extends Component {
                         search
                         selection
                         allowAdditions
+                        scrolling
+                        searchInput={<Dropdown.SearchInput maxLength={MAXFORMLENGTH} />}
                         options={courseOptions}
                         value={selectedItem.courses}
                         onChange={this.handleCourseDropdownChange}
